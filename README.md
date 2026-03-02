@@ -4,13 +4,13 @@ This software seeks to implement a modular bioinformatics pipeline tailored to a
  
 Currently, the Biology Department at CSUSM does not utilize most of the data it generates due to the time required to execute tools and the inability to easily configure existing pipelines. The software seeks to address this by being a modular, flexible system that will assist researchers and students currently working in the lab.
 
-# Frontend
+## Frontend
 The front end is implemented using NodeGraphQT.
 
-# Backend
+## Backend
 The backend is written in Python and NextFlow.
 
-# External tools
+## External tools
 - FastQC
 - Trimmomatic
 - QIIME2
