@@ -1,6 +1,8 @@
 from PySide6 import QtWidgets
 from NodeGraphQt import NodeGraph, BaseNode, NodeBaseWidget
 
+#todo: figure out how to fix weird warping of nodegraph
+
 #basic widget for node
 class TestNodeWidget(QtWidgets.QWidget):
     def __init__(self, parent=None):
@@ -59,24 +61,29 @@ class MainWindow(QtWidgets.QMainWindow):
 
         graph = NodeGraph() # graph
         g_widget = graph.widget
-        g_widget.setFixedSize(main_layout.get)
 
+        
+        #terminal
         self.terminal = QtWidgets.QTextEdit()
         self.terminal.setReadOnly(True)
         font = self.terminal.font()
         font.setFamily("Consolas")
         self.terminal.setFont(font)
 
+        #button dictionary mapping the button label and its function
         buttons = {'Save Preset' : self.save_preset,
                    'Load Preset' : self.load_preset,
                    'Stop Running' : self.stop_running}
 
+        # will add things in order from top to bottom: save, load, stop
         for text, func in buttons.items():
             btn = QtWidgets.QPushButton(text)
             btn.clicked.connect(func)
             side_layout.addWidget(btn)
 
-        side_layout.addWidget(self.terminal, 1)
+        #adds terminal beneath the buttons
+        side_layout.addWidget(self.terminal, 1) # sets it to stretch the rest of the remaining space
+
         graph.register_node(TestNode)
 
         graph.add_node = graph.create_node('practice.TestNode', name='test')
@@ -101,7 +108,25 @@ class MainWindow(QtWidgets.QMainWindow):
 if __name__ == '__main__':
     app = QtWidgets.QApplication([])
 
+    #gets user's screen size for resizing the window
+    screen = app.primaryScreen()
+    size = screen.size()
+    scr_w = size.width()
+    scr_h = size.height()
+
+
     window = MainWindow()
+
+    # resizes it based on screen size (takes up 80%)
+    width = int(scr_w * 0.8)
+    height = int(scr_h * 0.8)
+    window.setFixedHeight(height)
+    window.setFixedWidth(width)
+
+    # centers app at middle of screen
+    window.move((scr_w - width) // 2, (scr_h - height) // 2)
+
+
     window.show()
 
     app.exec()

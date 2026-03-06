@@ -1,4 +1,4 @@
-# a base program implementing nodegraphqt
+g# a base program implementing nodegraphqt
 
 # had to grab PySide6 which has everything from the Qt 6.0+ framework
 # wasn't specified in the documentation for NodeGraphQt (unless I missd it)
