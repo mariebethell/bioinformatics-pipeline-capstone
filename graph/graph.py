@@ -19,6 +19,14 @@ class Node:
         self.next_node: Node
         self.state = StageState.NEW
 
+    def can_accept_input(self, in_type):
+        """
+        Sets the in_type attribute with the file type that can be processed by this tool.
+    
+        :param in_type: file extension that can be accepted, e.g. fastq
+        """
+        self.in_type = in_type
+
     def to_string(self):
         print(f"Node number: {self.node_num}")
         print(f"Tool: {self.tool}")
@@ -41,22 +49,30 @@ class Graph:
     def get_first_node(self) -> Node:
         return next(iter((self.nodes).values()), None) # Returns first node or None if graph is empty.
 
-    def add_node(self, node, prev, next):
+    def add_node(self, node, prev=None, next=None):
         node.prev_node = prev
         node.next_node = next
 
         self.nodes[node.node_num] = node
+
+    def size(self):
+        return len(self.nodes)
     
 if __name__ == "__main__":
-    first = Node(1, "FastQC")
-    second = Node(2, "Trimmomatic")
-
     graph = Graph()
 
-    graph.add_node(first, None, second)
-    graph.add_node(second, first, None)
+    first = Node(graph.size(), "FastQC")
+    first.can_accept_input("fastq")
+    graph.add_node(first)
+
+    second = Node(graph.size(), "Trimmomatic")
+    second.can_accept_input("fastq")
+    graph.add_node(second)
+
+    first.next_node = second
+    second.prev_node = first
 
     # Test getting node information
     print(graph.get_first_node().to_string())
     print()
-    print(graph.get_node(2).to_string())
+    print(graph.get_node(1).to_string())
