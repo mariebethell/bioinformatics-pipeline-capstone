@@ -1,0 +1,10 @@
+.nextflow/
+null/
+results/
+work/
+.nextflow.log
+.nextflow.log.*
+__pycache__/
+fastqc/
+in/
+trimmomatic/
