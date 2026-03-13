@@ -258,7 +258,8 @@ class ToolNodeWrapper(NodeBaseWidget):
             elif w_type == 'combo_box':
                 #bam, sam, fastq
                 widget = QtWidgets.QComboBox()
-                widget.addItems(['fastq', 'sam', 'bam'])
+                if w_name == 'file_format_combobox':
+                    widget.addItems(['fastq', 'sam', 'bam'])
             
             # if the widget was succesfully grabbed then it will add it
             if widget is not None:
