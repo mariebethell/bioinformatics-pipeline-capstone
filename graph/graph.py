@@ -1,11 +1,11 @@
 from enum import Enum
 
 class StageState(Enum):
-    NEW = 0,
-    INIT = 1,
-    STOPPED = 2,
-    RUNNING = 3,
-    COMPLETED = 4,
+    NEW = 0
+    INIT = 1
+    STOPPED = 2
+    RUNNING = 3
+    COMPLETED = 4
     ERROR = 5
 
 class Node:
@@ -15,9 +15,10 @@ class Node:
         self.args = {}
         self.inputs = {}
         self.outputs = {}
-        self.prev_node: Node
-        self.next_node: Node
+        self.prev_node: Node | None = None
+        self.next_node: Node | None = None
         self.state = StageState.NEW
+        
 
     def can_accept_input(self, in_type):
         """
@@ -27,22 +28,32 @@ class Node:
         """
         self.in_type = in_type
 
-    def to_string(self):
-        print(f"Node number: {self.node_num}")
-        print(f"Tool: {self.tool}")
-        print(f"Arguments: {self.args}")
-        print(f"Inputs: {self.inputs}")
-        print(f"Outputs: {self.outputs}")
-        if (self.prev_node != None):
-            print(f"Previous node: {self.prev_node.node_num}, {self.prev_node.tool}")
-        if (self.next_node != None):
-            print(f"Next node: {self.next_node.node_num}, {self.next_node.tool}")
-        print(f"Current State: {self.state}")
+    def __str__(self):
+        prev = self.prev_node.node_num if self.prev_node else None
+        nxt = self.next_node.node_num if self.next_node else None
+
+        return (
+            f"Node {self.node_num}\n"
+            f"Tool: {self.tool}\n"
+            f"Arguments: {self.args}\n"
+            f"Inputs: {self.inputs}\n"
+            f"Outputs: {self.outputs}\n"
+            f"Previous: {prev}\n"
+            f"Next: {nxt}\n"
+            f"State: {self.state.name}"
+        )
 
 class Graph:
     def __init__(self):
         self.nodes = {} # Dictionary of node num keys and Nodes. A dict automatically preserves the order of insertion since Python 3.7.
-    
+        self.next_id = 0
+
+    def create_node(self, tool):
+        node = Node(self.next_id, tool)
+        self.nodes[self.next_id] = node
+        self.next_id += 1
+        return node
+
     def get_node(self, node_num) -> Node:
         return self.nodes[node_num]
     
@@ -55,24 +66,29 @@ class Graph:
 
         self.nodes[node.node_num] = node
 
+    def connect(self, a: Node, b: Node):
+        a.next_node = b
+        b.prev_node = a
+
     def size(self):
         return len(self.nodes)
     
 if __name__ == "__main__":
     graph = Graph()
 
-    first = Node(graph.size(), "FastQC")
-    first.can_accept_input("fastq")
+    # Use create_node for auto numbering
+    first = graph.create_node("FastQC")
+    second = graph.create_node("Trimmomatic")
+    third = graph.create_node("De Novo Transcriptome Assembly")
+
     graph.add_node(first)
-
-    second = Node(graph.size(), "Trimmomatic")
-    second.can_accept_input("fastq")
     graph.add_node(second)
+    graph.add_node(third)
 
-    first.next_node = second
-    second.prev_node = first
+    graph.connect(first, second)
+    graph.connect(second, third)
 
     # Test getting node information
-    print(graph.get_first_node().to_string())
-    print()
-    print(graph.get_node(1).to_string())
+    for node in graph.nodes.values():
+        print(node)
+        print()
