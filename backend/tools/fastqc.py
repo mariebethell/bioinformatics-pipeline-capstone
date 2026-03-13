@@ -7,8 +7,11 @@ wihtin the pipeline backend. The schema describes each supported fastQC paramete
 including its expected type, CLI flag mapping, validation rules, and default values.
 
 The schema is used to validate arguments recieved from the API, normalize tool config
-values, and generate fastQC command line arguments for Nextflow stages.
+values, and generate fastQC command line arguments for Nextflow stages.\
+
+This links to a page that briefly explains each tool https://home.cc.umanitoba.ca/~psgendb/doc/fastqc.help
 """
+
 fastqc_arg_schema = {
     "threads": {
       "type": int,
@@ -88,5 +91,45 @@ fastqc_arg_schema = {
       "allowed_values": ["bam","sam","fastq"],
       "default": None,
       "nullable": True
+    },
+
+    "extract": {
+        "type": bool,
+        "cli_flag": "--extracts",
+        "min_value": None,
+        "max_value": None,
+        "allowed_values": None,
+        "default": None,
+        "nullable": True
+    },
+
+    "version": {
+        "type": bool,
+        "cli_flag": "--version",
+        "min_value": None,
+        "max_value": None,
+        "allowed_values": None,
+        "default": None,
+        "nullable": True
+    },
+
+    "help": {
+        "type": bool,
+        "cli_flag": "--help",
+        "min_value": None,
+        "max_value": None,
+        "allowed_values": None,
+        "default": None,
+        "nullable": True
+    },
+
+    "outdir": {
+        "type": str,
+        "cli_flag": "--outdir",
+        "min_value": None,
+        "max_value": None,
+        "allowed_values": None,
+        "default": None,
+        "nullable": True
     },
 }
