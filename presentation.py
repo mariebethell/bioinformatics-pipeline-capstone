@@ -1,4 +1,3 @@
-# presentation layer
 from PySide6 import QtWidgets
 from NodeGraphQt import NodeGraph, BaseNode, NodeBaseWidget
 from abc import ABC, abstractmethod
@@ -17,7 +16,7 @@ class AppFrame(QtWidgets.QMainWindow):
 
         # panel controllers
         self.home = HomeController(self)
-        self.settings = SettingsController()
+        self.settings = SettingsController(self)
         self.workbench = PipelineWorkbenchVC(self)
 
         self.content = QtWidgets.QStackedWidget()
@@ -64,9 +63,8 @@ class HomeController(PanelController):
         self.app = app
 
     def init_view(self):
-        if not self.view:
-            self.view = HomeView()
-            self.app.content.addWidget(self.view)
+        self.view = HomeView()
+        self.app.content.addWidget(self.view)
         
         self.app.content.setCurrentWidget(self.view)
 
@@ -74,11 +72,24 @@ class HomeController(PanelController):
         pass
 
     def close(self):
-        print("Closing Home")
+        print('Closing Home')
 
 
 class SettingsController(PanelController):
-    pass
+    def __init__(self, app):
+        self.view = None
+        self.app = app
+    
+    def init_view(self):
+        self.view = SettingsView()
+        self.app.content.addWidget(self.view)
+
+        self.app.content.setCurrentWidget(self.view)
+
+    def commit_changes(self):
+        pass
+    
+
 
 
 class PipelineWorkbenchVC(PanelController):
@@ -141,7 +152,7 @@ class PipelineWorkbenchVC(PanelController):
         self.app.content.setCurrentWidget(self.view)
 
     def close(self):
-        print("closing")
+        print('closing')
 
 
 
@@ -152,7 +163,7 @@ class HomeView(QtWidgets.QWidget):
         super().__init__()
         layout = QtWidgets.QVBoxLayout()
 
-        welcome_text = "Home PAGE PLACEHOLDER !!" # placeholder
+        welcome_text = 'Home PAGE PLACEHOLDER !!' # placeholder
         self.welcome_label = QtWidgets.QLabel(welcome_text)
 
         # eventually use QTextEdit's setHTML to create a nicer, rich Home screen
@@ -160,23 +171,39 @@ class HomeView(QtWidgets.QWidget):
         layout.addWidget(self.welcome_label)
         self.setLayout(layout)
 
-class SettingsView():
-    pass
+class SettingsView(QtWidgets.QWidget):
+    def __init__(self):
+        super().__init__()
+        layout = QtWidgets.QVBoxLayout()
+
+        placeholder_text = 'Settings placeholder !!'
+        self.placeholder_label = QtWidgets.QLabel(placeholder_text)
+
+        layout.addWidget(self.placeholder_label)
+        self.setLayout(layout)
 
 #### NODE SECTION ####
 
 # set of widgets 
-# (a list of dictionaries which will contain the widget type, name, and label)
-TOOL_WIDGETS = {
-    "fastqc" : [
-        {"type": "button", "name": "x", "label": "x"},
+TOOL_WIDGETS = { # note: QSlider, QCheckBox, QComboBox
+    'fastqc' : [
+        {'type': 'slider', 'name': 'thread_slider', 'label': 'Number of Threads', 'default': 1 },
+        {'type': 'checkbox', 'name': 'quiet_check', 'label': 'Quiet', 'default': False },
+        {'type': 'checkbox', 'name': 'nogroup_check', 'label': 'NoGroup', 'default': False },
+        {'type': 'slider', 'name': 'kmers_slider', 'label': 'Kmer Length', 'default': 7 },
+        {'type': 'text_entry', 'name': 'adapters_text_input', 'label': 'Adapters', 'default': None }, # paired with a checkbox below
+        {'type': 'checkbox', 'name': 'adapters_checkbox', 'label': 'Adapters?', 'default': False},
+        {'type': 'text_entry', 'name': 'contaminants_text_input', 'label': 'Contaminants', 'default': None}, # paired with a checkbox below
+        {'type': 'checkbox', 'name': 'contaminants_check', 'label': 'Contaminants?', 'default': False}
     ]
 }
 
-# Node responsible for representing a tool within the pipeline.
+# Node responsible for representing a tool within the pipeline & its wrapper
+class ToolNodeWrapper(NodeBaseWidget):
+    pass
 class ToolNode(BaseNode):
     __identifier__ = 'bioinformatics_capstone'
-    NODE_NAME = "Tool"
+    NODE_NAME = 'Tool'
 
     def __init__(self):
         super(ToolNode, self).__init__()
