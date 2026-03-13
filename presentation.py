@@ -186,8 +186,8 @@ class SettingsView(QtWidgets.QWidget):
 
 #### NODE SECTION ####
 
-# set of widgets 
-TOOL_WIDGETS = { # note: QSlider, QCheckBox, QComboBox
+# a list of dictionaries for each tool, where each tool will contain what type of widget it will have and the fields for each widget
+TOOL_WIDGETS = {
     'fastqc' : [
         {'type': 'slider', 'name': 'thread_slider', 'label': 'Number of Threads: 1', 'default': 1, 'need_label': True },
         {'type': 'checkbox', 'name': 'quiet_check', 'label': 'Quiet', 'default': False, 'need_label': False },
@@ -253,7 +253,6 @@ class ToolNodeWrapper(NodeBaseWidget):
             elif w_type == 'text_entry':
                 widget = QtWidgets.QPlainTextEdit()
                 widget.setPlaceholderText(w_label)
-                widget.setReadOnly(True)
                 widget.setMaximumHeight(30)
 
             elif w_type == 'combo_box':
