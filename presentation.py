@@ -42,8 +42,13 @@ class AppFrame(QtWidgets.QMainWindow):
         self.setCentralWidget(central)
 
         self.home.init_view()
+    
 
 
+
+def GraphGenerator():
+    def from_workbench(node_list):
+        pass
 
 #### PANEL SECTION ####
 
@@ -89,7 +94,16 @@ class SettingsController(PanelController):
     def commit_changes(self):
         pass
     
+# This is necessary as the NodesPaletteWidget only populates itself with registered nodes.
+# However, we will only ever have 3 nodes registered (Tool, Input & Output) and it won't actually be populated with our tools, so this is a faux version of that
+class NodeBrowser(QtWidgets.QWidget):
+    def __init__(self):
+        super().__init__()
+        layout = QtWidgets.QVBoxLayout()
+        self.label = QtWidgets.QLabel('Node Browser TODO')
+        layout.addWidget(self.label)
 
+        self.setLayout(layout)
 
 
 class PipelineWorkbenchVC(PanelController):
@@ -102,6 +116,8 @@ class PipelineWorkbenchVC(PanelController):
         node_graph.register_node(ToolNode)
         node_graph.register_node(InputNode)
         node_graph.register_node(OutputNode)
+
+        self.tool_palette = None # this external window is responsible for holding the Node Browser window
 
         # TODO figure out some way to make it so nodes cannot go off screen
         
@@ -117,7 +133,8 @@ class PipelineWorkbenchVC(PanelController):
             'Save Preset' : self.save_preset,
             'Load Preset' : self.load_preset,
             'Run Pipeline' : self.run_pipeline,
-            'Purge All Data' : self.purge_all_data
+            'Purge All Data' : self.purge_all_data,
+            'Node Browser' : self.node_browser
         }
 
         top_bar_layout = QtWidgets.QHBoxLayout()
@@ -148,6 +165,11 @@ class PipelineWorkbenchVC(PanelController):
         
     def new_pipeline(self):
         pass
+    
+    def node_browser(self):
+        if self.tool_palette is None:
+                self.tool_palette = NodeBrowser()
+        self.tool_palette.show()
 
     def init_view(self):       
         self.app.content.addWidget(self.view)
@@ -185,7 +207,12 @@ class SettingsView(QtWidgets.QWidget):
         self.setLayout(layout)
 
 #### NODE SECTION ####
-
+"""
+Future idea and maybe a bit of a stretch goal but I wanted to record this here. I was thinking that perhaps one way to implement the ability to add
+new nodes (atleast in the front end) is that I could store these widgets in a JSON or some other similar file, and make a separate window called
+Node Builder where basically future devs could basically 'design' the node by dragging widgets to a blank node, and save it to the JSON, with the
+added ability to share this tool JSON around so that others may import it. Might have to come back to this, but didn't want to lose this idea. - Max
+"""
 # a list of dictionaries for each tool, where each tool will contain what type of widget it will have and the fields for each widget
 TOOL_WIDGETS = {
     'fastqc' : [
@@ -193,11 +220,11 @@ TOOL_WIDGETS = {
         {'type': 'checkbox', 'name': 'quiet_check', 'label': 'Quiet', 'default': False, 'need_label': False },
         {'type': 'checkbox', 'name': 'nogroup_check', 'label': 'NoGroup', 'default': False, 'need_label': False },
         {'type': 'slider', 'name': 'kmers_slider', 'label': 'Kmer Length: 7', 'default': 7, 'need_label': True },
-        {'type': 'text_entry', 'name': 'adapters_text_input', 'label': 'Adapters', 'default': None, 'need_label': False}, # paired with a checkbox below
-        {'type': 'checkbox', 'name': 'adapters_checkbox', 'label': 'Set Adapters', 'default': False, 'need_label': False},
-        {'type': 'text_entry', 'name': 'contaminants_text_input', 'label': 'Contaminants', 'default': None, 'need_label': False}, # paired with a checkbox below
-        {'type': 'checkbox', 'name': 'contaminants_check', 'label': 'Set Contaminants', 'default': False, 'need_label': False},
-        {'type': 'combo_box', 'name': 'file_format_combobox', 'label': 'File Format', 'default': 'fastq', 'need_label': True}
+        {'type': 'text_entry', 'name': 'adapters_text_input', 'label': 'Adapters', 'default': None, 'need_label': False }, # paired with a checkbox below
+        {'type': 'checkbox', 'name': 'adapters_checkbox', 'label': 'Set Adapters', 'default': False, 'need_label': False },
+        {'type': 'text_entry', 'name': 'contaminants_text_input', 'label': 'Contaminants', 'default': None, 'need_label': False }, # paired with a checkbox below
+        {'type': 'checkbox', 'name': 'contaminants_check', 'label': 'Set Contaminants', 'default': False, 'need_label': False },
+        {'type': 'combo_box', 'name': 'file_format_combobox', 'label': 'File Format', 'default': 'fastq', 'need_label': True }
     ]
 }
 
@@ -330,7 +357,10 @@ class ToolNode(BaseNode):
         super(ToolNode, self).__init__()
         self.wrapper = None
         
-        """ Just as an idea for later. Perhaps we could color code what are 'legal' connections, as in certain colors can only go to other colors. Just a thought"""
+        """ 
+        Just as an idea for later. Perhaps we could color code what are 'legal' connections, 
+        as in certain colors can only go to other colors. Just a thought - Max
+        """
         self.add_input('input', color=(0, 255, 0))
         self.add_output('output', color=(0, 0, 255))
     
