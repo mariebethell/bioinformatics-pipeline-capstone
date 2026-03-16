@@ -97,36 +97,52 @@ class SettingsController(PanelController):
 # This is necessary as the NodesPaletteWidget only populates itself with registered nodes.
 # However, we will only ever have 3 nodes registered (Tool, Input & Output) and it won't actually be populated with our tools, so this is a faux version of that
 class NodeBrowser(QtWidgets.QWidget):
-    def __init__(self):
-        super().__init__()
-        layout = QtWidgets.QVBoxLayout()
-        self.label = QtWidgets.QLabel('Node Browser TODO')
-        layout.addWidget(self.label)
+    def __init__(self, graph, parent=None):
+        super().__init__(parent) #TODO, figure out some way to make it close when i close the window
+
+        self.graph = graph
+        layout = QtWidgets.QGridLayout()
+
+        # gettin tools to create as buttons
+        for tool in TOOL_WIDGETS:
+            btn = QtWidgets.QPushButton('Create ' + tool + ' Node')
+
+            # lambda necessary here to capture current value, passes it to create tool node
+            btn.clicked.connect(
+                lambda _, t=tool : self.create_tool_node(t)
+                )
+            layout.addWidget(btn)
 
         self.setLayout(layout)
 
+    # interior function for creating a new tool node
+    def create_tool_node(self, tool):
+        node = self.graph.create_node('bioinformatics_capstone.ToolNode', name=tool, pos=(40, 40))
+        node.build_widgets(tool)
+
+        viewer = self.graph.viewer()
+        center = viewer.mapToScene(viewer.viewport().rect().center())
+
+        node.set_pos(center.x(), center.y())
+
+        self.close() # closes after a user picks a tool
 
 class PipelineWorkbenchVC(PanelController):
     def __init__(self, app):
-        node_graph = NodeGraph()
+        self.node_graph = NodeGraph()
 
         self.view = QtWidgets.QWidget()
         self.app = app
 
-        node_graph.register_node(ToolNode)
-        node_graph.register_node(InputNode)
-        node_graph.register_node(OutputNode)
+        self.node_graph.register_node(ToolNode)
+        self.node_graph.register_node(InputNode)
+        self.node_graph.register_node(OutputNode)
 
         self.tool_palette = None # this external window is responsible for holding the Node Browser window
 
         # TODO figure out some way to make it so nodes cannot go off screen
-        
-        # populating with nodes (one test one for now)
-        tool = 'fastqc'
-        node_test = node_graph.create_node('bioinformatics_capstone.ToolNode', name=tool)
-        node_test.build_widgets(tool)
 
-        gr_widget = node_graph.widget
+        gr_widget = self.node_graph.widget
         
         
         btns = {
@@ -168,7 +184,7 @@ class PipelineWorkbenchVC(PanelController):
     
     def node_browser(self):
         if self.tool_palette is None:
-                self.tool_palette = NodeBrowser()
+                self.tool_palette = NodeBrowser(self.node_graph)
         self.tool_palette.show()
 
     def init_view(self):       
@@ -213,7 +229,7 @@ new nodes (atleast in the front end) is that I could store these widgets in a JS
 Node Builder where basically future devs could basically 'design' the node by dragging widgets to a blank node, and save it to the JSON, with the
 added ability to share this tool JSON around so that others may import it. Might have to come back to this, but didn't want to lose this idea. - Max
 """
-# a list of dictionaries for each tool, where each tool will contain what type of widget it will have and the fields for each widget
+# a dictionary of a list for each tool, containing a dictionary of widget types where each tool will contain what type of widget it will have and the fields for each widget
 TOOL_WIDGETS = {
     'fastqc' : [
         {'type': 'slider', 'name': 'thread_slider', 'label': 'Number of Threads: 1', 'default': 1, 'need_label': True },
@@ -228,21 +244,26 @@ TOOL_WIDGETS = {
     ]
 }
 
+
 # Node responsible for representing a tool within the pipeline & its wrapper
 class ToolNodeWrapper(NodeBaseWidget):
-    def __init__(self, tool=None, parent=None):
+    def __init__(self, tool=None, parent=None, parent_node=None):
         super().__init__(parent)
 
         self.widgets = {}
         self.mutable_labels = {}
 
+        self.parent_node = parent_node
+
         container = QtWidgets.QWidget()
 
         # sets font color for widget labels in the node
         container.setStyleSheet(
-            """QLabel, QCheckBox{
+            """
+            QLabel, QCheckBox{
             color: white;}
-            """)
+            """
+            )
 
         layout = QtWidgets.QVBoxLayout()
         layout.setContentsMargins(0,0,0,0)
@@ -296,12 +317,19 @@ class ToolNodeWrapper(NodeBaseWidget):
                     layout.addWidget(label)
                 layout.addWidget(widget)
 
+
                 self.widgets[w_name] = widget
                 if w_type == 'slider':
                     self.mutable_labels[w_name] = label # tying mutable label to name of widget
             else:
                 print("Error in Tool Node Wrapper! failed to get widget")
-        
+            
+        # adds a delete button to the end of EVERY node (perhaps configure to be decoupled from ToolNode later)
+        delete_btn = QtWidgets.QPushButton('Delete Node')
+        delete_btn.clicked.connect(self.delete_node)
+        delete_btn.setStyleSheet('background-color:red; color:white;')
+        layout.addWidget(delete_btn)
+
         container.setLayout(layout)
         self.set_custom_widget(container)
 
@@ -340,6 +368,10 @@ class ToolNodeWrapper(NodeBaseWidget):
                 if index >= 0:
                     widget.setCurrentIndex(index)
             
+    def delete_node(self):
+        if self.node is not None:
+            graph = self.node.graph
+            graph.delete_nodes([self.node])
 
     def update_label(self, w_name, val):
         label = self.mutable_labels.get(w_name)
@@ -365,7 +397,7 @@ class ToolNode(BaseNode):
         self.add_output('output', color=(0, 0, 255))
     
     def build_widgets(self, tool):
-        self.wrapper = ToolNodeWrapper(tool, self.view)
+        self.wrapper = ToolNodeWrapper(tool, self.view, self)
         self.add_custom_widget(self.wrapper)
 
 
