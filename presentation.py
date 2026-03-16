@@ -159,6 +159,10 @@ class PipelineWorkbenchVC(PanelController):
         for label, func in btns.items():
             btn = QtWidgets.QPushButton(label)
             btn.clicked.connect(func)
+
+            if label == 'Run Pipeline':
+                btn.setStyleSheet('background-color: green; color: white;')
+            
             top_bar_layout.addWidget(btn)
 
         layout = QtWidgets.QVBoxLayout(self.view)
@@ -230,17 +234,52 @@ Node Builder where basically future devs could basically 'design' the node by dr
 added ability to share this tool JSON around so that others may import it. Might have to come back to this, but didn't want to lose this idea. - Max
 """
 # a dictionary of a list for each tool, containing a dictionary of widget types where each tool will contain what type of widget it will have and the fields for each widget
+# perhaps find a way to get the tool's version to display in the node to the user
 TOOL_WIDGETS = {
     'fastqc' : [
-        {'type': 'slider', 'name': 'thread_slider', 'label': 'Number of Threads: 1', 'default': 1, 'need_label': True },
+        {'type': 'slider', 'name': 'thread_slider', 'label': 'Number of Threads: 1', 'default': 1, 'need_label': True, 'min': 1, 'max': 128 },
         {'type': 'checkbox', 'name': 'quiet_check', 'label': 'Quiet', 'default': False, 'need_label': False },
         {'type': 'checkbox', 'name': 'nogroup_check', 'label': 'NoGroup', 'default': False, 'need_label': False },
-        {'type': 'slider', 'name': 'kmers_slider', 'label': 'Kmer Length: 7', 'default': 7, 'need_label': True },
+        {'type': 'slider', 'name': 'kmers_slider', 'label': 'Kmer Length: 7', 'default': 7, 'need_label': True, 'min': 1, 'max': 20 },
         {'type': 'text_entry', 'name': 'adapters_text_input', 'label': 'Adapters', 'default': None, 'need_label': False }, # paired with a checkbox below
         {'type': 'checkbox', 'name': 'adapters_checkbox', 'label': 'Set Adapters', 'default': False, 'need_label': False },
         {'type': 'text_entry', 'name': 'contaminants_text_input', 'label': 'Contaminants', 'default': None, 'need_label': False }, # paired with a checkbox below
         {'type': 'checkbox', 'name': 'contaminants_check', 'label': 'Set Contaminants', 'default': False, 'need_label': False },
         {'type': 'combo_box', 'name': 'file_format_combobox', 'label': 'File Format', 'default': 'fastq', 'need_label': True }
+    ],
+    #TRIMMOMATIC WIDGET NOTES
+    # arg(type, default, vals)
+    # notes:
+    # 
+    # _global argument widgets
+    # mode(str, 'SE', SE OR PE) dropdown
+    # threads(int, 0, 0-128) slider
+    # phred(str, None, 33 or 64) dropdown
+    # trimlog(str, None) checkbox?
+    # summary(str, None) checkbox?
+    # baseout(str, None) checkbox?
+    # validate_pairs(bool, false) checkbox
+    # compress_level(int, 1, 1-9) slider
+    # compression_mode(str, None, stream or block) dropdown
+    # quiet(bool, false) checkbox
+    # version unnecessary?
+    # step argument widgets
+    # will have to ask Ethan if this is the right way to go about it
+    # 
+    # _illumina clip widgets, in order of position
+    # illumina clip checkbox?
+    # fasta_with_adapters(str, None) checkbox?
+    # seed_mismatches(int, None) checkbox? 
+    # palindrome_clip_threshold(int, None) checkbox?
+    # simple_clip_threshold(int, None) checkbox?
+    # min_adapter_length_palindrome(int, 8, 1-inf) slider? or text entry?
+    # keep_both_reads (bool, False) checkbox
+    #
+    # _leading clip widgets
+    # leading(int, None, 0-inf) text entry
+    # trailing(int, None, 0-inf) text entry
+    'trimmomatic' : [
+        {}
     ]
 }
 
@@ -281,12 +320,11 @@ class ToolNodeWrapper(NodeBaseWidget):
             if w_type == 'slider':
                 widget = QtWidgets.QSlider(QtCore.Qt.Horizontal)
 
-                if w_name == 'thread_slider':
-                    widget.setMinimum(1)
-                    widget.setMaximum(128)
-                elif w_name == 'kmers_slider':
-                    widget.setMinimum(1)
-                    widget.setMaximum(20)
+                w_min = widget_def['min']
+                w_max = widget_def['max']
+                
+                widget.setMinimum(widget_def['min'])
+                widget.setMaximum(widget_def['max'])
                 
                 widget.setValue(w_default)
 
