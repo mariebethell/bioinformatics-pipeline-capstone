@@ -12,15 +12,42 @@ values, and generate fastQC command line arguments for Nextflow stages.\
 This links to a page that briefly explains each tool https://home.cc.umanitoba.ca/~psgendb/doc/fastqc.help
 """
 
-fastqc_arg_schema = {
+from tools.base import build_tool_def, validate_scalar_arg
+
+tool_metadata = {
+    "name" : "fastqc",
+    "display_name" : "FastQC",
+    "category" : "quality_control",
+    "supports_single_end" : "True",
+    "supports_paired_end" : "True",
+}
+
+input_contract = {
+    "accepted_formats": ["fastq", "fast.gz", "sam", "bam"],
+    "input_style": "one_or_many_files",
+}
+
+output_contract = {
+    "produced_formats": ["html", "zip"],
+    "output_style": "fastqc_report_bundle",
+}
+
+
+
+arg_schema = {
     "threads": {
       "type": int,
+      "kind": "option",
       "cli_flag": "--threads",
       "min_value": 1,
       "max_value": 128,
       "allowed_values": None,
       "default": 1,
-      "nullable": False
+      "nullable": False,
+      "ui_expose": True,
+      "managed_by_engine": False,
+      "help_text": "Number of FastQC worker threads.",
+
     },
 
     "quiet": {

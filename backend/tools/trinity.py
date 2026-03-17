@@ -14,7 +14,7 @@ trinity_core_arg_schema = {
     "cpu": {
         "type": int,
         "cli_flag": "--CPU",
-        "mine_value": 1,
+        "min_value": 1,
         "max_value": 128,
         "default": 1,
         "nullable": False,
