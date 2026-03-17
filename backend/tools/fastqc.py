@@ -95,7 +95,7 @@ fastqc_arg_schema = {
 
     "extract": {
         "type": bool,
-        "cli_flag": "--extracts",
+        "cli_flag": "--extract",
         "min_value": None,
         "max_value": None,
         "allowed_values": None,
