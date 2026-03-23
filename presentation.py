@@ -1,6 +1,11 @@
+from datetime import date, datetime
+import json
+from pathlib import Path
 from PySide6 import QtWidgets, QtCore
 from NodeGraphQt import NodeGraph, BaseNode, NodeBaseWidget
 from abc import ABC, abstractmethod
+
+#TODO Before report/pres 2:
 
 # handles what window is displayed to user
 class AppFrame(QtWidgets.QMainWindow):
@@ -42,13 +47,48 @@ class AppFrame(QtWidgets.QMainWindow):
         self.setCentralWidget(central)
 
         self.home.init_view()
+
+
     
 
 
+#what this does right now is generate a dictionary based on the outputs 
+class GraphGenerator():
+    def __init__(self, graph=None):
+        input = graph.get_node_by_name('Input')
+        self.graph_outline = None
+        file_uri = input.get_value()
 
-def GraphGenerator():
-    def from_workbench(node_list):
-        pass
+        if file_uri:
+            self.graph_outline = { 'input' : {'file_uri': file_uri} }
+            self.from_workbench(input)
+        else:
+            print("ERROR: Input File must have a FASTQ file input to run the pipeline!") # create some warning window that pops up if there is no URI/no input file
+
+    def from_workbench(self, input_node):
+
+        curr = input_node
+
+        while True:
+            connections = curr.connected_output_nodes() # gets all the connected output nodes in the form of a dictionary: {port object : list of nodes}
+            if not connections: # handles if there are no connections
+                break
+            
+            (_, nodes), = connections.items()
+
+            if not nodes: # if the node list is empty
+                break
+            
+            node = nodes[0]
+            
+            self.graph_outline.update({node.tool : node.get_value()})
+
+            curr = node
+
+        return self.graph_outline
+
+                
+
 
 #### PANEL SECTION ####
 
@@ -104,7 +144,7 @@ class NodeBrowser(QtWidgets.QWidget):
         layout = QtWidgets.QGridLayout()
 
         # gettin tools to create as buttons
-        for tool in TOOL_WIDGETS:
+        for tool in NODE_WIDGETS:
             btn = QtWidgets.QPushButton('Create ' + tool + ' Node')
 
             # lambda necessary here to capture current value, passes it to create tool node
@@ -113,19 +153,39 @@ class NodeBrowser(QtWidgets.QWidget):
                 )
             layout.addWidget(btn)
 
+        input_btn = QtWidgets.QPushButton('Create input Node')
+        output_btn = QtWidgets.QPushButton('Create output Node')
+
+        input_btn.clicked.connect(self.create_input_node)
+        output_btn.clicked.connect(self.create_output_node)
+
+        layout.addWidget(input_btn)
+        layout.addWidget(output_btn)
+
         self.setLayout(layout)
 
     # interior function for creating a new tool node
-    def create_tool_node(self, tool):
-        node = self.graph.create_node('bioinformatics_capstone.ToolNode', name=tool, pos=(40, 40))
-        node.build_widgets(tool)
+    def create_tool_node(self, tool, non_tool=False):
+        
+        self.node = ToolNode(tool)
+
+        self.graph.add_node(self.node)
 
         viewer = self.graph.viewer()
         center = viewer.mapToScene(viewer.viewport().rect().center())
 
-        node.set_pos(center.x(), center.y())
+        self.node.set_pos(center.x(), center.y())
 
         self.close() # closes after a user picks a tool
+    
+    def create_input_node(self):
+        node = self.graph.create_node('bioinformatics_capstone.InputNode', name='Input', pos=(40,40))
+        
+        self.close()
+
+    
+    def create_output_node(self):
+        pass
 
 class PipelineWorkbenchVC(PanelController):
     def __init__(self, app):
@@ -134,10 +194,14 @@ class PipelineWorkbenchVC(PanelController):
         self.view = QtWidgets.QWidget()
         self.app = app
 
+        self.pipeline_uuid = None
+
         self.node_graph.register_node(ToolNode)
         self.node_graph.register_node(InputNode)
         self.node_graph.register_node(OutputNode)
+        
 
+        
         self.tool_palette = None # this external window is responsible for holding the Node Browser window
 
         # TODO figure out some way to make it so nodes cannot go off screen
@@ -172,13 +236,56 @@ class PipelineWorkbenchVC(PanelController):
         layout.addWidget(gr_widget)
     
     def save_preset(self):
-        pass
+        #TODO have it popup for the user to be able to name their saved pipeline as opposed to saving a generic one.
+        
+        #
+        for node in self.node_graph.all_nodes():
+            if isinstance(node, ToolNode):
+                if node.wrapper:
+                    node.set_property('tool_data', node.get_value())
+
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        filename = f'pipeline_{timestamp}.json'
+
+        base_dir = Path(__file__).parent
+        preset_path = base_dir / 'presets' / filename
+
+
+        self.node_graph.save_session(str(preset_path))
+
+        # now need to manually remove junk property generated by adding the custom widget to ToolNode
+        try:
+            with open(preset_path, 'r') as file:
+                data = json.load(file)
+
+            if 'nodes' in data:
+                for _, node_info in data['nodes'].items():
+                    if 'custom' in node_info:
+                        node_info['custom'].pop('_delete', None) # deletes junk property in the custom field for the node info
+            
+            with open(preset_path, 'w') as file:
+                json.dump(data, file, indent=2)
+
+        except:
+            print('Error in save_preset when deleting junk property')
 
     def load_preset(self):
-        pass
+        file_dialog = QtWidgets.QFileDialog()
+
+        file_dialog.setWindowTitle('Open Pipeline JSON')
+        file_dialog.setNameFilter('*pipeline*.json') # only looks for files with 'pipeline' in the name
+
+        file_dialog.setFileMode(QtWidgets.QFileDialog.FileMode.ExistingFile) # forces the user to get an existing file
+        file_dialog.setViewMode(QtWidgets.QFileDialog.ViewMode.Detail)
+
+        if file_dialog.exec():
+            path = file_dialog.selectedFiles()[0]
+            self.node_graph.load_session(path)
 
     def run_pipeline(self):
-        pass
+        graph = GraphGenerator(graph=self.node_graph)
+        print(graph.graph_outline)
+        
     
     def purge_all_data(self):
         pass
@@ -235,17 +342,35 @@ added ability to share this tool JSON around so that others may import it. Might
 """
 # a dictionary of a list for each tool, containing a dictionary of widget types where each tool will contain what type of widget it will have and the fields for each widget
 # perhaps find a way to get the tool's version to display in the node to the user
-TOOL_WIDGETS = {
+
+# widget definitions to increase readability and make it easier to add widgets
+#TODO add tooltips to each widget
+
+def slider_widget(name, label, default=1, min=1, max=1):
+    return {'type': 'slider', 'name': name, 'label': f'{label}: {default}', 'label_template': f'{label}: {{}}', 'default': default, 'need_label': True, 'min': min, 'max': max }
+def checkbox_widget(name, label): 
+    return {'type': 'checkbox', 'name': name, 'label': label, 'default': False, 'need_label': False}
+def text_entry_widget(name, label, nullable=False):
+    return {'type': 'text_entry', 'name': name, 'label': label, 'default': None, 'need_label': False, 'nullable': nullable } 
+def combo_box_widget(name, label, default=None, items=[], nullable=False):
+    return {'type': 'combo_box', 'name': name, 'label': label, 'default': default, 'need_label': True, 'items': items, 'nullable': nullable}
+
+
+
+
+
+# common widgets
+threads_slider = slider_widget('threads', 'Number of Threads', 1, max=128)
+quiet_check = checkbox_widget('quiet', 'Quiet')
+NODE_WIDGETS = {
     'fastqc' : [
-        {'type': 'slider', 'name': 'thread_slider', 'label': 'Number of Threads: 1', 'default': 1, 'need_label': True, 'min': 1, 'max': 128 },
-        {'type': 'checkbox', 'name': 'quiet_check', 'label': 'Quiet', 'default': False, 'need_label': False },
-        {'type': 'checkbox', 'name': 'nogroup_check', 'label': 'NoGroup', 'default': False, 'need_label': False },
-        {'type': 'slider', 'name': 'kmers_slider', 'label': 'Kmer Length: 7', 'default': 7, 'need_label': True, 'min': 1, 'max': 20 },
-        {'type': 'text_entry', 'name': 'adapters_text_input', 'label': 'Adapters', 'default': None, 'need_label': False }, # paired with a checkbox below
-        {'type': 'checkbox', 'name': 'adapters_checkbox', 'label': 'Set Adapters', 'default': False, 'need_label': False },
-        {'type': 'text_entry', 'name': 'contaminants_text_input', 'label': 'Contaminants', 'default': None, 'need_label': False }, # paired with a checkbox below
-        {'type': 'checkbox', 'name': 'contaminants_check', 'label': 'Set Contaminants', 'default': False, 'need_label': False },
-        {'type': 'combo_box', 'name': 'file_format_combobox', 'label': 'File Format', 'default': 'fastq', 'need_label': True }
+        threads_slider,
+        quiet_check,
+        checkbox_widget('nogroup', 'NoGroup'),
+        slider_widget('kmers', 'Kmers Length', 7, max=20),
+        text_entry_widget('adapters', 'Adapters', True), 
+        text_entry_widget('contaminants', 'Contaminants', True),
+        combo_box_widget('file_format', 'File Format', items=['fastq', 'sam', 'bam'])
     ],
     #TRIMMOMATIC WIDGET NOTES
     # arg(type, default, vals)
@@ -254,13 +379,14 @@ TOOL_WIDGETS = {
     # _global argument widgets
     # mode(str, 'SE', SE OR PE) dropdown
     # threads(int, 0, 0-128) slider
-    # phred(str, None, 33 or 64) dropdown
-    # trimlog(str, None) checkbox?
-    # summary(str, None) checkbox?
-    # baseout(str, None) checkbox?
+    # phred(str, None, 33 or 64) dropdown, nullable
+    # trimlog(str, None) checkbox? nullable 
+    # summary(str, None) checkbox? nullable
+    # basein(str, None) checkbox? nullable
+    # baseout(str, None) checkbox? nullable
     # validate_pairs(bool, false) checkbox
     # compress_level(int, 1, 1-9) slider
-    # compression_mode(str, None, stream or block) dropdown
+    # compression_mode(str, None, stream or block) dropdown, nullable needs checkbox
     # quiet(bool, false) checkbox
     # version unnecessary?
     # step argument widgets
@@ -272,27 +398,78 @@ TOOL_WIDGETS = {
     # seed_mismatches(int, None) checkbox? 
     # palindrome_clip_threshold(int, None) checkbox?
     # simple_clip_threshold(int, None) checkbox?
-    # min_adapter_length_palindrome(int, 8, 1-inf) slider? or text entry?
-    # keep_both_reads (bool, False) checkbox
+    # min_adapter_length_palindrome(int, 8, 1-inf) slider? or text entry? nullable needs check box
+    # keep_both_reads (bool, False) checkbox nullable
     #
-    # _leading clip widgets
+    #
     # leading(int, None, 0-inf) text entry
     # trailing(int, None, 0-inf) text entry
+    # head_crop(int, None, 0-inf) text entry
+    # tail_crop(int, None 0-inf) text entry
+    # crop(int, None, 1-inf) text entry
+    # 
+    # _sliding window widgets, order of pos
+    # window_size(int, None, 1-inf) text entry
+    # required_quality(int, None, 0-inf) text entry
+    #
+    # _max_info widgets, order of pos
+    # parameters(int, None, 1) text entry
+    # strictness(float, 0.0, 0.0-1.0) slider
+    #
+    # min_len(int, None, 1-inf) text entry
+    # max_len(int, None, 1-inf) text entry
+    # avg_qual(int, None, 1-inf) text entry
+    #
+    # _base_count widgets, in order of pos
+    # bases(str, None, None) checkbox?
+    # min_count(int, None, 0-inf) text entry nullable
+    # max_count(int, None, 0-inf) text entry nullable
+
+    #order: type, name, label, default, need_label, extra*
+    #sliders and combo boxes need labels
+    # nullable checkboxes always after parent widget in dictionary order
     'trimmomatic' : [
-        {}
+        threads_slider,
+        combo_box_widget('mode', 'Mode', items=['SE', 'PE']),
+        combo_box_widget('phred', 'Phred', items=['33', '64'], nullable=True),
+        checkbox_widget('trimlog', 'Trimlog'),
+        checkbox_widget('summary', 'Summary'),
+        checkbox_widget('basein', 'Basein'),
+        checkbox_widget('baseout', 'Baseout'),
+        checkbox_widget('validate_pairs', 'Validate Pairs'),
+        slider_widget('compress_level', 'Compression Level', max=9),
+        combo_box_widget('compression_mode', 'Compression Mode', items=['stream', 'block'], nullable=True),
+        quiet_check
+        #illumina clip
+        
     ]
 }
 
+# TODO come back to
+# WIDGET_FACTORY = {
+#     'slider' : create_slider,
+#     'text_entry' : create_text_entry,
+#     'combo_box' : create_combo_box,
+#     'checkbox' : create_checkbox,
+# }
+
 
 # Node responsible for representing a tool within the pipeline & its wrapper
+#TODO Tooltips
 class ToolNodeWrapper(NodeBaseWidget):
-    def __init__(self, tool=None, parent=None, parent_node=None):
+    def __init__(self, tool=None, parent=None):
         super().__init__(parent)
-
+        
+        self.tool = tool
+        
         self.widgets = {}
-        self.mutable_labels = {}
 
-        self.parent_node = parent_node
+        self.mutable_labels = {}
+        
+        self.nullable_checks = {} # certain widgets can be nullable. this dictionary maps checkboxes to the nullable widgets
+
+        if not tool:
+            return
 
         container = QtWidgets.QWidget()
 
@@ -300,7 +477,7 @@ class ToolNodeWrapper(NodeBaseWidget):
         container.setStyleSheet(
             """
             QLabel, QCheckBox{
-            color: white;}
+            color: white; }
             """
             )
 
@@ -308,30 +485,37 @@ class ToolNodeWrapper(NodeBaseWidget):
         layout.setContentsMargins(0,0,0,0)
 
         # building widgets dynamically
-        for widget_def in TOOL_WIDGETS[tool]:
+        # NOTE i might come back to this, i feel like its kind of sloppy but gets the job done. i like kenneth's original suggestion of a factory, but will have to see later
+        # for now this works
+        for widget_def in NODE_WIDGETS[tool]:
+            # gathering fields for widget definition
             w_type = widget_def['type']
-            w_label = widget_def['label']
-            w_default = widget_def['default']
             w_name = widget_def['name']
-            need_label = widget_def['need_label']
+            w_label = widget_def['label']
+
+            # flags
+            need_label = widget_def.get('need_label', False)
+            w_default = widget_def.get('default', None)
+            w_label_template = widget_def.get('label_template')
+            nullable = widget_def.get('nullable', False)
+
 
             widget = None
 
-            if w_type == 'slider':
+            if w_type == 'slider': 
                 widget = QtWidgets.QSlider(QtCore.Qt.Horizontal)
-
-                w_min = widget_def['min']
-                w_max = widget_def['max']
                 
                 widget.setMinimum(widget_def['min'])
                 widget.setMaximum(widget_def['max'])
                 
                 widget.setValue(w_default)
 
+
                 # lambda function passes in the current widget name and the value from the signal to update label
                 widget.valueChanged.connect(
                     lambda value, name=w_name : self.update_label(name, value)
                     )
+                
 
             elif w_type == 'checkbox':
                 widget = QtWidgets.QCheckBox(w_label)
@@ -342,10 +526,8 @@ class ToolNodeWrapper(NodeBaseWidget):
                 widget.setMaximumHeight(30)
 
             elif w_type == 'combo_box':
-                #bam, sam, fastq
                 widget = QtWidgets.QComboBox()
-                if w_name == 'file_format_combobox':
-                    widget.addItems(['fastq', 'sam', 'bam'])
+                widget.addItems(widget_def['items'])
             
             # if the widget was succesfully grabbed then it will add it
             if widget is not None:
@@ -353,12 +535,29 @@ class ToolNodeWrapper(NodeBaseWidget):
 
                 if need_label:
                     layout.addWidget(label)
-                layout.addWidget(widget)
 
+                if nullable:
+                    checkbox = QtWidgets.QCheckBox()
+                    checkbox.setChecked(False)
 
+                    widget.setEnabled(False)
+                    checkbox.toggled.connect(widget.setEnabled)
+
+                    label = QtWidgets.QLabel('Enable ' + w_label)
+                    nullable_space = QtWidgets.QHBoxLayout()
+
+                    nullable_space.addWidget(checkbox)
+                    nullable_space.addWidget(label)
+                    nullable_space.addWidget(widget)
+
+                    layout.addLayout(nullable_space)
+
+                    self.nullable_checks[w_name] = checkbox
+                else: 
+                    layout.addWidget(widget)
                 self.widgets[w_name] = widget
                 if w_type == 'slider':
-                    self.mutable_labels[w_name] = label # tying mutable label to name of widget
+                    self.mutable_labels[w_name] = (label, w_label_template) # tying mutable label to name of widget
             else:
                 print("Error in Tool Node Wrapper! failed to get widget")
             
@@ -376,18 +575,27 @@ class ToolNodeWrapper(NodeBaseWidget):
         # if there is more sensible way to return it, PLEASE modify this.
 
         for name, widget in self.widgets.items():
+            checkbox = self.nullable_checks.get(name)  
+
+            #checks if both the checkbox exists and if it is not checked 
+            if checkbox and not checkbox.isChecked():
+                continue
+
             if isinstance(widget, QtWidgets.QSlider):
                 values[name] = widget.value()
             elif isinstance(widget, QtWidgets.QCheckBox):
-                values[name] = widget.isChecked()
-            elif isinstance(widget, QtWidgets.QCheckBox):
+                if(widget.isChecked()): # will not append to list
+                    values[name] = widget.isChecked()
+            elif isinstance(widget, QtWidgets.QTextEdit):
                 values[name] = widget.toPlainText()
             elif isinstance(widget, QtWidgets.QComboBox):
                 values[name] = widget.currentText()
             else:
                 values[name] = None
-
-        print(values)
+        # return values
+        #print(f'{self.tool} outputs: {values}')
+        #return {self.tool : values}
+        return values
 
     def set_value(self, val_dict):
         for name, val, in val_dict.items():
@@ -399,34 +607,48 @@ class ToolNodeWrapper(NodeBaseWidget):
                 widget.setValue(val)
             elif isinstance(widget, QtWidgets.QCheckBox):
                 widget.setChecked(val)
-            elif isinstance(widget, QtWidgets.QCheckBox):
+            elif isinstance(widget, QtWidgets.QTextEdit):
                 widget.setPlainText(str(val))
             elif isinstance(widget, QtWidgets.QComboBox):
                 index = widget.findText(str(val))
                 if index >= 0:
                     widget.setCurrentIndex(index)
             
-    def delete_node(self):
+    def delete_node(self): # TODO add a warning pop up for deleting a node
         if self.node is not None:
             graph = self.node.graph
             graph.delete_nodes([self.node])
 
     def update_label(self, w_name, val):
-        label = self.mutable_labels.get(w_name)
+        data = self.mutable_labels.get(w_name)
 
-        if w_name == "thread_slider":
-            label.setText(f'Number of Threads: {val}')
-        elif w_name == "kmers_slider":
-            label.setText(f'Kmer Length: {val}')
+        if not data:
+            print("Problem getting mutable label & template")
+        
+        label, template = data
+
+        if template:
+            label.setText(template.format(val))
+        
 
 class ToolNode(BaseNode):
     __identifier__ = 'bioinformatics_capstone'
     NODE_NAME = 'Tool'
 
-    def __init__(self):
+    def __init__(self, tool=None):
         super(ToolNode, self).__init__()
         self.wrapper = None
+
+        self.tool = tool
+        self.cache = None
+
+        self.create_property('tool_type', None)
+        self.create_property('tool_data', {})
         
+        #only builds if we have a tool so when we load the session, it skips it
+        if tool:
+            self.build_widgets(tool)
+       
         """ 
         Just as an idea for later. Perhaps we could color code what are 'legal' connections, 
         as in certain colors can only go to other colors. Just a thought - Max
@@ -435,26 +657,128 @@ class ToolNode(BaseNode):
         self.add_output('output', color=(0, 0, 255))
     
     def build_widgets(self, tool):
-        self.wrapper = ToolNodeWrapper(tool, self.view, self)
+        if not tool or self.wrapper is not None:
+                return
+
+        self.tool = tool
+        self.wrapper = ToolNodeWrapper(tool, self.view)
+        self.set_property('tool_type', tool)
+        
+        self.wrapper.set_name('_delete') # junk
+        #self.set_property('tool_data', self.wrapper.get_value())
         self.add_custom_widget(self.wrapper)
+
+        if self.cache:
+            self.wrapper.set_value(self.cache)
+            self.cache = None
+        else:
+            existing_data = self.get_property('tool_data')
+            if existing_data:
+                self.wrapper.set_value(existing_data)
+            else:
+                self.model.set_property('tool_data', self.wrapper.get_value())
+
+
+    def set_property(self, name, val):      
+        super(ToolNode, self).set_property(name, val)
+
+        if name == 'tool_type' and val:
+            if not self.wrapper:
+                self.build_widgets(val)
+        elif name == 'tool_data' and val:
+            if self.wrapper:
+                self.wrapper.set_value(val)
+
+
+    def on_input_connected(self, in_port, out_port):
+        super(ToolNode, self).on_input_connected(in_port, out_port)
+
+        t_type = self.get_property('tool_type')
+        if t_type and not self.wrapper:
+            self.build_widgets(t_type)
+
+    def get_value(self):
+        return self.wrapper.get_value() if self.wrapper else {}
 
 
 class DataNode(BaseNode):
-    @property
-    @abstractmethod
-    def uri(self):
-        pass
+    def __init__(self):
+        super(DataNode, self).__init__()
+        self.uri = None
+
 
     @abstractmethod
     def check_format_against_consumer(self): # later function to check if two connected nodes are valid
         pass
+
+
+class InputNodeWrapper(NodeBaseWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.uri = None
+
+        container = QtWidgets.QWidget()
+        layout = QtWidgets.QVBoxLayout()
+        layout.setContentsMargins(0,0,0,0)
+
+        btn = QtWidgets.QPushButton('Input FASTQ File')
+        btn.clicked.connect(self.open_file)
+
+        layout.addWidget(btn)
+        container.setLayout(layout)
+
+        self.set_custom_widget(container)
+
+    def open_file(self):
+        file_dialog = QtWidgets.QFileDialog()
+
+        file_dialog.setWindowTitle('Open FASTQ File')
+        file_dialog.setNameFilter('*.fastq')
+        file_dialog.setFileMode(QtWidgets.QFileDialog.FileMode.ExistingFile)
+        file_dialog.setViewMode(QtWidgets.QFileDialog.ViewMode.Detail)
+        
+        #TODO FIX BUG
+        if file_dialog.exec():
+            self.uri = file_dialog.selectedFiles()
+            return self.uri # returns the uri of the file
+
+    def get_value(self):
+        return self.uri
+
+
+    def set_value(self, val):
+        pass
 # Node responsible for the accepting of data
 class InputNode(DataNode):
-    pass
+    __identifier__ = 'bioinformatics_capstone'
+    NODE_NAME = 'Input'
+
+    def __init__(self):
+        super().__init__()
+        self.add_output('output', color=(0,255, 0))
+
+        self.wrapper = InputNodeWrapper(self.view)
+
+        self.wrapper.set_name('input_data')
+        self.add_custom_widget(self.wrapper)
+
+    def get_value(self):
+        return self.wrapper.get_value()
+
+    
 
 # Node responsible for the exporting of data
+# maybe it'd just be better if each tool node was able to export data once it was done processing?
 class OutputNode(DataNode):
-    pass
+    __identifier__ = 'bioinformatics_capstone'
+    NODE_NAME = 'Output'
+
+    def __init__(self):
+        super().__init__()
+        self.add_input('input', color=(0,0,255))
+
+        # self.wrapper = None
+        # self.add_custom_widget(self.wrapper)
 
 
 
