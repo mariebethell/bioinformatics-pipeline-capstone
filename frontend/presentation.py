@@ -4,6 +4,7 @@ from pathlib import Path
 from PySide6 import QtWidgets, QtCore
 from NodeGraphQt import NodeGraph, BaseNode, NodeBaseWidget
 from abc import ABC, abstractmethod
+from shared.graph import Graph
 
 #TODO Before report/pres 2:
 
@@ -48,11 +49,8 @@ class AppFrame(QtWidgets.QMainWindow):
 
         self.home.init_view()
 
-
-    
-
-
 #what this does right now is generate a dictionary based on the outputs 
+""""
 class GraphGenerator():
     def __init__(self, graph=None):
         input = graph.get_node_by_name('Input')
@@ -86,9 +84,42 @@ class GraphGenerator():
             curr = node
 
         return self.graph_outline
+"""
 
-                
+# New GraphGenerator class that converts node graph to backend graph data structure
+class GraphGenerator():
+    def __init__(self, qt_graph):
+        self.qt_graph = qt_graph
+        self.graph = Graph()
+        self.node_map = {}  # maps Qt nodes to backend nodes
 
+    def from_workbench(self):
+        # create backend nodes
+        for qt_node in self.qt_graph.all_nodes():
+            if isinstance(qt_node, InputNode):
+                tool = "input"
+            elif isinstance(qt_node, ToolNode):
+                tool = qt_node.tool
+            else:
+                continue
+
+            node = self.graph.create_node(tool)
+            node.args = qt_node.get_value()
+
+            self.node_map[qt_node] = node
+
+        # connect nodes
+        for qt_node in self.qt_graph.all_nodes():
+            connections = qt_node.connected_output_nodes()
+
+            for _, connected_nodes in connections.items():
+                for target in connected_nodes:
+                    self.graph.connect(
+                        self.node_map[qt_node],
+                        self.node_map[target]
+                    )
+
+        return self.graph
 
 #### PANEL SECTION ####
 
@@ -283,10 +314,12 @@ class PipelineWorkbenchVC(PanelController):
             self.node_graph.load_session(path)
 
     def run_pipeline(self):
-        graph = GraphGenerator(graph=self.node_graph)
-        print(graph.graph_outline)
+        graph = GraphGenerator(self.node_graph)
+        graph = graph.from_workbench()
+
+        for node_num, node in graph.nodes.items():
+            print(f"Node {node_num}: tool={node.tool}, args={node.args}")
         
-    
     def purge_all_data(self):
         pass
         
