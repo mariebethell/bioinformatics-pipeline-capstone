@@ -15,7 +15,7 @@ step schemas are attatched seperately for the final tool definition.
 Reference: https://github.com/usadellab/Trimmomatic
 """
 
-from tools.base import build_tool_def, validate_scalar_arg
+from backend.tools.base import build_tool_def, validate_scalar_arg
 
 tool_metadata = {
     "name": "trimmomatic",
@@ -768,6 +768,7 @@ def resolve_trimmomatic_outputs(node_args: dict, context: dict) -> dict:
     mode = node_args.get("mode", "SE")
 
     outputs = {
+        "outdir": stage_work_dir,
         "summary": f"{stage_work_dir}/{output_prefix}_trimmomatic_summary.txt",
         "trimlog": f"{stage_work_dir}/{output_prefix}_trimmomatic_trimlog.txt",
     }

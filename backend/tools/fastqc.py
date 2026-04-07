@@ -12,7 +12,7 @@ values, and generate fastQC command line arguments for Nextflow stages.
 This links to a page that briefly explains each tool https://home.cc.umanitoba.ca/~psgendb/doc/fastqc.help
 """
 
-from tools.base import build_tool_def, validate_scalar_arg
+from backend.tools.base import build_tool_def, validate_scalar_arg
 
 tool_metadata = {
     "name" : "fastqc",
