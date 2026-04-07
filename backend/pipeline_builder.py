@@ -28,7 +28,7 @@ class NextflowPipeline(Pipeline):
         generator = NextflowGenerator(self.graph, self.registry)
 
         generator.prepare_graph()
-        script = generator.generate_pipeline(self.graph, None)
+        script = generator.generate_pipeline(self.graph)
 
         print("Generated pipeline:")
         print(script)
@@ -76,7 +76,6 @@ class NextflowGenerator:
         prev_outputs = None
 
         for node in ordered_nodes:
-            print(node.tool, node.args, node.inputs)
             # validate using schema rules
             if (node.tool != "input"):
                 errors = self.registry.validate_tool_args(node.tool, node.args)
@@ -88,8 +87,6 @@ class NextflowGenerator:
                     node.args,
                     self.registry.get_tool_arg_schema(node.tool)
                 )
-
-                print(f"DEBUG - After applying defaults, node args are: {node.args}")
 
                 # resolve inputs
                 if node.inputs is None:
@@ -117,8 +114,6 @@ class NextflowGenerator:
         """
         Generate the command string for a single stage based on the node's tool, args, inputs, and outputs.
         """
-        print(node.outputs)
-
         command = self.registry.render_tool_command(
             node.tool,
             node.args,
@@ -160,7 +155,7 @@ class NextflowGenerator:
 
             return module_template
 
-    def generate_pipeline(self, graph, input_folder) -> str:
+    def generate_pipeline(self, graph) -> str:
         """
         Generate the Nextflow pipeline script as a string.
         """

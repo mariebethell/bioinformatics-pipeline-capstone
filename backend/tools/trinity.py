@@ -9,7 +9,7 @@ Input read files are resolved from upstream artifacts, not stores as ordinary us
 the output directory is managed by the backend.
 """
 
-from tools.base import build_tool_def, validate_scalar_arg
+from backend.tools.base import build_tool_def, validate_scalar_arg
 
 tool_metadata = {
     "name": "trinity",
