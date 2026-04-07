@@ -9,11 +9,11 @@ class StageState(Enum):
     ERROR = 5
 
 class Node:
-    def __init__(self, node_num, tool):
+    def __init__(self, node_num, tool, args=None, inputs=None):
         self.node_num = node_num
         self.tool = tool
-        self.args = {}
-        self.inputs = {}
+        self.args = args
+        self.inputs = inputs
         self.outputs = {}
         self.prev_node: Node | None = None
         self.next_node: Node | None = None
