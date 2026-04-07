@@ -161,7 +161,7 @@ class NextflowGenerator:
         """
         pipeline_script = ""
         
-        for node in graph.nodes.items():
+        for node_num, node in graph.nodes.items():
             if (node.tool != "input"):
                 module_str = self.generate_module(node)
                 pipeline_script += module_str + "\n\n"
