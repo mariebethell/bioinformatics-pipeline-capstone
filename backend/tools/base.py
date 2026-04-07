@@ -125,4 +125,9 @@ def apply_defaults(args: dict, schema: dict) -> dict:
         else:
             resolved[arg_name] = spec.get("default")
         
+    # Add any extra keys that were in args but not in schema without modification
+    for arg_name in args:
+        if arg_name not in resolved:
+            resolved[arg_name] = args[arg_name]
+            
     return resolved
