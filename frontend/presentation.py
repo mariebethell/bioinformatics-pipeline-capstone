@@ -403,7 +403,7 @@ class PipelineWorkbenchVC(PanelController):
 
         pipeline_factory = PipelineFactory()
         pipeline = pipeline_factory.build_pipeline("nextflow", graph, input_folder, ToolRegistry(), pipeline_script_path="backend/pipeline.nf")
-        pipeline.run_pipeline()
+        # pipeline.run_pipeline()
         
     def purge_all_data(self):
         pass
