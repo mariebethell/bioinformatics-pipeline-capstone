@@ -1,3 +1,6 @@
+import sys
+[sys.path.append(i) for i in ['.', '..']] # Tells Python to search for modules in the parent directories.
+
 from datetime import date, datetime
 import json
 import re
