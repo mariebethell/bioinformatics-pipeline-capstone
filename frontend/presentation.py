@@ -1,5 +1,6 @@
 from datetime import date, datetime
 import json
+import re
 from pathlib import Path
 from platform import node
 from PySide6 import QtWidgets, QtCore
@@ -8,8 +9,6 @@ from abc import ABC, abstractmethod
 from shared.graph import Graph
 from backend.pipeline_builder import PipelineFactory
 from backend.tool_registry import ToolRegistry
-
-#TODO Before report/pres 2:
 
 # handles what window is displayed to user
 class AppFrame(QtWidgets.QMainWindow):
@@ -139,6 +138,9 @@ class GraphGenerator():
 #### PANEL SECTION ####
 
 class PanelController():
+    """
+    Abstract class for all Panel Controllers, which has a init_view method required
+    """
     @abstractmethod
     def init_view(self):
         pass
@@ -149,6 +151,9 @@ class PanelController():
 
 
 class HomeController(PanelController):
+    """
+    This is the Home Page of the App, which will describe 
+    """
     def __init__(self, app):
         self.view = None
         self.app = app
@@ -156,7 +161,7 @@ class HomeController(PanelController):
     def init_view(self):
         self.view = HomeView()
         self.app.content.addWidget(self.view)
-        
+    
         self.app.content.setCurrentWidget(self.view)
 
     def show_documentation(self):
@@ -167,6 +172,9 @@ class HomeController(PanelController):
 
 
 class SettingsController(PanelController):
+    """
+    This is the Settings Page's controller where commands to change the app will be passed through.
+    """
     def __init__(self, app):
         self.view = None
         self.app = app
@@ -180,9 +188,11 @@ class SettingsController(PanelController):
     def commit_changes(self):
         pass
     
-# This is necessary as the NodesPaletteWidget only populates itself with registered nodes.
-# However, we will only ever have 3 nodes registered (Tool, Input & Output) and it won't actually be populated with our tools, so this is a faux version of that
-class NodeBrowser(QtWidgets.QWidget):
+class NodeBrowser(QtWidgets.QDialog): 
+    """
+    This is a small window responsible for allowing the user to create new tool/data nodes.
+    Creating a dedicated NodeBrowser class bypasses the limitation brought on by our lack of registering new tool nodes.
+    """
     def __init__(self, graph, parent=None):
         super().__init__(parent) #TODO, figure out some way to make it close when i close the window
 
@@ -232,6 +242,43 @@ class NodeBrowser(QtWidgets.QWidget):
     
     def create_output_node(self):
         pass
+        
+
+class SaveWindow(QtWidgets.QDialog):
+    """
+    A window which will allow the user to specify a name for their saved file.
+    """
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.setWindowTitle('Save Pipeline')
+
+        layout = QtWidgets.QVBoxLayout()
+        layout.setContentsMargins(0,0,0,0)
+
+        self.input = QtWidgets.QLineEdit()
+        self.input.setPlaceholderText('Enter Filename Here (or None to name it as a generic)')
+        self.input.setMaximumHeight(30)
+
+        btn = QtWidgets.QPushButton('Save')
+        btn.clicked.connect(self.accept) # when the button is clicked, it closes the dialog and sends an Accepted exit code
+
+        layout.addWidget(self.input)
+        layout.addWidget(btn)
+
+        self.setLayout(layout)
+    
+    def save_name(self):
+        filename = self.input.text()
+
+        filename = filename.replace(' ', '_')
+
+        # uses regex to keep only valid characters by
+        filename = re.sub(r'[^a-zA-Z0-9._-]', '', filename)
+
+        filename = filename.strip('. ')
+
+        return filename
 
 class PipelineWorkbenchVC(PanelController):
     def __init__(self, app):
@@ -270,7 +317,7 @@ class PipelineWorkbenchVC(PanelController):
             btn = QtWidgets.QPushButton(label)
             btn.clicked.connect(func)
 
-            if label == 'Run Pipeline':
+            if label == 'Run Pipeline': # flag to make the run pipeline button green
                 btn.setStyleSheet('background-color: green; color: white;')
             
             top_bar_layout.addWidget(btn)
@@ -279,41 +326,53 @@ class PipelineWorkbenchVC(PanelController):
         layout.setContentsMargins(10, 10, 10, 10)
 
         layout.addLayout(top_bar_layout)
+
         layout.addWidget(gr_widget)
     
-    def save_preset(self):
-        #TODO have it popup for the user to be able to name their saved pipeline as opposed to saving a generic one.
-        
-        #
+    def save_preset(self):  
+        # syncing all nodes
         for node in self.node_graph.all_nodes():
             if isinstance(node, ToolNode):
                 if node.wrapper:
                     node.set_property('tool_data', node.get_value())
 
-        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        filename = f'pipeline_{timestamp}.json'
+        # opens a dialog for the user to input a name
+        save_dialog = SaveWindow(parent=self.app)
+        
+        if save_dialog.exec() == QtWidgets.QDialog.Accepted:
+            filename = save_dialog.save_name()
 
-        base_dir = Path(__file__).parent
-        preset_path = base_dir / 'presets' / filename
+            if not filename:
+                filename = 'pipeline'
 
-        self.node_graph.save_session(str(preset_path))
+                timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+                filename = f'pipeline_{timestamp}.json'
 
-        # now need to manually remove junk property generated by adding the custom widget to ToolNode
-        try:
-            with open(preset_path, 'r') as file:
-                data = json.load(file)
+            base_dir = Path(__file__).parent
+            preset_path = base_dir / 'presets' / filename
 
-            if 'nodes' in data:
-                for _, node_info in data['nodes'].items():
-                    if 'custom' in node_info:
-                        node_info['custom'].pop('_delete', None) # deletes junk property in the custom field for the node info
+
+            self.node_graph.save_session(str(preset_path))
+
+            # now need to manually remove junk property generated by adding the custom widget to ToolNode
+            try:
+                with open(preset_path, 'r') as file:
+                    data = json.load(file)
+
+                if 'nodes' in data:
+                    for _, node_info in data['nodes'].items():
+                        if 'custom' in node_info:
+                            node_info['custom'].pop('_delete', None) # deletes junk property in the custom field for the node info
+                
+                with open(preset_path, 'w') as file:
+                    json.dump(data, file, indent=2)
+
+            except:
+                print('Error in save_preset when deleting junk property')
             
-            with open(preset_path, 'w') as file:
-                json.dump(data, file, indent=2)
-
-        except:
-            print('Error in save_preset when deleting junk property')
-
+            print(f'Succesfully saved as {filename}')
+        else:
+            print('Save Preset cancelled by user.')
     def load_preset(self):
         file_dialog = QtWidgets.QFileDialog()
 
@@ -354,7 +413,7 @@ class PipelineWorkbenchVC(PanelController):
     
     def node_browser(self):
         if self.tool_palette is None:
-                self.tool_palette = NodeBrowser(self.node_graph)
+                self.tool_palette = NodeBrowser(self.node_graph, parent=self.app)
         self.tool_palette.show()
 
     def init_view(self):       
@@ -369,6 +428,10 @@ class PipelineWorkbenchVC(PanelController):
 #### VIEW SECTION ####
 
 class HomeView(QtWidgets.QWidget):
+    """
+    This is the Home Page's view, which will display a place to log in to their OneDrive account
+    as well as see information about the system
+    """
     def __init__(self):
         super().__init__()
         layout = QtWidgets.QVBoxLayout()
@@ -382,6 +445,9 @@ class HomeView(QtWidgets.QWidget):
         self.setLayout(layout)
 
 class SettingsView(QtWidgets.QWidget):
+    """
+    This is the Setting Page's view, which actually displays information to the user to change app-wide settings
+    """
     def __init__(self):
         super().__init__()
         layout = QtWidgets.QVBoxLayout()
