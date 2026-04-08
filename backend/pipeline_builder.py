@@ -32,6 +32,9 @@ class NextflowPipeline(Pipeline):
 
         print("Generated pipeline:")
         print(script)
+        
+        with open(self.pipeline_script_path, 'w') as f:
+            f.write(script)
 
         # TODO: Execute generated script with Nextflow (use subprocess to call nextflow run with the generated script)
 
@@ -134,6 +137,8 @@ class NextflowGenerator:
         """
         Generate a Nextflow module for the given node. 
         Loads the module template and fills in the command and input/output definitions.
+
+        Returns the file path of the generated module script.
         """
 
         template_file_path = os.path.join("backend", "templates", "module_template.nf")
@@ -145,7 +150,8 @@ class NextflowGenerator:
             module_template = f.read()
 
             command = self.generate_stage(node)
-            module_template = module_template.replace("TOOL_NAME", node.tool.upper())
+            process_name = node.tool.upper()
+            module_template = module_template.replace("TOOL_NAME", process_name)
             module_template = module_template.replace("COMMAND", command)
             module_template = module_template.replace("OUTPUT", node.outputs["outdir"])
 
@@ -153,7 +159,7 @@ class NextflowGenerator:
             with open(output_file_path, 'w') as out_f:
                 out_f.write(module_template)
 
-            return module_template
+        return process_name, output_file_path
 
     def generate_pipeline(self, graph) -> str:
         """
@@ -161,10 +167,20 @@ class NextflowGenerator:
         """
         pipeline_script = ""
         
+        workflow_body = ""
         for node_num, node in graph.nodes.items():
+            if (node.tool == "input"):
+                workflow_header = "workflow {\n"
+                workflow_body += f"    read_ch = Channel.fromPath('{node.outputs['reads'][0]}')\n"
             if (node.tool != "input"):
-                module_str = self.generate_module(node)
-                pipeline_script += module_str + "\n\n"
+                process_name, module_path = self.generate_module(node) 
+                pipeline_script += f"include {{ {process_name} }} from '{module_path}'\n"
+                
+                workflow_body += f"    {process_name}(read_ch)\n"
+
+        workflow_body += "}\n"
+        pipeline_script += workflow_header + workflow_body
+
         return pipeline_script
     
 if __name__ == "__main__":
@@ -173,6 +189,11 @@ if __name__ == "__main__":
     pipeline_factory = PipelineFactory()
     tool_registry = ToolRegistry()
     graph = Graph()
+
+    node0 = graph.create_node("input")
+    node0.outputs = {
+        "reads": ['C:/Users/Marie Bethell/projects/bioinformatics-pipeline-capstone/data/Test01_L001_R1_001.fastq']
+    }
 
     node1 = graph.create_node("fastqc")
     node1.args = {'threads': 1, 'kmers': 7, 'format': 'fastq'}
@@ -188,8 +209,9 @@ if __name__ == "__main__":
         }
     ]}
 
-    graph.add_node(node1, next=node2)
-    graph.add_node(node2, prev=node1)
+    graph.add_node(node0, prev=None, next=node1)
+    graph.add_node(node1, prev=node0,next=node2)
+    graph.add_node(node2, prev=node1, next=None)
 
     node1.inputs = {'reads': ['/data/Test01-L001_R1_001.fastq']}
     node2.inputs = {'reads': ['/data/Test01-L001_R1_001.fastq']} # use same input for testing, in reality this would be node1.outputs after resolution
