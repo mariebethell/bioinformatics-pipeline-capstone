@@ -99,6 +99,7 @@ class GraphGenerator():
         self.node_map = {}  # maps Qt nodes to backend nodes
 
         input = self.qt_graph.get_node_by_name('Input')
+        #BUG, for some reason running an empty pipeline gives me a NoneType attribute error.
         file_uri = input.get_value()
 
         if not file_uri:
@@ -326,7 +327,8 @@ class PipelineWorkbenchVC(PanelController):
             if not dir.exists():
                 dir.mkdir(exist_ok=True)
 
-            preset_path = dir / filename
+            # ensures that pipeline is added to the filename, so when searching for a file it only looks for things named pipeline
+            preset_path = dir / filename / 'pipeline'
 
 
             self.node_graph.save_session(str(preset_path))
@@ -386,6 +388,10 @@ class PipelineWorkbenchVC(PanelController):
         pass
         
     def new_pipeline(self):
+        if not self.node_graph.all_nodes():
+            print('Empty Node Graph, skipping new pipeline')
+            return
+        
         warning_dialog = self.PopupWindow(parent=self.app, type='delete_warn')
         if warning_dialog.exec() == QtWidgets.QDialog.Accepted:
             self.node_graph.clear_session()
