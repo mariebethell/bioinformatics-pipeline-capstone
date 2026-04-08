@@ -99,7 +99,10 @@ class GraphGenerator():
         self.node_map = {}  # maps Qt nodes to backend nodes
 
         input = self.qt_graph.get_node_by_name('Input')
-        #BUG, for some reason running an empty pipeline gives me a NoneType attribute error.
+        if not input:
+            print("ERROR: Input Node must exist within the graph to run the pipeline!")
+            return
+
         file_uri = input.get_value()
 
         if not file_uri:
@@ -370,7 +373,7 @@ class PipelineWorkbenchVC(PanelController):
         graph = graph.from_workbench()
 
         input_node = graph.get_first_node()
-        if (graph.get_node(input_node.node_num).tool != "input"):
+        if not input_node or (graph.get_node(input_node.node_num).tool != "input"):
             print("ERROR: First node must be an input node with a FASTQ file input to run the pipeline!")
             return
         else:
