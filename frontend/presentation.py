@@ -395,7 +395,7 @@ class PipelineWorkbenchVC(PanelController):
             print('Empty Node Graph, skipping new pipeline')
             return
         
-        warning_dialog = self.PopupWindow(parent=self.app, type='delete_warn')
+        warning_dialog = self.PopupWindow(parent=self.app, type='warn', warn_msg='Warning! This will Delete the Current Pipeline!', btn_label='Create New Pipeline')
         if warning_dialog.exec() == QtWidgets.QDialog.Accepted:
             self.node_graph.clear_session()
     
@@ -417,7 +417,7 @@ class PipelineWorkbenchVC(PanelController):
         Saving Dialog, Warning Messages
         """
 
-        def __init__(self, parent=None, type=None):
+        def __init__(self, parent=None, type=None, warn_msg=None, btn_label=None):
             if not type:
                 print('Error in PopupWindow, Type not specified')
 
@@ -440,16 +440,16 @@ class PipelineWorkbenchVC(PanelController):
                     widgets.append(self.input)
                     widgets.append(btn)
                 
-                elif type == 'delete_warn':
+                elif type == 'warn':
                     self.setWindowTitle('Warning')
-                    label = QtWidgets.QLabel('Warning! This will Delete the Current Pipeline!')
+                    label = QtWidgets.QLabel(warn_msg)
                     label.setStyleSheet(
                         """
                         color:red;
                         """
                     )
 
-                    btn = QtWidgets.QPushButton('Create New Pipeline')
+                    btn = QtWidgets.QPushButton(btn_label)
                     btn.clicked.connect(self.accept)
 
                     widgets.append(label)
@@ -474,8 +474,6 @@ class PipelineWorkbenchVC(PanelController):
 
             return filename
 
-        def delete_confirm(self):
-            print('user wants to delete')
 
 
 
