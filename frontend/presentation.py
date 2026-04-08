@@ -351,8 +351,13 @@ class PipelineWorkbenchVC(PanelController):
                 timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
                 filename = f'pipeline_{timestamp}.json'
 
-            base_dir = Path(__file__).parent
-            preset_path = base_dir / 'presets' / filename
+            dir = Path(__file__).parent
+            dir = dir / 'presets'
+
+            if not dir.exists():
+                dir.mkdir(exist_ok=True)
+
+            preset_path = dir / filename
 
 
             self.node_graph.save_session(str(preset_path))
