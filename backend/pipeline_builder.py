@@ -1,3 +1,6 @@
+import sys
+[sys.path.append(i) for i in ['.', '..']] # Tells Pyhton to search for modules in the parent directories.
+
 from shared.graph import Graph, Node
 from backend.tool_registry import ToolRegistry
 from backend.tools.fastqc import fastqc_tool
