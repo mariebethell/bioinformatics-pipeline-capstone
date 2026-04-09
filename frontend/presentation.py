@@ -99,6 +99,10 @@ class GraphGenerator():
         self.node_map = {}  # maps Qt nodes to backend nodes
 
         input = self.qt_graph.get_node_by_name('Input')
+        if not input:
+            print("ERROR: Input Node must exist within the graph to run the pipeline!")
+            return
+
         file_uri = input.get_value()
 
         if not file_uri:
@@ -247,43 +251,11 @@ class NodeBrowser(QtWidgets.QDialog):
         pass
         
 
-class SaveWindow(QtWidgets.QDialog):
-    """
-    A window which will allow the user to specify a name for their saved file.
-    """
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        self.setWindowTitle('Save Pipeline')
-
-        layout = QtWidgets.QVBoxLayout()
-        layout.setContentsMargins(0,0,0,0)
-
-        self.input = QtWidgets.QLineEdit()
-        self.input.setPlaceholderText('Enter Filename Here (or None to name it as a generic)')
-        self.input.setMaximumHeight(30)
-
-        btn = QtWidgets.QPushButton('Save')
-        btn.clicked.connect(self.accept) # when the button is clicked, it closes the dialog and sends an Accepted exit code
-
-        layout.addWidget(self.input)
-        layout.addWidget(btn)
-
-        self.setLayout(layout)
-    
-    def save_name(self):
-        filename = self.input.text()
-
-        filename = filename.replace(' ', '_')
-
-        # uses regex to keep only valid characters by
-        filename = re.sub(r'[^a-zA-Z0-9._-]', '', filename)
-
-        filename = filename.strip('. ')
-
-        return filename
-
 class PipelineWorkbenchVC(PanelController):
+    """
+    The View-Control portion of the Pipeline Workbench which includes various subfeatures:
+    Saving/Loading a Preset, Running the Pipeline, Browsing/Creating Nodes, Purging All Data within the pipeline, and the NodeGraph suite
+    """
     def __init__(self, app):
         self.node_graph = NodeGraph()
 
@@ -310,7 +282,8 @@ class PipelineWorkbenchVC(PanelController):
             'Load Preset' : self.load_preset,
             'Run Pipeline' : self.run_pipeline,
             'Purge All Data' : self.purge_all_data,
-            'Node Browser' : self.node_browser
+            'Node Browser' : self.node_browser,
+            'Create New Pipeline' : self.new_pipeline
         }
 
         top_bar_layout = QtWidgets.QHBoxLayout()
@@ -340,8 +313,8 @@ class PipelineWorkbenchVC(PanelController):
                     node.set_property('tool_data', node.get_value())
 
         # opens a dialog for the user to input a name
-        save_dialog = SaveWindow(parent=self.app)
-        
+        save_dialog = self.PopupWindow(parent=self.app, type='save')
+
         if save_dialog.exec() == QtWidgets.QDialog.Accepted:
             filename = save_dialog.save_name()
 
@@ -357,7 +330,8 @@ class PipelineWorkbenchVC(PanelController):
             if not dir.exists():
                 dir.mkdir(exist_ok=True)
 
-            preset_path = dir / filename
+            # ensures that pipeline is added to the filename, so when searching for a file it only looks for things named pipeline
+            preset_path = dir / filename / 'pipeline'
 
 
             self.node_graph.save_session(str(preset_path))
@@ -399,7 +373,7 @@ class PipelineWorkbenchVC(PanelController):
         graph = graph.from_workbench()
 
         input_node = graph.get_first_node()
-        if (graph.get_node(input_node.node_num).tool != "input"):
+        if not input_node or (graph.get_node(input_node.node_num).tool != "input"):
             print("ERROR: First node must be an input node with a FASTQ file input to run the pipeline!")
             return
         else:
@@ -417,7 +391,13 @@ class PipelineWorkbenchVC(PanelController):
         pass
         
     def new_pipeline(self):
-        pass
+        if not self.node_graph.all_nodes():
+            print('Empty Node Graph, skipping new pipeline')
+            return
+        
+        warning_dialog = self.PopupWindow(parent=self.app, type='warn', warn_msg='Warning! This will Delete the Current Pipeline!', btn_label='Create New Pipeline')
+        if warning_dialog.exec() == QtWidgets.QDialog.Accepted:
+            self.node_graph.clear_session()
     
     def node_browser(self):
         if self.tool_palette is None:
@@ -430,6 +410,70 @@ class PipelineWorkbenchVC(PanelController):
 
     def close(self):
         print('closing')
+
+    class PopupWindow(QtWidgets.QDialog):
+        """
+        An inner class to PipelineWorkbenchVC that allows for multiple different types of popup windows:
+        Saving Dialog, Warning Messages
+        """
+
+        def __init__(self, parent=None, type=None, warn_msg=None, btn_label=None):
+            if not type:
+                print('Error in PopupWindow, Type not specified')
+
+            else:
+                super().__init__(parent)
+                layout = QtWidgets.QVBoxLayout()
+                layout.setContentsMargins(5, 5, 5, 5)
+
+                widgets = []
+
+                if type == 'save': # if the popup window is a save window
+                    self.setWindowTitle('Save Pipeline')
+                    self.input = QtWidgets.QLineEdit()
+                    self.input.setPlaceholderText('Enter Filename Here (or None to name it as a generic)')
+                    self.input.setMaximumHeight(30)
+
+                    btn = QtWidgets.QPushButton('Save')
+                    btn.clicked.connect(self.accept) # when the button is clicked, it closes the dialog and sends an Accepted exit code
+
+                    widgets.append(self.input)
+                    widgets.append(btn)
+                
+                elif type == 'warn':
+                    self.setWindowTitle('Warning')
+                    label = QtWidgets.QLabel(warn_msg)
+                    label.setStyleSheet(
+                        """
+                        color:red;
+                        """
+                    )
+
+                    btn = QtWidgets.QPushButton(btn_label)
+                    btn.clicked.connect(self.accept)
+
+                    widgets.append(label)
+                    widgets.append(btn)
+                
+                # adds widgets based on window type to the window
+                for widget in widgets:
+                    layout.addWidget(widget)
+
+                self.setLayout(layout)
+                
+
+        def save_name(self):
+            filename = self.input.text()
+
+            filename = filename.replace(' ', '_')
+
+            # uses regex to keep only valid characters by
+            filename = re.sub(r'[^a-zA-Z0-9._-]', '', filename)
+
+            filename = filename.strip('. ')
+
+            return filename
+
 
 
 
