@@ -8,10 +8,12 @@ from pathlib import Path
 from platform import node
 from PySide6 import QtWidgets, QtCore
 from NodeGraphQt import NodeGraph, BaseNode, NodeBaseWidget
+from NodeGraphQt.qgraphics.node_base import NodeItem
 from abc import ABC, abstractmethod
 from shared.graph import Graph
 from backend.pipeline_builder import PipelineFactory
 from backend.tool_registry import ToolRegistry
+
 
 # handles what window is displayed to user
 class AppFrame(QtWidgets.QMainWindow):
@@ -523,14 +525,15 @@ added ability to share this tool JSON around so that others may import it. Might
 # widget definitions to increase readability and make it easier to add widgets
 #TODO add tooltips to each widget
 
-def slider_widget(name, label, default=1, min=1, max=1):
-    return {'type': 'slider', 'name': name, 'label': f'{label}: {default}', 'label_template': f'{label}: {{}}', 'default': default, 'need_label': True, 'min': min, 'max': max }
-def checkbox_widget(name, label): 
-    return {'type': 'checkbox', 'name': name, 'label': label, 'default': False, 'need_label': False}
-def text_entry_widget(name, label, nullable=False):
-    return {'type': 'text_entry', 'name': name, 'label': label, 'default': None, 'need_label': False, 'nullable': nullable } 
-def combo_box_widget(name, label, default=None, items=[], nullable=False):
-    return {'type': 'combo_box', 'name': name, 'label': label, 'default': default, 'need_label': True, 'items': items, 'nullable': nullable}
+def slider_widget(name, label, default=1, min=1, max=1, section=None):
+    return {'type': 'slider', 'name': name, 'label': f'{label}: {default}', 'label_template': f'{label}: {{}}', 'default': default, 'need_label': True, 'min': min, 'max': max, 'section' : section }
+def checkbox_widget(name, label, section=None): 
+    return {'type': 'checkbox', 'name': name, 'label': label, 'default': False, 'need_label': False, 'section' : section }
+def text_entry_widget(name, label, nullable=False, section=None):
+    return {'type': 'text_entry', 'name': name, 'label': label, 'default': None, 'need_label': False, 'nullable': nullable, 'section' : section } 
+def combo_box_widget(name, label, default=None, items=[], nullable=False, section=None):
+    return {'type': 'combo_box', 'name': name, 'label': label, 'default': default, 'need_label': True, 'items': items, 'nullable': nullable, 'section' : section }
+
 
 
 
@@ -557,10 +560,10 @@ NODE_WIDGETS = {
     # mode(str, 'SE', SE OR PE) dropdown
     # threads(int, 0, 0-128) slider
     # phred(str, None, 33 or 64) dropdown, nullable
-    # trimlog(str, None) checkbox? nullable 
-    # summary(str, None) checkbox? nullable
-    # basein(str, None) checkbox? nullable
-    # baseout(str, None) checkbox? nullable
+    # trimlog(str, None) checkbox? nullable delete
+    # summary(str, None) checkbox? nullable delete
+    # basein(str, None) checkbox? nullable delete
+    # baseout(str, None) checkbox? nullable delete
     # validate_pairs(bool, false) checkbox
     # compress_level(int, 1, 1-9) slider
     # compression_mode(str, None, stream or block) dropdown, nullable needs checkbox
@@ -616,9 +619,10 @@ NODE_WIDGETS = {
         checkbox_widget('validate_pairs', 'Validate Pairs'),
         slider_widget('compress_level', 'Compression Level', max=9),
         combo_box_widget('compression_mode', 'Compression Mode', items=['stream', 'block'], nullable=True),
-        quiet_check
+        quiet_check,
+
         #illumina clip
-        
+        text_entry_widget('fasta_with_adapters', 'FASTA File Path (CHANGE LATER TO FILE UPLOAD!)', section='substep')
     ]
 }
 
@@ -630,6 +634,21 @@ NODE_WIDGETS = {
 #     'checkbox' : create_checkbox,
 # }
 
+# class ResizableNodeItem(NodeItem):
+#     def __init__(self, name='node', parent=None):
+#         super(ResizableNodeItem, self).__init__(name, parent)
+
+#     def force_resize(self, w, h):
+#         self.prepareGeometryChange()
+
+#         self._w = w
+#         self._h = h
+
+#         self.align_ports()
+#         self.align_widgets()
+#         self.align_label()
+
+#         self.update()
 
 # Node responsible for representing a tool within the pipeline & its wrapper
 #TODO Tooltips
@@ -638,12 +657,18 @@ class ToolNodeWrapper(NodeBaseWidget):
         super().__init__(parent)
         
         self.tool = tool
+
+        # self._node_ref = None
         
         self.widgets = {}
 
         self.mutable_labels = {}
         
         self.nullable_checks = {} # certain widgets can be nullable. this dictionary maps checkboxes to the nullable widgets
+
+        self.sections = {} # some widgets might need to be contained within their own sections in a ToolNode
+
+        self.substep_defs = []
 
         if not tool:
             return
@@ -658,7 +683,7 @@ class ToolNodeWrapper(NodeBaseWidget):
             """
             )
 
-        layout = QtWidgets.QVBoxLayout()
+        layout = QtWidgets.QVBoxLayout(container)
         layout.setContentsMargins(0,0,0,0)
 
         # building widgets dynamically
@@ -675,7 +700,11 @@ class ToolNodeWrapper(NodeBaseWidget):
             w_default = widget_def.get('default', None)
             w_label_template = widget_def.get('label_template')
             nullable = widget_def.get('nullable', False)
+            w_section = widget_def.get('section', False) # if in a section, creates a subwindow for it
 
+            if w_section == 'substep':
+                self.substep_defs.append(widget_def)
+                continue
 
             widget = None
 
@@ -693,7 +722,6 @@ class ToolNodeWrapper(NodeBaseWidget):
                     lambda value, name=w_name : self.update_label(name, value)
                     )
                 
-
             elif w_type == 'checkbox':
                 widget = QtWidgets.QCheckBox(w_label)
 
@@ -708,10 +736,10 @@ class ToolNodeWrapper(NodeBaseWidget):
             
             # if the widget was succesfully grabbed then it will add it
             if widget is not None:
-                label = QtWidgets.QLabel(w_label)
+               # label = QtWidgets.QLabel(w_label)
 
-                if need_label:
-                    layout.addWidget(label)
+                #if need_label:
+                 #   layout.addWidget(label)
 
                 if nullable:
                     checkbox = QtWidgets.QCheckBox()
@@ -727,17 +755,49 @@ class ToolNodeWrapper(NodeBaseWidget):
                     nullable_space.addWidget(label)
                     nullable_space.addWidget(widget)
 
-                    layout.addLayout(nullable_space)
+                    #layout.addLayout(nullable_space)
 
                     self.nullable_checks[w_name] = checkbox
                 else: 
-                    layout.addWidget(widget)
+                    #layout.addWidget(widget)
+                    label = QtWidgets.QLabel(w_label)
+
+                if w_section:
+                    if w_section not in self.sections:
+                        sec = self.CollapsibleSection(w_section)
+                        layout.addWidget(sec)
+                        self.sections[w_section] = sec
+                    
+                    target_sec = self.sections[w_section]
+
+                    if nullable:
+                        target_sec.addLayout(nullable_space)
+                    else:
+                        if need_label: 
+                            target_sec.addWidget(label)
+                        
+                        target_sec.addWidget(widget)        
+                else:
+                    if nullable:
+                        layout.addLayout(nullable_space)
+                    else:
+                        if need_label:
+                            layout.addWidget(label)
+                        layout.addWidget(widget)
+
                 self.widgets[w_name] = widget
                 if w_type == 'slider':
                     self.mutable_labels[w_name] = (label, w_label_template) # tying mutable label to name of widget
             else:
                 print("Error in Tool Node Wrapper! failed to get widget")
             
+
+                        
+        if self.substep_defs:
+            substep_btn = QtWidgets.QPushButton('Configure Substeps')
+            substep_btn.setStyleSheet('background-color: orange;')
+            substep_btn.clicked.connect(self.open_substeps)
+            layout.addWidget(substep_btn)        
         # adds a delete button to the end of EVERY node (perhaps configure to be decoupled from ToolNode later)
         delete_btn = QtWidgets.QPushButton('Delete Node')
         delete_btn.clicked.connect(self.delete_node)
@@ -746,6 +806,17 @@ class ToolNodeWrapper(NodeBaseWidget):
 
         container.setLayout(layout)
         self.set_custom_widget(container)
+
+    def open_substeps(self):
+        dialog = self.SubstepDialog(self.tool, self.substep_defs, self.get_custom_widget())
+        for name, widget in dialog.widgets.items():
+            if name in self.widgets:
+                if isinstance(widget, QtWidgets.QPlainTextEdit):
+                    widget.setPlainText(self.widgets[name].toPlainText())
+            
+        if dialog.exec() == QtWidgets.QDialog.Accepted:
+            for name, widget in dialog.widgets.items():
+                self.widgets[name] = widget
 
     def get_value(self):
         values = {} # this set will contain the values returned, in order of: slider, checkboxes, strings, then combo box
@@ -806,6 +877,166 @@ class ToolNodeWrapper(NodeBaseWidget):
 
         if template:
             label.setText(template.format(val))
+
+    class SubstepDialog(QtWidgets.QDialog):
+        def __init__(self, title, widgets_def, parent=None):
+            super().__init__(parent)
+
+            tool = title
+            self.setWindowTitle(f'{title} Settings')
+            layout = QtWidgets.QVBoxLayout(self)
+            layout.setContentsMargins(5, 5, 5, 5)
+
+            self.widgets = {}
+            self.nullable_checks = {}
+
+            self.mutable_labels = {}
+        
+            self.nullable_checks = {} # certain widgets can be nullable. this dictionary maps checkboxes to the nullable widgets
+
+            self.sections = {} # some widgets might need to be contained within their own sections in a ToolNode
+
+            self.substep_defs = []
+
+
+            for widget_def in widgets_def:
+                # gathering fields for widget definition
+                w_type = widget_def['type']
+                w_name = widget_def['name']
+                w_label = widget_def['label']
+
+                # flags
+                need_label = widget_def.get('need_label', False)
+                w_default = widget_def.get('default', None)
+                w_label_template = widget_def.get('label_template')
+                nullable = widget_def.get('nullable', False)
+                w_section = widget_def.get('section', False) # if in a section, creates a subwindow for it
+
+
+                widget = None
+
+                if w_type == 'slider': 
+                    widget = QtWidgets.QSlider(QtCore.Qt.Horizontal)
+                    
+                    widget.setMinimum(widget_def['min'])
+                    widget.setMaximum(widget_def['max'])
+                    
+                    widget.setValue(w_default)
+
+
+                    # lambda function passes in the current widget name and the value from the signal to update label
+                    widget.valueChanged.connect(
+                        lambda value, name=w_name : self.update_label(name, value)
+                        )
+                    
+                elif w_type == 'checkbox':
+                    widget = QtWidgets.QCheckBox(w_label)
+
+                elif w_type == 'text_entry':
+                    widget = QtWidgets.QPlainTextEdit()
+                    widget.setPlaceholderText(w_label)
+                    widget.setMaximumHeight(30)
+
+                elif w_type == 'combo_box':
+                    widget = QtWidgets.QComboBox()
+                    widget.addItems(widget_def['items'])
+                
+                # if the widget was succesfully grabbed then it will add it
+                if widget is not None:
+                # label = QtWidgets.QLabel(w_label)
+
+                    #if need_label:
+                    #   layout.addWidget(label)
+
+                    if nullable:
+                        checkbox = QtWidgets.QCheckBox()
+                        checkbox.setChecked(False)
+
+                        widget.setEnabled(False)
+                        checkbox.toggled.connect(widget.setEnabled)
+
+                        label = QtWidgets.QLabel('Enable ' + w_label)
+                        nullable_space = QtWidgets.QHBoxLayout()
+
+                        nullable_space.addWidget(checkbox)
+                        nullable_space.addWidget(label)
+                        nullable_space.addWidget(widget)
+
+                        layout.addLayout(nullable_space)
+
+                        self.nullable_checks[w_name] = checkbox
+                    else: 
+                        if need_label:
+                            label = QtWidgets.QLabel(w_label)
+                            self.layout.addWidget(label)
+                            if w_type == 'slider':
+                               self.mutable_labels[w_name] = (label, w_label_template)
+
+                        layout.addWidget(widget)
+                    
+                    self.widgets[w_name] = widget
+                else:
+                    print("Error in Substep Dialog Widgets!")
+            
+            self.done_btn = QtWidgets.QPushButton('done')
+            self.done_btn.clicked.connect(self.accept)
+            layout.addWidget(self.done_btn)
+                
+
+    # def update_size(self):
+    #     custom_widget = self.get_custom_widget()
+    #     custom_widget.adjustSize()
+    #     size_hint = custom_widget.sizeHint()
+
+    #     w = size_hint.width() + 40
+    #     h = size_hint.height() + 60
+
+    #     if hasattr(self._node_ref, 'force_resize'):
+    #         self._node_ref.force_resize(w, h)
+
+    # class CollapsibleSection(QtWidgets.QWidget):
+    #     def __init__(self, title='', parent=None):
+    #         super().__init__(parent)
+
+    #         self.main_layout = QtWidgets.QVBoxLayout()
+    #         self.main_layout.setContentsMargins(0, 0, 0, 0)
+
+    #         # button to toggle the section as viewable
+    #         self.toggle_btn = QtWidgets.QPushButton(f'Toggle {title}')
+    #         self.toggle_btn.setCheckable(True)
+    #         self.toggle_btn.setStyleSheet(
+    #             'text-align:left; background-color: orange'
+    #         )
+    #         self.toggle_btn.clicked.connect(self.display)
+
+    #         # container for the actual content to be shown
+    #         self.content = QtWidgets.QWidget()
+    #         self.content_layout = QtWidgets.QVBoxLayout(self.content)
+    #         self.content_layout.setContentsMargins(0,0,0,0)
+    #         self.content.setVisible(False)
+
+    #         self.main_layout.addWidget(self.toggle_btn)
+    #         self.main_layout.addWidget(self.content)
+
+    #         self.setLayout(self.main_layout)
+
+    #     def display(self):
+    #         checked = self.toggle_btn.isChecked()
+    #         self.content.setVisible(checked)
+
+    #         QtCore.QTimer.singleShot(10, self._request_resize)
+        
+
+            
+        
+        # def addWidget(self, widget):
+        #     self.content_layout.addWidget(widget)
+
+        # def addLayout(self, layout):
+        #     self.content_layout.addLayout(layout)
+
+
+        
         
 
 class ToolNode(BaseNode):
@@ -832,7 +1063,13 @@ class ToolNode(BaseNode):
         """
         self.add_input('input', color=(0, 255, 0))
         self.add_output('output', color=(0, 0, 255))
-    
+        
+    @property
+    def view(self):
+        if self._view is None:
+            self._view = ResizableNodeItem(self.NODE_NAME)
+        return self._view
+
     def build_widgets(self, tool):
         if not tool or self.wrapper is not None:
                 return
@@ -877,6 +1114,8 @@ class ToolNode(BaseNode):
 
     def get_value(self):
         return self.wrapper.get_value() if self.wrapper else {}
+
+    
 
 
 class DataNode(BaseNode):
