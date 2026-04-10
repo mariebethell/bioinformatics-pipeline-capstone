@@ -666,8 +666,6 @@ class ToolNodeWrapper(NodeBaseWidget):
         
         self.nullable_checks = {} # certain widgets can be nullable. this dictionary maps checkboxes to the nullable widgets
 
-        self.sections = {} # some widgets might need to be contained within their own sections in a ToolNode
-
         self.substep_defs = []
 
         if not tool:
@@ -687,28 +685,63 @@ class ToolNodeWrapper(NodeBaseWidget):
         layout.setContentsMargins(0,0,0,0)
 
         # building widgets dynamically
-        # NOTE i might come back to this, i feel like its kind of sloppy but gets the job done. i like kenneth's original suggestion of a factory, but will have to see later
-        # for now this works
         for widget_def in NODE_WIDGETS[tool]:
-            # gathering fields for widget definition
-            w_type = widget_def['type']
-            w_name = widget_def['name']
-            w_label = widget_def['label']
-
-            # flags
-            need_label = widget_def.get('need_label', False)
-            w_default = widget_def.get('default', None)
-            w_label_template = widget_def.get('label_template')
-            nullable = widget_def.get('nullable', False)
-            w_section = widget_def.get('section', False) # if in a section, creates a subwindow for it
-
-            if w_section == 'substep':
+            # if it is a substep, we save it for the substep dialog and continue
+            if widget_def.get('section') == 'substep':
                 self.substep_defs.append(widget_def)
                 continue
 
-            widget = None
+            # building widgets by passing in the layout so the helper knows where to build widgets and passing in the update label callback in case a label needs to be updated
+            widget, checkbox, label = self.build_widget_from_def(widget_def, layout, self.update_label)
 
-            if w_type == 'slider': 
+            if widget:
+                name = widget_def['name']
+                self.widgets[name] = self.widget
+
+                # if a checkbox exists, there is a nullable space
+                if checkbox:
+                    self.nullable_checks[name] = checkbox
+                
+                # if a label exists and the widget is a slider, we create an extra mutable label for it
+                if label and widget_def['type'] == 'slider':
+                    self.mutable_labels[name] = (label, widget_def.get('label_template'))
+
+        # button creation section
+        # add a button for a substep page if one needs to be made
+        if self.substep_defs:
+            substep_btn = QtWidgets.QPushButton('Configure Substeps')
+            substep_btn.setStyleSheet('background-color: orange;')
+            substep_btn.clicked.connect(self.open_substeps)
+            layout.addWidget(substep_btn) 
+
+               
+        # adds a delete button to the end of EVERY node 
+        delete_btn = QtWidgets.QPushButton('Delete Node')
+        delete_btn.clicked.connect(self.delete_node)
+        delete_btn.setStyleSheet('background-color:red; color:white;')
+        layout.addWidget(delete_btn)
+
+        container.setLayout(layout)
+        self.set_custom_widget(container)
+
+    @staticmethod
+    def build_widget_from_def(widget_def, parent_layout, update_callback=None):
+        """
+        Helper function to build widgets in both the wrapper and subset dialog,
+        given a layout and widget definition
+        """
+        w_type = widget_def['type']
+        w_name = widget_def['name']
+        w_label = widget_def['label']
+        w_default = widget_def.get('default', None)
+        nullable = widget_def.get('nullable', False)
+        need_label = widget_def.get('need_label', False)
+
+        widget = None
+        checkbox = None
+        label = None
+
+        if w_type == 'slider': 
                 widget = QtWidgets.QSlider(QtCore.Qt.Horizontal)
                 
                 widget.setMinimum(widget_def['min'])
@@ -719,93 +752,45 @@ class ToolNodeWrapper(NodeBaseWidget):
 
                 # lambda function passes in the current widget name and the value from the signal to update label
                 widget.valueChanged.connect(
-                    lambda value, name=w_name : self.update_label(name, value)
+                    lambda value : update_callback(w_name, value)
                     )
                 
-            elif w_type == 'checkbox':
-                widget = QtWidgets.QCheckBox(w_label)
+        elif w_type == 'checkbox':
+            widget = QtWidgets.QCheckBox(w_label)
 
-            elif w_type == 'text_entry':
-                widget = QtWidgets.QPlainTextEdit()
-                widget.setPlaceholderText(w_label)
-                widget.setMaximumHeight(30)
+        elif w_type == 'text_entry':
+            widget = QtWidgets.QPlainTextEdit()
+            widget.setPlaceholderText(w_label)
+            widget.setMaximumHeight(30)
 
-            elif w_type == 'combo_box':
-                widget = QtWidgets.QComboBox()
-                widget.addItems(widget_def['items'])
-            
-            # if the widget was succesfully grabbed then it will add it
-            if widget is not None:
-               # label = QtWidgets.QLabel(w_label)
+        elif w_type == 'combo_box':
+            widget = QtWidgets.QComboBox()
+            widget.addItems(widget_def['items'])
 
-                #if need_label:
-                 #   layout.addWidget(label)
+        # handling widget layout
+        if widget:
+            # creates a space of widgets that are nullable by a checkbox (default nulled)
+            if nullable:
+                checkbox = QtWidgets.QCheckBox()
+                widget.setEnabled(False)
+                checkbox.toggled.connect(widget.setEnabled)
 
-                if nullable:
-                    checkbox = QtWidgets.QCheckBox()
-                    checkbox.setChecked(False)
+                label = QtWidgets.QLabel('Enable ' + w_label)
+                nullable_space = QtWidgets.QHBoxLayout()
+                nullable_space.addWidget(checkbox)
+                nullable_space.addWidget(label)
+                nullable_space.addWidget(widget)
 
-                    widget.setEnabled(False)
-                    checkbox.toggled.connect(widget.setEnabled)
-
-                    label = QtWidgets.QLabel('Enable ' + w_label)
-                    nullable_space = QtWidgets.QHBoxLayout()
-
-                    nullable_space.addWidget(checkbox)
-                    nullable_space.addWidget(label)
-                    nullable_space.addWidget(widget)
-
-                    #layout.addLayout(nullable_space)
-
-                    self.nullable_checks[w_name] = checkbox
-                else: 
-                    #layout.addWidget(widget)
-                    label = QtWidgets.QLabel(w_label)
-
-                if w_section:
-                    if w_section not in self.sections:
-                        sec = self.CollapsibleSection(w_section)
-                        layout.addWidget(sec)
-                        self.sections[w_section] = sec
-                    
-                    target_sec = self.sections[w_section]
-
-                    if nullable:
-                        target_sec.addLayout(nullable_space)
-                    else:
-                        if need_label: 
-                            target_sec.addWidget(label)
-                        
-                        target_sec.addWidget(widget)        
-                else:
-                    if nullable:
-                        layout.addLayout(nullable_space)
-                    else:
-                        if need_label:
-                            layout.addWidget(label)
-                        layout.addWidget(widget)
-
-                self.widgets[w_name] = widget
-                if w_type == 'slider':
-                    self.mutable_labels[w_name] = (label, w_label_template) # tying mutable label to name of widget
+                parent_layout.addLayout(nullable_space)
             else:
-                print("Error in Tool Node Wrapper! failed to get widget")
-            
+                if need_label:
+                    label = QtWidgets.QLabel(w_label)
+                    parent_layout.addWidget(label)
+                parent_layout.addWidget(widget)
 
-                        
-        if self.substep_defs:
-            substep_btn = QtWidgets.QPushButton('Configure Substeps')
-            substep_btn.setStyleSheet('background-color: orange;')
-            substep_btn.clicked.connect(self.open_substeps)
-            layout.addWidget(substep_btn)        
-        # adds a delete button to the end of EVERY node (perhaps configure to be decoupled from ToolNode later)
-        delete_btn = QtWidgets.QPushButton('Delete Node')
-        delete_btn.clicked.connect(self.delete_node)
-        delete_btn.setStyleSheet('background-color:red; color:white;')
-        layout.addWidget(delete_btn)
 
-        container.setLayout(layout)
-        self.set_custom_widget(container)
+            return widget, checkbox, label
+        
 
     def open_substeps(self):
         dialog = self.SubstepDialog(self.tool, self.substep_defs, self.get_custom_widget())
@@ -840,9 +825,7 @@ class ToolNodeWrapper(NodeBaseWidget):
                 values[name] = widget.currentText()
             else:
                 values[name] = None
-        # return values
-        #print(f'{self.tool} outputs: {values}')
-        #return {self.tool : values}
+
         return values
 
     def set_value(self, val_dict):
@@ -879,108 +862,49 @@ class ToolNodeWrapper(NodeBaseWidget):
             label.setText(template.format(val))
 
     class SubstepDialog(QtWidgets.QDialog):
+        """
+        An inner class for nodes who have substeps to have a separate window for optional parameters
+        Ideally, this would be a part of the node but NodeGraphQt has limitations on node resizing (as the system itself is not very dynamic..)
+        so this is a temporary solution.
+        """
         def __init__(self, title, widgets_def, parent=None):
             super().__init__(parent)
 
-            tool = title
             self.setWindowTitle(f'{title} Settings')
+            self.setMinimumWidth(400)
+
             layout = QtWidgets.QVBoxLayout(self)
             layout.setContentsMargins(5, 5, 5, 5)
 
             self.widgets = {}
             self.nullable_checks = {}
-
             self.mutable_labels = {}
-        
-            self.nullable_checks = {} # certain widgets can be nullable. this dictionary maps checkboxes to the nullable widgets
-
-            self.sections = {} # some widgets might need to be contained within their own sections in a ToolNode
-
-            self.substep_defs = []
-
-
-            for widget_def in widgets_def:
-                # gathering fields for widget definition
-                w_type = widget_def['type']
-                w_name = widget_def['name']
-                w_label = widget_def['label']
-
-                # flags
-                need_label = widget_def.get('need_label', False)
-                w_default = widget_def.get('default', None)
-                w_label_template = widget_def.get('label_template')
-                nullable = widget_def.get('nullable', False)
-                w_section = widget_def.get('section', False) # if in a section, creates a subwindow for it
-
-
-                widget = None
-
-                if w_type == 'slider': 
-                    widget = QtWidgets.QSlider(QtCore.Qt.Horizontal)
-                    
-                    widget.setMinimum(widget_def['min'])
-                    widget.setMaximum(widget_def['max'])
-                    
-                    widget.setValue(w_default)
-
-
-                    # lambda function passes in the current widget name and the value from the signal to update label
-                    widget.valueChanged.connect(
-                        lambda value, name=w_name : self.update_label(name, value)
-                        )
-                    
-                elif w_type == 'checkbox':
-                    widget = QtWidgets.QCheckBox(w_label)
-
-                elif w_type == 'text_entry':
-                    widget = QtWidgets.QPlainTextEdit()
-                    widget.setPlaceholderText(w_label)
-                    widget.setMaximumHeight(30)
-
-                elif w_type == 'combo_box':
-                    widget = QtWidgets.QComboBox()
-                    widget.addItems(widget_def['items'])
-                
-                # if the widget was succesfully grabbed then it will add it
-                if widget is not None:
-                # label = QtWidgets.QLabel(w_label)
-
-                    #if need_label:
-                    #   layout.addWidget(label)
-
-                    if nullable:
-                        checkbox = QtWidgets.QCheckBox()
-                        checkbox.setChecked(False)
-
-                        widget.setEnabled(False)
-                        checkbox.toggled.connect(widget.setEnabled)
-
-                        label = QtWidgets.QLabel('Enable ' + w_label)
-                        nullable_space = QtWidgets.QHBoxLayout()
-
-                        nullable_space.addWidget(checkbox)
-                        nullable_space.addWidget(label)
-                        nullable_space.addWidget(widget)
-
-                        layout.addLayout(nullable_space)
-
-                        self.nullable_checks[w_name] = checkbox
-                    else: 
-                        if need_label:
-                            label = QtWidgets.QLabel(w_label)
-                            self.layout.addWidget(label)
-                            if w_type == 'slider':
-                               self.mutable_labels[w_name] = (label, w_label_template)
-
-                        layout.addWidget(widget)
-                    
-                    self.widgets[w_name] = widget
-                else:
-                    print("Error in Substep Dialog Widgets!")
             
+            for widget_def in widgets_def:
+                
+                widget, checkbox, label = ToolNodeWrapper.build_widget_from_def(widget_def, layout, self.update_label_local)
+
+            if widget:
+                name = widget_def['name']
+                self.widgets[name] = widget
+
+                # if the section is nullable
+                if checkbox:
+                    self.nullable_checks[name] = checkbox
+
+                # if there is a slider we need a mutable label
+                if label and widget_def['type'] == 'slider':
+                    self.mutable_labels[name] = (label, widget_def.get('label_template'))
+
             self.done_btn = QtWidgets.QPushButton('done')
             self.done_btn.clicked.connect(self.accept)
             layout.addWidget(self.done_btn)
+        
+        def update_label_local(self, name, val):
+            data = self.mutable_labels.get(name)
+            if data:
+                label, template = data
+                label.setText(template.format(val))
                 
 
     # def update_size(self):
