@@ -634,22 +634,6 @@ NODE_WIDGETS = {
 #     'checkbox' : create_checkbox,
 # }
 
-# class ResizableNodeItem(NodeItem):
-#     def __init__(self, name='node', parent=None):
-#         super(ResizableNodeItem, self).__init__(name, parent)
-
-#     def force_resize(self, w, h):
-#         self.prepareGeometryChange()
-
-#         self._w = w
-#         self._h = h
-
-#         self.align_ports()
-#         self.align_widgets()
-#         self.align_label()
-
-#         self.update()
-
 # Node responsible for representing a tool within the pipeline & its wrapper
 #TODO Tooltips
 class ToolNodeWrapper(NodeBaseWidget):
@@ -727,7 +711,7 @@ class ToolNodeWrapper(NodeBaseWidget):
     @staticmethod
     def build_widget_from_def(widget_def, parent_layout, update_callback=None):
         """
-        Helper function to build widgets in both the wrapper and subset dialog,
+        Helper static function to build widgets in both the wrapper and subset dialog,
         given a layout and widget definition
         """
         w_type = widget_def['type']
@@ -794,20 +778,48 @@ class ToolNodeWrapper(NodeBaseWidget):
 
     def open_substeps(self):
         dialog = self.SubstepDialog(self.tool, self.substep_defs, self.get_custom_widget())
-        for name, widget in dialog.widgets.items():
+
+        # filling dialog with values(!) stored in the wrapper
+        for name, widget, in dialog.widgets.items():
             if name in self.widgets:
-                if isinstance(widget, QtWidgets.QPlainTextEdit):
-                    widget.setPlainText(self.widgets[name].toPlainText())
-            
+                existing_val = self.widgets[name]
+
+                # setting values in the dialog's widgets from existing values
+                if isinstance(widget, QtWidgets.QSlider):
+                    widget.setValue(existing_val)
+                elif isinstance(widget, QtWidgets.QCheckBox):
+                    widget.setChecked(existing_val)
+                elif isinstance(widget, QtWidgets.QTextEdit):
+                    widget.setPlainText(str(existing_val))
+                elif isinstance(widget, QtWidgets.QComboBox):
+                    index = widget.findText(str(existing_val))
+                    if index >= 0:
+                        widget.setCurrentIndex(index)
+
         if dialog.exec() == QtWidgets.QDialog.Accepted:
             for name, widget in dialog.widgets.items():
-                self.widgets[name] = widget
+                if isinstance(widget, QtWidgets.QSlider):
+                    self.widgets[name] = widget.value()
+                elif isinstance(widget, QtWidgets.QCheckBox):
+                    self.widgets[name] = widget.isChecked()
+                elif isinstance(widget, QtWidgets.QTextEdit):
+                    self.widgets[name] = widget.toPlainText()
+                elif isinstance(widget, QtWidgets.QComboBox):
+                    self.widgets[name] = widget.currentText()
 
     def get_value(self):
         values = {} # this set will contain the values returned, in order of: slider, checkboxes, strings, then combo box
         # if there is more sensible way to return it, PLEASE modify this.
 
-        for name, widget in self.widgets.items():
+        for name, item in self.widgets.items():
+
+            # if it is already a value (from a closed dialog) it is simply used
+            if not isinstance(item, QtWidgets.QWidget):
+                values[name] = item
+                continue
+            
+            # otherwise it is a widget
+            widget = item
             checkbox = self.nullable_checks.get(name)  
 
             #checks if both the checkbox exists and if it is not checked 
@@ -906,62 +918,6 @@ class ToolNodeWrapper(NodeBaseWidget):
                 label, template = data
                 label.setText(template.format(val))
                 
-
-    # def update_size(self):
-    #     custom_widget = self.get_custom_widget()
-    #     custom_widget.adjustSize()
-    #     size_hint = custom_widget.sizeHint()
-
-    #     w = size_hint.width() + 40
-    #     h = size_hint.height() + 60
-
-    #     if hasattr(self._node_ref, 'force_resize'):
-    #         self._node_ref.force_resize(w, h)
-
-    # class CollapsibleSection(QtWidgets.QWidget):
-    #     def __init__(self, title='', parent=None):
-    #         super().__init__(parent)
-
-    #         self.main_layout = QtWidgets.QVBoxLayout()
-    #         self.main_layout.setContentsMargins(0, 0, 0, 0)
-
-    #         # button to toggle the section as viewable
-    #         self.toggle_btn = QtWidgets.QPushButton(f'Toggle {title}')
-    #         self.toggle_btn.setCheckable(True)
-    #         self.toggle_btn.setStyleSheet(
-    #             'text-align:left; background-color: orange'
-    #         )
-    #         self.toggle_btn.clicked.connect(self.display)
-
-    #         # container for the actual content to be shown
-    #         self.content = QtWidgets.QWidget()
-    #         self.content_layout = QtWidgets.QVBoxLayout(self.content)
-    #         self.content_layout.setContentsMargins(0,0,0,0)
-    #         self.content.setVisible(False)
-
-    #         self.main_layout.addWidget(self.toggle_btn)
-    #         self.main_layout.addWidget(self.content)
-
-    #         self.setLayout(self.main_layout)
-
-    #     def display(self):
-    #         checked = self.toggle_btn.isChecked()
-    #         self.content.setVisible(checked)
-
-    #         QtCore.QTimer.singleShot(10, self._request_resize)
-        
-
-            
-        
-        # def addWidget(self, widget):
-        #     self.content_layout.addWidget(widget)
-
-        # def addLayout(self, layout):
-        #     self.content_layout.addLayout(layout)
-
-
-        
-        
 
 class ToolNode(BaseNode):
     __identifier__ = 'bioinformatics_capstone'
