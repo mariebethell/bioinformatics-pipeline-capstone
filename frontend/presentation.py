@@ -680,7 +680,7 @@ class ToolNodeWrapper(NodeBaseWidget):
 
             if widget:
                 name = widget_def['name']
-                self.widgets[name] = self.widget
+                self.widgets[name] = widget
 
                 # if a checkbox exists, there is a nullable space
                 if checkbox:
@@ -786,9 +786,9 @@ class ToolNodeWrapper(NodeBaseWidget):
 
                 # setting values in the dialog's widgets from existing values
                 if isinstance(widget, QtWidgets.QSlider):
-                    widget.setValue(existing_val)
+                    widget.setValue(int(existing_val))
                 elif isinstance(widget, QtWidgets.QCheckBox):
-                    widget.setChecked(existing_val)
+                    widget.setChecked(bool(existing_val))
                 elif isinstance(widget, QtWidgets.QTextEdit):
                     widget.setPlainText(str(existing_val))
                 elif isinstance(widget, QtWidgets.QComboBox):
@@ -806,6 +806,9 @@ class ToolNodeWrapper(NodeBaseWidget):
                     self.widgets[name] = widget.toPlainText()
                 elif isinstance(widget, QtWidgets.QComboBox):
                     self.widgets[name] = widget.currentText()
+            
+            for name, check in dialog.nullable_checks.items():
+                self.nullable_checks[name] = check.isChecked()
 
     def get_value(self):
         values = {} # this set will contain the values returned, in order of: slider, checkboxes, strings, then combo box
@@ -815,15 +818,22 @@ class ToolNodeWrapper(NodeBaseWidget):
 
             # if it is already a value (from a closed dialog) it is simply used
             if not isinstance(item, QtWidgets.QWidget):
+                # if it is a disabled nullable item
+                if name in self.nullable_checks and self.nullable_checks[name] is False:
+                    continue
                 values[name] = item
                 continue
             
             # otherwise it is a widget
             widget = item
-            checkbox = self.nullable_checks.get(name)  
+
 
             #checks if both the checkbox exists and if it is not checked 
-            if checkbox and not checkbox.isChecked():
+            checkbox = self.nullable_checks.get(name) 
+
+            if isinstance(checkbox, QtWidgets.QCheckBox) and not checkbox.isChecked():
+                continue
+            elif checkbox is False:
                 continue
 
             if isinstance(widget, QtWidgets.QSlider):
@@ -831,7 +841,7 @@ class ToolNodeWrapper(NodeBaseWidget):
             elif isinstance(widget, QtWidgets.QCheckBox):
                 if(widget.isChecked()): # will not append to list
                     values[name] = widget.isChecked()
-            elif isinstance(widget, QtWidgets.QTextEdit):
+            elif isinstance(widget, QtWidgets.QPlainTextEdit):
                 values[name] = widget.toPlainText()
             elif isinstance(widget, QtWidgets.QComboBox):
                 values[name] = widget.currentText()
@@ -896,17 +906,17 @@ class ToolNodeWrapper(NodeBaseWidget):
                 
                 widget, checkbox, label = ToolNodeWrapper.build_widget_from_def(widget_def, layout, self.update_label_local)
 
-            if widget:
-                name = widget_def['name']
-                self.widgets[name] = widget
+                if widget:
+                    name = widget_def['name']
+                    self.widgets[name] = widget
 
-                # if the section is nullable
-                if checkbox:
-                    self.nullable_checks[name] = checkbox
+                    # if the section is nullable
+                    if checkbox:
+                        self.nullable_checks[name] = checkbox
 
-                # if there is a slider we need a mutable label
-                if label and widget_def['type'] == 'slider':
-                    self.mutable_labels[name] = (label, widget_def.get('label_template'))
+                    # if there is a slider we need a mutable label
+                    if label and widget_def['type'] == 'slider':
+                        self.mutable_labels[name] = (label, widget_def.get('label_template'))
 
             self.done_btn = QtWidgets.QPushButton('done')
             self.done_btn.clicked.connect(self.accept)
