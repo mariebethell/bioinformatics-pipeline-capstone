@@ -2,9 +2,9 @@ from rest_framework.response import Response as RestResp
 from rest_framework.request import Request
 from typing import Type
 
-from network.computeServer.gateway.LocalPolicy import LocalPolicy
+from network.server.computeServer.gateway.LocalPolicy import LocalPolicy
 from shared.Command import Command
-from network.computeServer.gateway.DatagramTools import DatagramTools
+from network.server.computeServer.gateway.DatagramTools import DatagramTools
 
 from shared import CommandFactory
 

@@ -1,6 +1,6 @@
 import ipaddress
 
-from network.computeServer.gateway.DatagramTools import DatagramTools
+from network.server.computeServer.gateway.DatagramTools import DatagramTools
 
 class FilterPolicy:
     def __init__(self):

@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view
 from rest_framework.request import Request
 from rest_framework.response import Response as RestResp
 
-from network.computeServer.gateway import ComputeServer
+from network.server.computeServer.gateway import ComputeServer
 from shared.Command import *
 
 # Create your views here.
