@@ -56,7 +56,7 @@ class ClientConnect(Command):
 
 @dataclass
 class ClientConnectResponse(Response):
-    ACTIVE_PIPELINE_UUID: Annotated[graph.StageState, Nullable(True)] = None
+    ACTIVE_PIPELINE_UUID: Annotated["graph.StageState", Nullable(True)] = None
 
 @dataclass
 class GetPipeline(Command):
@@ -65,7 +65,7 @@ class GetPipeline(Command):
 
 @dataclass
 class GetPipelineResponse(Response):
-    GRAPH: Annotated[graph.Graph, Nullable(True)] = None
+    GRAPH: Annotated["graph.Graph", Nullable(True)] = None
 
 @dataclass
 class NewPipeline(Command):
@@ -164,4 +164,4 @@ class OnStageComplete(Command):
 class OnPipelineError(Command):
     pipeline_id: Annotated[uuid.UUID, Nullable(False)] = None
     stage_num: Annotated[int, Nullable(False)] = None
-    error: Annotated[any, Nullable(False)] = None
+    error: Annotated[object, Nullable(False)] = None
