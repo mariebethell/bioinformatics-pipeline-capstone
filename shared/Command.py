@@ -6,8 +6,8 @@ import inspect
 import ipaddress
 from dataclasses import dataclass
 
-import graph
-import APIStatus
+from shared import graph
+from shared import APIStatus
 
 """
 For future devs adding new commands - type annotations are REQUIRED for the serialization system to work properly. Each field MUST have an annotation or they will be ignored by the serializer
@@ -165,3 +165,4 @@ class OnPipelineError(Command):
     pipeline_id: Annotated[uuid.UUID, Nullable(False)] = None
     stage_num: Annotated[int, Nullable(False)] = None
     error: Annotated[object, Nullable(False)] = None
+    

@@ -4,10 +4,11 @@ import copy
 import inspect
 import datetime
 import uuid
+import ipaddress
 
-import Command
-import graph
-import APIStatus
+from shared import Command
+from shared import graph
+from shared import APIStatus
 
 
 class Serializer:
@@ -38,7 +39,7 @@ class Serializer:
 
         proto_obj = {}
         proto_obj['timestamp'] = cmd.timestamp.isoformat()
-        proto_obj['source'] = cmd.source
+        proto_obj['source'] = str(cmd.source)
 
         for field, annotation in inspect.get_annotations(type(cmd)).items():
             annotations = get_args(annotation)
@@ -54,11 +55,12 @@ class Serializer:
             if isinstance(sub_obj_type, ForwardRef):
                 sub_obj_type = Serializer._unforward_ref(sub_obj_type)
 
+            print(f"type: {sub_obj_type}")
             if (sub_obj_type is Command.Nullable):
                 raise ValueError(f"Command type {type(cmd)} has malformed annotations for field {field}. First annotation should be object type, not Nullable")
             
             if (type(sub_obj) is not sub_obj_type):
-                raise TypeError(f"Actual field type does not match specified type by annotation for command {type(cmd)}, field {field}")
+                raise TypeError(f"Actual field type does not match specified type by annotation for command {type(cmd)}, field {field}. Expected type {sub_obj_type} but got {type(sub_obj)}")
 
             if sub_obj_type is graph.Graph:
                 ser_graph = Serializer._serializify_graph(sub_obj)
@@ -102,6 +104,13 @@ class Serializer:
 
         raw_obj = json.loads(json_string)
         raw_obj['timestamp'] = datetime.datetime.fromisoformat(raw_obj['timestamp'])
+        raw_source = raw_obj.get('source', None)
+        if raw_source is not None:
+            try:
+                raw_obj['source'] = ipaddress.ip_address(raw_source)
+
+            except ValueError:
+                raw_obj['source'] = None
 
         if issubclass(obj_type, Command.Command):
             proto_cmd = obj_type()
@@ -136,6 +145,9 @@ class Serializer:
                 
                 elif expected_field_type is APIStatus.APIStatus:
                     reconstructedVal = APIStatus.APIStatus(val)
+
+                elif expected_field_type is uuid.UUID:
+                    reconstructedVal = uuid.UUID(val)
 
                 # else assume val is already good to go
 
@@ -352,7 +364,7 @@ class SerializableNode(graph.Node):
 
         Returns:
             Bool which is True if the dictionary has the correct shape, False if it should be rejected
-            
+
         """
 
         test_ser_node = SerializableNode()

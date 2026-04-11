@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'computeServer',
+    'network.computeServer',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -51,7 +51,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'compute.urls'
+ROOT_URLCONF = 'network.compute.urls'
 
 TEMPLATES = [
     {
@@ -68,7 +68,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'compute.wsgi.application'
+WSGI_APPLICATION = 'network.compute.wsgi.application'
 
 
 # Database
@@ -122,3 +122,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PARSER_CLASSES': [
+        'network.computeServer.gateway.CmdParser.CommandParser', # Deserializes Commands automatically
+        'rest_framework.parsers.JSONParser', # Recommended to keep default
+    ]
+}
