@@ -1,9 +1,9 @@
 from typing import Type
 import datetime
 
-import Command
-import Serializer
-import graph
+from shared import Command
+from shared import Serializer
+from shared import graph
 
 class CommandFactory:
     """

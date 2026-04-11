@@ -1,5 +1,7 @@
 import ipaddress
 
+from network.computeServer.gateway.DatagramTools import DatagramTools
+
 class FilterPolicy:
     def __init__(self):
         self.docker_bridge_range = ipaddress.ip_network('172.17.0.0/16')
@@ -22,7 +24,7 @@ class FilterPolicy:
         
     def enforce_container_origin(self, dg):
         try:
-            ipaddr = self._extract_ip(dg)
+            ipaddr = DatagramTools.extract_ip(dg)
             return ipaddr in self.docker_bridge_range
             
         except ValueError:
@@ -36,22 +38,3 @@ class FilterPolicy:
     def _screen_datagram_integrity(self, dg):
         return True
         raise NotImplementedError()
-        
-    def _extract_ip(self, dg):
-        ipaddr = None
-        try:
-            # Assume first IP in proxy record is the source IP
-            source = dg.META['HTTP_X_FORWARDED_FOR'].split(',')[0] 
-            ipaddr = ipaddress.ip_address(source)
-            
-        except (KeyError, ValueError):
-            try:
-                # No proxy, fallback to direct address
-                source = dg.META['REMOTE_ADDR']
-                ipaddr = ipaddress.ip_address(source)
-                
-            except (KeyError, ValueError):
-                # No IP given or bad IP. Reject.
-                raise ValueError("Invalid IP given")
-                
-        return ipaddr
