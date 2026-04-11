@@ -4,7 +4,7 @@ URL configuration for computeServer app.
 from django.contrib import admin
 from django.urls import path
 
-from network.computeServer import views
+from network.server.computeServer import views
 
 urlpatterns = [
     path('test/', views.test, name='test'),

@@ -1,7 +1,7 @@
 import ipaddress
 
-from network.computeServer.gateway import FilterPolicy
-from network.computeServer.gateway.DatagramTools import DatagramTools
+from network.server.computeServer.gateway import FilterPolicy
+from network.server.computeServer.gateway.DatagramTools import DatagramTools
 
 class LocalPolicy(FilterPolicy.FilterPolicy):
     # Override parent hook
