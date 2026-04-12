@@ -2,6 +2,8 @@
 Endpoints defined here
 """
 
+from datetime import datetime
+
 from rest_framework.decorators import api_view
 from rest_framework.request import Request
 from rest_framework.response import Response as RestResp
@@ -13,6 +15,10 @@ from shared.Command import *
 @api_view(['GET'])
 def test(request: Request):
     return RestResp("Hello!")
+    
+@api_view(['GET'])
+def ping(request: Request):
+    return RestResp(str(datetime.now()))
 
 # Client HTTP API
 @api_view(['POST'])

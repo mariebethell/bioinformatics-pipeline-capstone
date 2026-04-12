@@ -1,10 +1,12 @@
-from typing import Type, get_args, ForwardRef
 import json
 import copy
 import inspect
 import datetime
 import uuid
 import ipaddress
+
+from typing import Type, get_args, ForwardRef
+from types import UnionType
 
 from shared import Command
 from shared import graph
@@ -38,46 +40,52 @@ class Serializer:
         """
 
         proto_obj = {}
-        proto_obj['timestamp'] = cmd.timestamp.isoformat()
-        proto_obj['source'] = str(cmd.source)
 
-        for field, annotation in inspect.get_annotations(type(cmd)).items():
-            annotations = get_args(annotation)
+        polymorphs = cmd.__class__.__mro__[:-1] # Get tuple of self's type and all ancestors types. Last element is always object, which is cut off
+        for desc_type in polymorphs:
+            for field, annotation in inspect.get_annotations(desc_type).items():
+                annotations = get_args(annotation)
 
-            sub_obj = copy.deepcopy(getattr(cmd, field, None)) # Should be impossible for it to return None because an annotation exists at all
+                sub_obj = copy.deepcopy(getattr(cmd, field, None)) # Should be impossible for it to return None because an annotation exists at all
 
-            # Check if annotation actually has any metadata before trying to access them
-            if (annotations.count == 0):
-                # Let json.dumps handle it as a regular obj later
-                proto_obj[field] = sub_obj
+                # Check if annotation actually has any metadata before trying to access them
+                if (annotations.count == 0):
+                    # Let json.dumps handle it as a regular obj later
+                    proto_obj[field] = sub_obj
 
-            sub_obj_type = annotations[0] # Type metadata SHOULD always be at the front
-            if isinstance(sub_obj_type, ForwardRef):
-                sub_obj_type = Serializer._unforward_ref(sub_obj_type)
+                sub_obj_type = annotations[0] # Type metadata SHOULD always be at the front
+                if isinstance(sub_obj_type, ForwardRef):
+                    sub_obj_type = Serializer._unforward_ref(sub_obj_type)
 
-            print(f"type: {sub_obj_type}")
-            if (sub_obj_type is Command.Nullable):
-                raise ValueError(f"Command type {type(cmd)} has malformed annotations for field {field}. First annotation should be object type, not Nullable")
-            
-            if (type(sub_obj) is not sub_obj_type):
-                raise TypeError(f"Actual field type does not match specified type by annotation for command {type(cmd)}, field {field}. Expected type {sub_obj_type} but got {type(sub_obj)}")
+                if (sub_obj_type is Command.Nullable):
+                    raise ValueError(f"Command type {type(cmd)} has malformed annotations for field {field}. First annotation should be object type, not Nullable")
+                
+                if (type(sub_obj) is not sub_obj_type and sub_obj is not None):
+                    raise TypeError(f"Actual field type does not match specified type by annotation for command {type(cmd)}, field {field}. Expected type {sub_obj_type} but got {type(sub_obj)}")
 
-            if sub_obj_type is graph.Graph:
-                ser_graph = Serializer._serializify_graph(sub_obj)
-                proto_obj[field] = ser_graph
+                if sub_obj is not None:
+                    if sub_obj_type is graph.Graph:
+                        ser_graph = Serializer._serializify_graph(sub_obj)
+                        proto_obj[field] = ser_graph
 
-            elif sub_obj_type is graph.Node:
-                ser_node = SerializableNode.copy_construct(sub_obj)
-                proto_obj[field] = vars(ser_node)
+                    elif sub_obj_type is graph.Node:
+                        ser_node = SerializableNode.copy_construct(sub_obj)
+                        proto_obj[field] = vars(ser_node)
 
-            elif sub_obj_type is uuid.UUID:
-                proto_obj[field] = str(sub_obj)
+                    elif sub_obj_type is uuid.UUID:
+                        proto_obj[field] = str(sub_obj)
 
-            elif sub_obj_type is APIStatus.APIStatus:
-                proto_obj[field] = sub_obj.value # is int
+                    elif sub_obj_type is APIStatus.APIStatus:
+                        proto_obj[field] = sub_obj.value # is int
 
-            else:
-                proto_obj[field] = sub_obj # Deep copy from earlier makes this safe
+                    elif sub_obj_type is datetime.datetime:
+                        proto_obj[field] = sub_obj.isoformat()
+
+                    elif sub_obj_type is ipaddress.IPv4Address or sub_obj_type is ipaddress.IPv6Address:
+                        proto_obj[field] = str(sub_obj)
+
+                    else:
+                        proto_obj[field] = sub_obj # Deep copy from earlier makes this safe
 
         return json.dumps(proto_obj)
     
@@ -95,6 +103,8 @@ class Serializer:
 
         Returns:
             An object of obj_type containing the data held within the JSON string
+                - In some situations the server may return Response instead of the requested obj_type. In those
+                    cases, this method will return an object of type Response instead of obj_type!
 
         Raises:
             TypeError if the fields in the JSON have the incorrect type for the fields within the specified Type
@@ -103,18 +113,14 @@ class Serializer:
         """
 
         raw_obj = json.loads(json_string)
-        raw_obj['timestamp'] = datetime.datetime.fromisoformat(raw_obj['timestamp'])
-        raw_source = raw_obj.get('source', None)
-        if raw_source is not None:
-            try:
-                raw_obj['source'] = ipaddress.ip_address(raw_source)
-
-            except ValueError:
-                raw_obj['source'] = None
 
         if issubclass(obj_type, Command.Command):
             proto_cmd = obj_type()
-            cmd_annotations = inspect.get_annotations(obj_type)
+
+            cmd_annotations = {}
+            polymorphs = proto_cmd.__class__.__mro__[:-1] # Get tuple of self's type and all ancestors types. Last element is always object, which is cut off
+            for desc_type in polymorphs:
+                cmd_annotations = cmd_annotations | inspect.get_annotations(desc_type)
 
             # Copy all incoming data into empty command, validate to check if command is malformed
             for field, val in raw_obj.items():
@@ -149,6 +155,15 @@ class Serializer:
                 elif expected_field_type is uuid.UUID:
                     reconstructedVal = uuid.UUID(val)
 
+                elif expected_field_type is datetime.datetime:
+                    reconstructedVal = datetime.datetime.fromisoformat(val)
+
+                elif expected_field_type is UnionType:
+                    for type_option in expected_field_type:
+                        if type_option is ipaddress.IPv4Address or type_option is ipaddress.IPv6Address:
+                            reconstructedVal = ipaddress.ip_address(val)
+                            break
+
                 # else assume val is already good to go
 
                 if (hasattr(proto_cmd, field)):
@@ -158,13 +173,45 @@ class Serializer:
                     print(f"WARNING: Deserializer given field which does not exist in target object type. Field: {field}, target type: {obj_type}")
 
             if not proto_cmd.validate():
-                raise ValueError("Given JSON was invalid for the given command type")
+                try:
+                    return Serializer._coerce_resp_to_base(proto_cmd) # Server may have returned base Response type in case of error
+                
+                except ValueError: # Coerce throws ValueError if cast was unsuccessful
+                    raise ValueError("Given JSON was invalid for the given command type") # Point of this is to give more specific details even though exception type is the same
             
             return proto_cmd
 
         else:
-            #TODO cast to given type
+            #TODO cast to given type, but low priority
             return raw_obj
+        
+    @staticmethod
+    def _coerce_resp_to_base(resp: Command.Response):
+        """
+        Under certain situations, the server may return a Response containing an error status instead of the requested Response derivative type
+            This method allows the Serializer to handle those situations by attempting to narrow the scope of deserialization to just the fields
+            required by the base Response type so it can return that instead
+
+        Args:
+            resp (Response): An invalid Response derivative to attempt to narrow into a base Response
+
+        Returns:
+            A Response object containing copied fields from the given invalid Response
+
+        Raises:
+            ValueError if the given Response object did not contain enough valid data to make a valid base Response object
+        
+        """
+
+        proto_base_resp = Command.Response()
+        for field in vars(proto_base_resp).keys():
+            val = getattr(resp, field, None)
+            setattr(proto_base_resp, field, val)
+
+        if not proto_base_resp.validate():
+            raise ValueError("Could not cast to Response type")
+        
+        return proto_base_resp
 
     @staticmethod
     def _serializify_graph(graph: graph.Graph) -> dict: # Dict contains fields within the graph type
@@ -315,7 +362,7 @@ class SerializableNode(graph.Node):
         self.next_id = None
 
     @staticmethod
-    def copy_construct(original_node: graph.Node) -> SerializableNode:
+    def copy_construct(original_node: graph.Node):
         """
         Constructs a SerializableNode which contains a clone of all information stored in the given Node
             - SerializableNode is not dependent on the original node

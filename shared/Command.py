@@ -1,9 +1,9 @@
-from datetime import datetime
-import copy
 import uuid
-from typing import Annotated, get_args
 import inspect
 import ipaddress
+
+from datetime import datetime
+from typing import Annotated, get_args
 from dataclasses import dataclass
 
 from shared import graph
@@ -19,32 +19,38 @@ For future devs adding new commands - type annotations are REQUIRED for the seri
 # COMMANDS
 ###########################################################
 
+# Metaclass for defining what command fields are allowed to be None
+class Nullable:
+    def __init__(self, is_nullable: bool):
+        self.is_nullable = is_nullable
+
 @dataclass
 class Command:
     timestamp: Annotated[datetime, Nullable(False)] = None # Unfortunately = None has to be there on every field to prevent Python from forcing each param to be set immediately
     source: Annotated[ipaddress.IPv4Address | ipaddress.IPv6Address, Nullable(True)] = None # Must be nullable because IP address is injected by networking layer upon receipt
 
     def validate(self):
-        for field, annotation in inspect.get_annotations(type(self)).items():
-            annotations = get_args(annotation)
-            field_nullable = next((md for md in annotations if type(md) is Nullable), None)
-            if (field_nullable is None): 
-                raise TypeError(f"Command of type {type(self)} is missing nullable annotations!")
+        polymorphs = self.__class__.__mro__[:-1] # Get tuple of self's type and all ancestors types. Last element is always object, which is cut off
 
-            # Check if all fields are present in the obj, or if not are the missing ones allowed to be missing
-            if not hasattr(self, field) and not field_nullable.is_nullable:
-                return False
+        for desc_type in polymorphs:
+            for field, annotation in inspect.get_annotations(desc_type).items():
+                annotations = get_args(annotation)
+                field_nullable = next((md for md in annotations if type(md) is Nullable), None)
+                if (field_nullable is None): 
+                    raise TypeError(f"Command of type {type(self)} is missing nullable annotations!")
+
+                # Check if all fields are present in the obj, or if not are the missing ones allowed to be missing
+                if not hasattr(self, field) and not field_nullable.is_nullable:
+                    return False
+                
+                if getattr(self, field) is None and not field_nullable.is_nullable:
+                    return False
         
         return True
 
 @dataclass
 class Response(Command):
     STATUS: Annotated["APIStatus.APIStatus", Nullable(False)] = None
-
-# Metaclass for defining what command fields are allowed to be None
-class Nullable:
-    def __init__(self, is_nullable: bool):
-        self.is_nullable = is_nullable
 
 ###########################################################
 # CLIENT API DATA
@@ -76,7 +82,7 @@ class NewPipeline(Command):
 @dataclass
 class NewPipelineResponse(Response):
     PIPELINE_ID: Annotated[uuid.UUID, Nullable(False)] = None
-    ERROR_INFO: Annotated[object, Nullable(True)] = None
+    ERROR_INFO: Annotated["APIStatus.APIStatus", Nullable(True)] = None
 
 @dataclass
 class OverwritePipeline(NewPipeline):
@@ -93,7 +99,7 @@ class ModifyPipelineParams(Command):
     user_uuid: Annotated[uuid.UUID, Nullable(False)] = None
     pipeline_id: Annotated[uuid.UUID, Nullable(False)] = None
     node_num: Annotated[int, Nullable(False)] = None
-    new_args: Annotated[object, Nullable(False)] = None
+    new_args: Annotated[dict, Nullable(False)] = None
 
 @dataclass
 class ModifyPipelineParamsResponse(Response):
@@ -107,7 +113,7 @@ class RunPipeline(Command):
 
 @dataclass
 class RunPipelineResponse(Response):
-    ERROR_INFO: Annotated[object, Nullable(True)] = None
+    ERROR_INFO: Annotated["APIStatus.APIStatus", Nullable(True)] = None
 
 @dataclass
 class StopPipeline(Command):

@@ -1,8 +1,30 @@
 import ipaddress
 
+from rest_framework.request import Request
+
 class DatagramTools:
+    """
+    Tools used by FilterPolicies to perform repetitive tasks
+
+    """
+
     @staticmethod
-    def extract_ip(datagram):
+    def extract_ip(datagram: Request) -> ipaddress.IPv4Address | ipaddress.IPv6Address:
+        """
+        Extracts and parses the source IP from a request
+            - Uses source data from NIC or reverse proxy, not whatever the sender put in there
+
+        Args:
+            datagram (rest_framework.request) to pull IP from
+
+        Returns:
+            The extracted ipaddress object, which could be IPv4Address or IPv6Address
+
+        Raises:
+            ValueError if IP in request is invalid
+
+        """
+
         ipaddr = None
         try:
             # Assume first IP in proxy record is the source IP
