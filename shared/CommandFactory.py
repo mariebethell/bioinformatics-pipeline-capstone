@@ -1,9 +1,9 @@
-from typing import Type
 import datetime
+
+from typing import Type
 
 from shared import Command
 from shared import Serializer
-from shared import graph
 
 class CommandFactory:
     """
@@ -12,7 +12,7 @@ class CommandFactory:
     """
 
     @staticmethod
-    def new_command(cmd_type: Type[Command.Command], params=None):
+    def new_command(cmd_type: Type[Command.Command], params=None) -> Command.Command:
         """
         Constructs a Command object of the specified subtype and applies the specified parameters
             - Parameters should line up with the fields specified in the API spec/Command.py
@@ -49,7 +49,7 @@ class CommandFactory:
         return cmd
 
     @staticmethod
-    def deserialize_command(cmd_type: Type[Command.Command], cmdStr):
+    def deserialize_command(cmd_type: Type[Command.Command], cmdStr) -> Command.Command:
         """
         Attempts to parse a JSON string and coerce it into the specified type
             - Contains special logic for handing Command subtypes
@@ -62,6 +62,8 @@ class CommandFactory:
 
         Returns:
             An object of obj_type containing the data held within the JSON string
+                - In some situations the server may return Response instead of the requested obj_type. In those
+                    cases, this method will return an object of type Response instead of obj_type!
 
         Raises:
             TypeError if the fields in the JSON have the incorrect type for the fields within the specified Type
@@ -71,7 +73,7 @@ class CommandFactory:
         return Serializer.Serializer.deserialize(cmd_type, cmdStr)
 
     @staticmethod
-    def serialize_command(cmd: Command.Command):
+    def serialize_command(cmd: Command.Command) -> str:
         """
         Attempts to clone and isolate field data in the given command into a dictionary and serialize the dictionary into a JSON string
             - Automatically converts custom datatypes and enums into more primitive versions which may be serialized

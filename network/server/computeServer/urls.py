@@ -8,6 +8,7 @@ from network.server.computeServer import views
 
 urlpatterns = [
     path('test/', views.test, name='test'),
+    path ('ping/', views.ping, name='ping'),
     
     # Client API
     path('client/connect/', views.connect, name='connect'),
