@@ -8,6 +8,7 @@ from backend.tools.trimmomatic import trimmomatic_tool
 from backend.tools.base import apply_defaults
 from abc import ABC, abstractmethod
 import os
+import shlex
 
 class Pipeline(ABC):
     def __init__(self, graph: Graph, tool_registry):
@@ -128,12 +129,8 @@ class NextflowGenerator:
         )
 
         # Convert list of command parts into a single string for Nextflow
-        command_string = ""
-        for part in command:
-            if ' ' in part:
-                part = f'"{part}"'  # Quote parts with spaces
-            command_string += part + " "
-
+        command_string = " ".join(shlex.quote(part) for part in command)
+            
         return command_string.strip()
     
     def generate_module(self, node: Node) -> str:
@@ -168,21 +165,40 @@ class NextflowGenerator:
         """
         Generate the Nextflow pipeline script as a string.
         """
-        pipeline_script = ""
-        
+
+        pipeline_script = "nextflow.enable.dsl=2\n\n"
+
+        workflow_header = "workflow {\n"
         workflow_body = ""
+
+        current_channel = None  # tracks output of previous step
+
         for node_num, node in graph.nodes.items():
-            if (node.tool == "input"):
-                workflow_header = "workflow {\n"
-                workflow_body += f"    read_ch = Channel.fromPath('{node.outputs['reads'][0]}')\n"
-            if (node.tool != "input"):
-                process_name, module_path = self.generate_module(node) 
-                pipeline_script += f"include {{ {process_name} }} from '{module_path}'\n"
-                
-                workflow_body += f"    {process_name}(read_ch)\n"
+            # Input node
+            if node.tool == "input":
+                input_path = node.outputs['reads'][0]
+                workflow_body += f"    read_ch = Channel.fromPath('{input_path}')\n"
+                current_channel = "read_ch"
+                continue
+
+            # Generate module
+            process_name, module_path = self.generate_module(node)
+
+            # include statement
+            pipeline_script += f"include {{ {process_name} }} from '{module_path}'\n"
+
+            # create variable name for output
+            output_var = f"{node.tool}_{node.node_num}_out"
+
+            # chain execution
+            workflow_body += f"    {output_var} = {process_name}({current_channel})\n"
+
+            # update current channel
+            current_channel = output_var
 
         workflow_body += "}\n"
-        pipeline_script += workflow_header + workflow_body
+
+        pipeline_script += "\n" + workflow_header + workflow_body
 
         return pipeline_script
     
@@ -219,5 +235,5 @@ if __name__ == "__main__":
     node1.inputs = {'reads': ['/data/Test01-L001_R1_001.fastq']}
     node2.inputs = {'reads': ['/data/Test01-L001_R1_001.fastq']} # use same input for testing, in reality this would be node1.outputs after resolution
 
-    pipeline = pipeline_factory.build_pipeline("nextflow", graph, "input_folder", tool_registry, pipeline_script_path="backend/pipeline.nf")
+    pipeline = pipeline_factory.build_pipeline("nextflow", graph, "input_folder", tool_registry, pipeline_script_path="backend/main.nf")
     pipeline.run_pipeline()

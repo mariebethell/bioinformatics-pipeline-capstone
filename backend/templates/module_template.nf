@@ -1,10 +1,10 @@
 process TOOL_NAME {
     input:
-        path READS
+        path "READS"
     output:
-        path OUTPUT
+        path "OUTPUT"
     script:
         """
-        COMMAND
+        "COMMAND"
         """
 }
