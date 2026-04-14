@@ -641,16 +641,14 @@ class ToolNodeWrapper(NodeBaseWidget):
         super().__init__(parent)
         
         self.tool = tool
-
-        # self._node_ref = None
         
+        # inner storage
         self.widgets = {}
-
         self.mutable_labels = {}
-        
         self.nullable_checks = {} # certain widgets can be nullable. this dictionary maps checkboxes to the nullable widgets
-
         self.substep_defs = []
+        self.substep_vals = {}
+
 
         if not tool:
             return
@@ -777,19 +775,19 @@ class ToolNodeWrapper(NodeBaseWidget):
         
 
     def open_substeps(self):
-        dialog = self.SubstepDialog(self.tool, self.substep_defs, self.get_custom_widget())
+        dialog = self.SubstepDialog(self.tool, self.substep_defs, None)
 
         # filling dialog with values(!) stored in the wrapper
-        for name, widget, in dialog.widgets.items():
-            if name in self.widgets:
-                existing_val = self.widgets[name]
+        for name, widget in dialog.widgets.items():
+            if name in self.substep_vals:
+                existing_val = self.substep_vals[name]
 
                 # setting values in the dialog's widgets from existing values
                 if isinstance(widget, QtWidgets.QSlider):
                     widget.setValue(int(existing_val))
                 elif isinstance(widget, QtWidgets.QCheckBox):
                     widget.setChecked(bool(existing_val))
-                elif isinstance(widget, QtWidgets.QTextEdit):
+                elif isinstance(widget, QtWidgets.QPlainTextEdit):
                     widget.setPlainText(str(existing_val))
                 elif isinstance(widget, QtWidgets.QComboBox):
                     index = widget.findText(str(existing_val))
@@ -799,13 +797,13 @@ class ToolNodeWrapper(NodeBaseWidget):
         if dialog.exec() == QtWidgets.QDialog.Accepted:
             for name, widget in dialog.widgets.items():
                 if isinstance(widget, QtWidgets.QSlider):
-                    self.widgets[name] = widget.value()
+                    self.substep_vals[name] = widget.value()
                 elif isinstance(widget, QtWidgets.QCheckBox):
-                    self.widgets[name] = widget.isChecked()
-                elif isinstance(widget, QtWidgets.QTextEdit):
-                    self.widgets[name] = widget.toPlainText()
+                    self.substep_vals[name] = widget.isChecked()
+                elif isinstance(widget, QtWidgets.QPlainTextEdit):
+                    self.substep_vals[name] = widget.toPlainText()
                 elif isinstance(widget, QtWidgets.QComboBox):
-                    self.widgets[name] = widget.currentText()
+                    self.substep_vals[name] = widget.currentText()
             
             for name, check in dialog.nullable_checks.items():
                 self.nullable_checks[name] = check.isChecked()
@@ -848,6 +846,8 @@ class ToolNodeWrapper(NodeBaseWidget):
             else:
                 values[name] = None
 
+        values.update(self.substep_vals)
+
         return values
 
     def set_value(self, val_dict):
@@ -860,7 +860,7 @@ class ToolNodeWrapper(NodeBaseWidget):
                 widget.setValue(val)
             elif isinstance(widget, QtWidgets.QCheckBox):
                 widget.setChecked(val)
-            elif isinstance(widget, QtWidgets.QTextEdit):
+            elif isinstance(widget, QtWidgets.QPlainTextEdit):
                 widget.setPlainText(str(val))
             elif isinstance(widget, QtWidgets.QComboBox):
                 index = widget.findText(str(val))
