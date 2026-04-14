@@ -525,8 +525,8 @@ added ability to share this tool JSON around so that others may import it. Might
 # widget definitions to increase readability and make it easier to add widgets
 #TODO add tooltips to each widget
 
-def slider_widget(name, label, default=1, min=1, max=1, section=None):
-    return {'type': 'slider', 'name': name, 'label': f'{label}: {default}', 'label_template': f'{label}: {{}}', 'default': default, 'need_label': True, 'min': min, 'max': max, 'section' : section }
+def slider_widget(name, label, nullable=False, default=1, min=1, max=1, section=None):
+    return {'type': 'slider', 'name': name, 'label': f'{label}: {default}', 'label_template': f'{label}: {{}}', 'default': default, 'need_label': True, 'min': min, 'max': max, 'nullable' : nullable, 'section' : section }
 def checkbox_widget(name, label, section=None): 
     return {'type': 'checkbox', 'name': name, 'label': label, 'default': False, 'need_label': False, 'section' : section }
 def text_entry_widget(name, label, nullable=False, section=None):
@@ -540,7 +540,7 @@ def combo_box_widget(name, label, default=None, items=[], nullable=False, sectio
 
 
 # common widgets
-threads_slider = slider_widget('threads', 'Number of Threads', 1, max=128)
+threads_slider = slider_widget('threads', 'Number of Threads', min=1, max=128)
 quiet_check = checkbox_widget('quiet', 'Quiet')
 NODE_WIDGETS = {
     'fastqc' : [
@@ -574,7 +574,7 @@ NODE_WIDGETS = {
     # 
     # _illumina clip widgets, in order of position
     # illumina clip checkbox?
-    # fasta_with_adapters(str, None) checkbox?
+    # fasta_with_adapters(str, None) checkbox? (FILE INPUT DIALOG)
     # seed_mismatches(int, None) checkbox? 
     # palindrome_clip_threshold(int, None) checkbox?
     # simple_clip_threshold(int, None) checkbox?
@@ -622,7 +622,12 @@ NODE_WIDGETS = {
         quiet_check,
 
         #illumina clip
-        text_entry_widget('fasta_with_adapters', 'FASTA File Path (CHANGE LATER TO FILE UPLOAD!)', section='substep')
+        text_entry_widget('fasta_with_adapters', 'FASTA File Path (CHANGE LATER TO FILE UPLOAD!)', section='substep'),
+        slider_widget('seed_mismatches', 'Maximum Seed Mismatches', max=100, section='substep'),
+        slider_widget('palindrome_clip_threshold', 'Palindrome Clip Threshold', max=100, section='substep'),
+        slider_widget('simple_clip_threshold', 'Simple Clip Threshold', max=100, section='substep'),
+        slider_widget('min_adapter_length_palindrome', 'Min Adapter Length', nullable=True, max=100, section='substep'),
+        checkbox_widget('keep_both_reads', 'Keep Both Reads?', section='substep')
     ]
 }
 
