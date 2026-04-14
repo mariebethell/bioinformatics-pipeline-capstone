@@ -1,5 +1,5 @@
 import sys
-[sys.path.append(i) for i in ['.', '..']] # Tells Pyhton to search for modules in the parent directories.
+[sys.path.append(i) for i in ['.', '..']] # Tells Python to search for modules in the parent directories.
 
 from shared.graph import Graph, Node
 from backend.tool_registry import ToolRegistry
@@ -8,7 +8,13 @@ from backend.tools.trimmomatic import trimmomatic_tool
 from backend.tools.base import apply_defaults
 from abc import ABC, abstractmethod
 import os
-import shlex
+
+# Extensions have to be concatenated with the process name to form the output channel name
+OUTPUT_CHANNEL_EXTS = {
+    "fastqc": ".out.zip",
+    "trimmomatic": ".out.trimmed_reads",
+    "trinity": ".out.transcript_fasta"
+}
 
 class Pipeline(ABC):
     def __init__(self, graph: Graph, tool_registry):
@@ -129,8 +135,12 @@ class NextflowGenerator:
         )
 
         # Convert list of command parts into a single string for Nextflow
-        command_string = " ".join(shlex.quote(part) for part in command)
-            
+        command_string = ""
+        for part in command:
+            if ' ' in part:
+                part = f'"{part}"'  # Quote parts with spaces
+            command_string += part + " "
+
         return command_string.strip()
     
     def generate_module(self, node: Node) -> str:
@@ -161,44 +171,140 @@ class NextflowGenerator:
 
         return process_name, output_file_path
 
+    def generate_input_parameters(self, node: Node) -> str:
+        """
+        Generate the input parameters for the pipeline script based on the input node.
+        """
+        input_files = node.outputs["reads"]
+        input_param_string = "params.input = [\n"
+        input_param_string += ",\n".join([f'    "{file}"' for file in input_files])
+        input_param_string += "\n]\n"
+        return input_param_string
+
+    def generate_input_channel_str(self) -> str:
+        """
+        Generate the input channel definition for the pipeline script based on the input node.
+        """
+        input_channel_string = "    reads_ch = Channel.fromPath(params.input, checkIfExists: true)\n"
+        input_channel_string += """        .map { f ->
+        def name = f.getName()
+
+        def sample_id = name
+            .replaceAll(/_R?1(_\d+)?\.fastq$/, '')
+            .replaceAll(/_R?2(_\d+)?\.fastq$/, '')
+
+        tuple(sample_id, f  )
+        }
+        .groupTuple()
+        .map { sample_id, files ->
+
+            def files_list = files.toList()
+
+            def r1 = files_list.find { it.getName() ==~ /.*_R?1(_\d+)?\.fastq$/ }
+            def r2 = files_list.find { it.getName() ==~ /.*_R?2(_\d+)?\.fastq$/ }
+
+            def meta = [ id: sample_id ]
+
+            if (r1 && r2) {
+                tuple(meta, [ r1, r2 ])
+            } else {
+                tuple(meta, files_list[0])
+            }
+        }\n"""
+        return input_channel_string
+    
+    def generate_output_channel_str(self, node: Node, tool_alias: str=None) -> str:
+        """
+        Generate the output channel definition for the pipeline script based on the node's outputs.
+        """
+        channel_name = "ch_" + (tool_alias.lower() if tool_alias else node.tool.lower())
+        output_channel_string = f"    {channel_name} = {node.tool.upper()}{OUTPUT_CHANNEL_EXTS.get(node.tool.lower())}\n"
+        if tool_alias:
+            output_channel_string = f"    {channel_name} = {tool_alias}{OUTPUT_CHANNEL_EXTS.get(node.tool.lower())}\n"
+        return output_channel_string
+
+    def generate_nfcore_include_statement(self, node: Node, tool_alias : str=None) -> str:
+        """
+        Given a node, generate the include statement for a nf-core module.
+        """
+        process_name = node.tool.upper()
+        module_path = f"./modules/nf-core/{node.tool}/main"
+        if tool_alias:
+            return f"include {{ {process_name} as {tool_alias} }} from '{module_path}'\n"
+
+        return f"include {{ {process_name} }} from '{module_path}'\n"
+    
+    def generate_execution_block(self, node: Node, tool_alias: str=None) -> str:
+        """
+        Given a node, generate the execution block for a nf-core module.
+        Assumes the module takes a single input channel called "reads_ch" and produces an output channel called "output_ch".
+        """
+        process_name = node.tool.upper()
+
+        if tool_alias:
+            process_name = tool_alias
+
+        if node.prev_node.tool == "input":
+            return f"    {process_name}(reads_ch)\n"
+        else:
+            prev_process_name = node.prev_node.tool.upper()
+            output_channel_name = self.generate_output_channel_str(node.prev_node, tool_alias=prev_process_name if node.prev_node.tool != "input" else None).strip().split()[0]
+            return f"    {process_name}({output_channel_name})\n"
+
+    
     def generate_pipeline(self, graph) -> str:
         """
         Generate the Nextflow pipeline script as a string.
         """
 
-        pipeline_script = "nextflow.enable.dsl=2\n\n"
+        pipeline_script = ""
+        
+        tools_in_graph = {}
+        for node in graph.nodes.values():
+            if node.tool not in tools_in_graph:
+                tools_in_graph[node.tool] = 1
+            else:
+                tools_in_graph[node.tool] += 1
 
-        workflow_header = "workflow {\n"
-        workflow_body = ""
+        alias_counts = {}
 
-        current_channel = None  # tracks output of previous step
-
+        workflow_header = "nextflow.enable.dsl=2\n\n"
+        workflow_body = "\nworkflow {\n\n"
         for node_num, node in graph.nodes.items():
-            # Input node
             if node.tool == "input":
-                input_path = node.outputs['reads'][0]
-                workflow_body += f"    read_ch = Channel.fromPath('{input_path}')\n"
-                current_channel = "read_ch"
-                continue
+                workflow_header += self.generate_input_parameters(node) + "\n"
+                workflow_body += self.generate_input_channel_str() + "\n"
 
-            # Generate module
-            process_name, module_path = self.generate_module(node)
+            tool_alias = None
+            if node.tool != "input":
+                if tools_in_graph[node.tool] > 1:
+                    if node.tool not in alias_counts:
+                        alias_counts[node.tool] = 1
+                    else:
+                        alias_counts[node.tool] += 1
 
-            # include statement
-            pipeline_script += f"include {{ {process_name} }} from '{module_path}'\n"
+                    tool_alias = node.tool.upper() + str(alias_counts[node.tool])
+                    workflow_header += self.generate_nfcore_include_statement(node,tool_alias)
+                else:
+                    workflow_header += self.generate_nfcore_include_statement(node)
+                
+                workflow_body += self.generate_execution_block(node, tool_alias if tools_in_graph[node.tool] > 1 else None)
+                workflow_body += self.generate_output_channel_str(node, tool_alias=tool_alias if tools_in_graph[node.tool] > 1 else None) + "\n"
+            
+            """"
+            if (node.tool == "input"):
+                workflow_header = "workflow {\n"
+                workflow_body += f"    read_ch = Channel.fromPath('{node.outputs['reads'][0]}')\n"
+            if (node.tool != "input"):
+                process_name, module_path = self.generate_module(node) 
+                pipeline_script += f"include {{ {process_name} }} from '{module_path}'\n"
+                
+                workflow_body += f"    {process_name}(read_ch)\n"
 
-            # create variable name for output
-            output_var = f"{node.tool}_{node.node_num}_out"
-
-            # chain execution
-            workflow_body += f"    {output_var} = {process_name}({current_channel})\n"
-
-            # update current channel
-            current_channel = output_var
+            """
 
         workflow_body += "}\n"
-
-        pipeline_script += "\n" + workflow_header + workflow_body
+        pipeline_script += workflow_header + workflow_body
 
         return pipeline_script
     
@@ -211,7 +317,7 @@ if __name__ == "__main__":
 
     node0 = graph.create_node("input")
     node0.outputs = {
-        "reads": ['C:/Users/Marie Bethell/projects/bioinformatics-pipeline-capstone/data/Test01_L001_R1_001.fastq']
+        "reads": ['../data/Test01_L001_R1_001.fastq', '../data/Test01_L001_R2_001.fastq', '../data/Test02_L001_R1_001.fastq', '../data/Test02_L001_R2_001.fastq']
     }
 
     node1 = graph.create_node("fastqc")
@@ -228,12 +334,18 @@ if __name__ == "__main__":
         }
     ]}
 
+    node3 = graph.create_node("fastqc")
+    node3.args = {'threads': 1, 'kmers': 7, 'format': 'fastq'}
+
     graph.add_node(node0, prev=None, next=node1)
     graph.add_node(node1, prev=node0,next=node2)
-    graph.add_node(node2, prev=node1, next=None)
+    graph.add_node(node2, prev=node0, next=node3)
+    graph.add_node(node3, prev=node2, next=None)
 
-    node1.inputs = {'reads': ['/data/Test01-L001_R1_001.fastq']}
-    node2.inputs = {'reads': ['/data/Test01-L001_R1_001.fastq']} # use same input for testing, in reality this would be node1.outputs after resolution
+    node1.inputs = {'reads': ['../data/Test01_L001_R1_001.fastq']} # use same input for testing, in reality this would be node0.outputs after resolution
+    node2.inputs = {'reads': ['../data/Test01_L001_R1_001.fastq']} # use same input for testing, in reality this would be node1.outputs after resolution
+    node3.inputs = {'reads': ['../data/Test01_L001_R1_001.fastq']} # use same input for testing, in reality this would be node2.outputs after resolution
 
     pipeline = pipeline_factory.build_pipeline("nextflow", graph, "input_folder", tool_registry, pipeline_script_path="backend/main.nf")
+    
     pipeline.run_pipeline()
