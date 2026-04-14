@@ -1081,14 +1081,11 @@ class InputNodeWrapper(NodeBaseWidget):
 
         container = QtWidgets.QWidget()
         layout = QtWidgets.QVBoxLayout()
-        
-        # self.label = QtWidgets.QLabel("No file selected")
 
         btn = QtWidgets.QPushButton('Input FASTQ File')
         btn.clicked.connect(self.open_file)
 
         layout.addWidget(btn)
-        # layout.addWidget(self.label)
 
         container.setLayout(layout)
         self.set_custom_widget(container)
@@ -1102,6 +1099,8 @@ class InputNodeWrapper(NodeBaseWidget):
             if files:
                 self.uri = files[0]
                 # self.label.setText(self.uri)
+                if self.node: # updating node property so the uri gets saved
+                    self.node.set_property('file_uri', self.uri)
 
     def get_value(self):
         if not self.uri:
@@ -1120,13 +1119,22 @@ class InputNode(DataNode):
         super().__init__()
         self.add_output('output', color=(0,255, 0))
 
+        self.create_property('file_uri', '')
+
         self.wrapper = InputNodeWrapper(self.view)
 
         self.wrapper.set_name('input_data')
         self.add_custom_widget(self.wrapper)
 
     def get_value(self):
-        return self.wrapper.get_value()
+        uri = self.get_property('file_uri')
+        return {"reads" : [uri]} if uri else {}
+        #return self.wrapper.get_value()
+
+    def set_property(self, name, val, push_undo=True):
+        super(InputNode, self).set_property(name, val, push_undo)
+        if name == 'file_uri' and self.wrapper:
+            self.wrapper.uri = val
 
     
 
