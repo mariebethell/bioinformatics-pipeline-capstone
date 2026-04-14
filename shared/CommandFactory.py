@@ -16,7 +16,7 @@ class CommandFactory:
         """
         Constructs a Command object of the specified subtype and applies the specified parameters
             - Parameters should line up with the fields specified in the API spec/Command.py
-            - Parameters are validated by type and nullability
+            - Parameters are validated against nullability
 
         Args:
             cmd_type (Type representing a class which is derived from the Command class): The type of Command to construct
