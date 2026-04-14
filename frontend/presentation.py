@@ -533,7 +533,8 @@ def text_entry_widget(name, label, nullable=False, section=None):
     return {'type': 'text_entry', 'name': name, 'label': label, 'default': None, 'need_label': False, 'nullable': nullable, 'section' : section } 
 def combo_box_widget(name, label, default=None, items=[], nullable=False, section=None):
     return {'type': 'combo_box', 'name': name, 'label': label, 'default': default, 'need_label': True, 'items': items, 'nullable': nullable, 'section' : section }
-
+def num_input_widget(name, label, step=1, default=1, nullable=False, min=1, max=100, section=None):
+    return {'type': 'num_input', 'name': name, 'label': label, 'step' : step, 'default': default, 'need_label': True, 'min': min, 'max': max, 'nullable' : nullable, 'section' : section }
 
 
 
@@ -612,22 +613,25 @@ NODE_WIDGETS = {
         threads_slider,
         combo_box_widget('mode', 'Mode', items=['SE', 'PE']),
         combo_box_widget('phred', 'Phred', items=['33', '64'], nullable=True),
-        checkbox_widget('trimlog', 'Trimlog'),
-        checkbox_widget('summary', 'Summary'),
-        checkbox_widget('basein', 'Basein'),
-        checkbox_widget('baseout', 'Baseout'),
+        #checkbox_widget('trimlog', 'Trimlog'),
+        #checkbox_widget('summary', 'Summary'),
+        #checkbox_widget('basein', 'Basein'),
+        #checkbox_widget('baseout', 'Baseout'),
         checkbox_widget('validate_pairs', 'Validate Pairs'),
         slider_widget('compress_level', 'Compression Level', max=9),
         combo_box_widget('compression_mode', 'Compression Mode', items=['stream', 'block'], nullable=True),
         quiet_check,
 
-        #illumina clip
+        # illumina clip
         text_entry_widget('fasta_with_adapters', 'FASTA File Path (CHANGE LATER TO FILE UPLOAD!)', section='substep'),
-        slider_widget('seed_mismatches', 'Maximum Seed Mismatches', max=100, section='substep'),
-        slider_widget('palindrome_clip_threshold', 'Palindrome Clip Threshold', max=100, section='substep'),
-        slider_widget('simple_clip_threshold', 'Simple Clip Threshold', max=100, section='substep'),
-        slider_widget('min_adapter_length_palindrome', 'Min Adapter Length', nullable=True, max=100, section='substep'),
-        checkbox_widget('keep_both_reads', 'Keep Both Reads?', section='substep')
+        num_input_widget('seed_mismatches', 'Maximum Seed Mismatches', max=100, section='substep'),
+        num_input_widget('palindrome_clip_threshold', 'Palindrome Clip Threshold', max=100, section='substep'),
+        num_input_widget('simple_clip_threshold', 'Simple Clip Threshold', max=100, section='substep'),
+        num_input_widget('min_adapter_length_palindrome', 'Min Adapter Length', nullable=True, max=100, section='substep'),
+        checkbox_widget('keep_both_reads', 'Keep Both Reads?', section='substep'),
+
+        # leading
+        
     ]
 }
 
@@ -638,6 +642,8 @@ NODE_WIDGETS = {
 #     'combo_box' : create_combo_box,
 #     'checkbox' : create_checkbox,
 # }
+
+
 
 # Node responsible for representing a tool within the pipeline & its wrapper
 #TODO Tooltips
@@ -754,6 +760,16 @@ class ToolNodeWrapper(NodeBaseWidget):
             widget = QtWidgets.QComboBox()
             widget.addItems(widget_def['items'])
 
+        elif w_type == 'num_input':
+            widget = QtWidgets.QSpinBox()
+
+            widget.setMinimum(widget_def['min'])
+            widget.setMaximum(widget_def['max'])
+
+            widget.setSingleStep(widget_def['step'])
+            widget.setValue(w_default)
+            
+
         # handling widget layout
         if widget:
             # creates a space of widgets that are nullable by a checkbox (default nulled)
@@ -788,7 +804,7 @@ class ToolNodeWrapper(NodeBaseWidget):
                 existing_val = self.substep_vals[name]
 
                 # setting values in the dialog's widgets from existing values
-                if isinstance(widget, QtWidgets.QSlider):
+                if isinstance(widget, QtWidgets.QSlider) or isinstance(widget, QtWidgets.QSpinBox):
                     widget.setValue(int(existing_val))
                 elif isinstance(widget, QtWidgets.QCheckBox):
                     widget.setChecked(bool(existing_val))
@@ -799,9 +815,10 @@ class ToolNodeWrapper(NodeBaseWidget):
                     if index >= 0:
                         widget.setCurrentIndex(index)
 
+
         if dialog.exec() == QtWidgets.QDialog.Accepted:
             for name, widget in dialog.widgets.items():
-                if isinstance(widget, QtWidgets.QSlider):
+                if isinstance(widget, QtWidgets.QSlider) or isinstance(widget, QtWidgets.QSpinBox):
                     self.substep_vals[name] = widget.value()
                 elif isinstance(widget, QtWidgets.QCheckBox):
                     self.substep_vals[name] = widget.isChecked()
@@ -809,6 +826,7 @@ class ToolNodeWrapper(NodeBaseWidget):
                     self.substep_vals[name] = widget.toPlainText()
                 elif isinstance(widget, QtWidgets.QComboBox):
                     self.substep_vals[name] = widget.currentText()
+
             
             for name, check in dialog.nullable_checks.items():
                 self.nullable_checks[name] = check.isChecked()
@@ -839,7 +857,7 @@ class ToolNodeWrapper(NodeBaseWidget):
             elif checkbox is False:
                 continue
 
-            if isinstance(widget, QtWidgets.QSlider):
+            if isinstance(widget, QtWidgets.QSlider) or isinstance(widget, QtWidgets.QSpinBox):
                 values[name] = widget.value()
             elif isinstance(widget, QtWidgets.QCheckBox):
                 if(widget.isChecked()): # will not append to list
@@ -861,7 +879,7 @@ class ToolNodeWrapper(NodeBaseWidget):
 
             if widget is None:
                 continue
-            if isinstance(widget, QtWidgets.QSlider):
+            if isinstance(widget, QtWidgets.QSlider) or isinstance(widget, QtWidgets.QSpinBox):
                 widget.setValue(val)
             elif isinstance(widget, QtWidgets.QCheckBox):
                 widget.setChecked(val)
