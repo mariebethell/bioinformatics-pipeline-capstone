@@ -1009,12 +1009,7 @@ class ToolNode(BaseNode):
         """
         self.add_input('input', color=(0, 255, 0))
         self.add_output('output', color=(0, 0, 255))
-        
-    @property
-    def view(self):
-        if self._view is None:
-            self._view = ResizableNodeItem(self.NODE_NAME)
-        return self._view
+
 
     def build_widgets(self, tool):
         if not tool or self.wrapper is not None:
