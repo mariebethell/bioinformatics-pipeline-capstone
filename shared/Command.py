@@ -11,7 +11,7 @@ from shared import APIStatus
 
 """
 For future devs adding new commands - type annotations are REQUIRED for the serialization system to work properly. Each field MUST have an annotation or they will be ignored by the serializer
-    First index of the annotation object should be the field's type (or object for any), second field should be a Nullable class which defines if the field is allowed to be None/null
+    First index of the annotation object should be the field's type, second field should be a Nullable class which defines if the field is allowed to be None/null
 
 """
 
@@ -41,9 +41,11 @@ class Command:
 
                 # Check if all fields are present in the obj, or if not are the missing ones allowed to be missing
                 if not hasattr(self, field) and not field_nullable.is_nullable:
+                    print(f"Command {type(self)} failed validation due to missing non-nullable field: {field}")
                     return False
                 
                 if getattr(self, field) is None and not field_nullable.is_nullable:
+                    print(f"Command {type(self)} failed validation due to None value in non-nullable field {field}")
                     return False
         
         return True
@@ -62,7 +64,7 @@ class ClientConnect(Command):
 
 @dataclass
 class ClientConnectResponse(Response):
-    ACTIVE_PIPELINE_UUID: Annotated["graph.StageState", Nullable(True)] = None
+    ACTIVE_PIPELINE_UUID: Annotated[uuid.UUID, Nullable(True)] = None
 
 @dataclass
 class GetPipeline(Command):
@@ -154,7 +156,7 @@ class GetArtifactDownloadResponse(Response):
 @dataclass
 class GraphUIUpdate(Command):
     PIPELINE_ID: Annotated[uuid.UUID, Nullable(False)] = None
-    UPDATES: Annotated[dict, Nullable(False)] = None
+    UPDATES: Annotated[dict[int, "graph.StageState"], Nullable(False)] = None
 
 
 ###########################################################
@@ -170,5 +172,5 @@ class OnStageComplete(Command):
 class OnPipelineError(Command):
     pipeline_id: Annotated[uuid.UUID, Nullable(False)] = None
     stage_num: Annotated[int, Nullable(False)] = None
-    error: Annotated[object, Nullable(False)] = None
+    error: Annotated["APIStatus.APIStatus", Nullable(False)] = None
     

@@ -6,7 +6,8 @@ import uuid
 import ipaddress
 
 from typing import Type, get_args, ForwardRef
-from types import UnionType
+from types import UnionType, GenericAlias
+from enum import Enum
 
 from shared import Command
 from shared import graph
@@ -61,7 +62,26 @@ class Serializer:
                     raise ValueError(f"Command type {type(cmd)} has malformed annotations for field {field}. First annotation should be object type, not Nullable")
                 
                 if (type(sub_obj) is not sub_obj_type and sub_obj is not None):
-                    raise TypeError(f"Actual field type does not match specified type by annotation for command {type(cmd)}, field {field}. Expected type {sub_obj_type} but got {type(sub_obj)}")
+                    # This block deals with key/val type annotations for dicts. Patch to fix failed test for serialization/deserialization of GraphUIUpdate Commands
+                    # Basically, the serializer can't deal with custom types which are nested in other objects. This patches that specifically for StageStates in dictionaries
+                    if isinstance(sub_obj_type, GenericAlias) and isinstance(sub_obj, dict): # Type may refer to dictionary key/val type and we have a dict
+                            if len(sub_obj) > 0: # Just let it through if its an empty dict
+                                types = get_args(sub_obj_type)
+                                if len(types) == 2: # Annotation likely refers to key/val types
+                                    # Expected key/val types
+                                    key_type = Serializer._unforward_ref(types[0])
+                                    val_type = Serializer._unforward_ref(types[1])
+                                    
+                                    # Measure actual key/val types
+                                    act_key = next(iter(sub_obj.keys())) 
+                                    act_val = next(iter(sub_obj.values()))
+                                    
+                                    # Do they match?
+                                    if not isinstance(act_key, key_type) or not isinstance(act_val, val_type):
+                                        raise TypeError(f"Actual field type does not match specified type by annotation for command {type(cmd)}, field {field}, dict. Expected dict key type {key_type}, val type {val_type} but got {type(act_key)}, {type(act_val)}")
+                                    
+                    else:
+                        raise TypeError(f"Actual field type does not match specified type by annotation for command {type(cmd)}, field {field}. Expected type {sub_obj_type} but got {type(sub_obj)}")
 
                 if sub_obj is not None:
                     if sub_obj_type is graph.Graph:
@@ -77,12 +97,33 @@ class Serializer:
 
                     elif sub_obj_type is APIStatus.APIStatus:
                         proto_obj[field] = sub_obj.value # is int
+                        
+                    elif sub_obj_type is graph.StageState:
+                        proto_obj[field] = sub_obj.value # is int
 
                     elif sub_obj_type is datetime.datetime:
                         proto_obj[field] = sub_obj.isoformat()
 
                     elif sub_obj_type is ipaddress.IPv4Address or sub_obj_type is ipaddress.IPv6Address:
                         proto_obj[field] = str(sub_obj)
+                        
+                    elif isinstance(sub_obj_type, GenericAlias): # Patch to fix failed test for serialization/deserialization of GraphUIUpdate Commands
+                        try:
+                            kvTypes = get_args(sub_obj_type)
+                            if kvTypes is not None:
+                                try:
+                                    valType = Serializer._unforward_ref(kvTypes[1])
+                                    if valType is graph.StageState:
+                                        for k, v in sub_obj.items():
+                                            sub_obj[k] = v.value
+                                    
+                                except IndexError:
+                                    pass # No val annotation, nothing to do
+                            
+                        except AttributeError:
+                            pass # No annotations, nothing to do
+                            
+                        proto_obj[field] = sub_obj
 
                     else:
                         proto_obj[field] = sub_obj # Deep copy from earlier makes this safe
@@ -151,18 +192,52 @@ class Serializer:
                 
                 elif expected_field_type is APIStatus.APIStatus:
                     reconstructedVal = APIStatus.APIStatus(val)
+                    
+                elif expected_field_type is graph.StageState:
+                    reconstructedVal = graph.StageState(val)
 
                 elif expected_field_type is uuid.UUID:
                     reconstructedVal = uuid.UUID(val)
 
                 elif expected_field_type is datetime.datetime:
                     reconstructedVal = datetime.datetime.fromisoformat(val)
+                    
+                elif expected_field_type is int:
+                    if type(val) is str: # json.dumps sometimes casts ints to strs. This fixes that
+                        try:
+                            reconstructedVal = int(val)
+                            
+                        except ValueError | TypeError:
+                            pass
 
                 elif expected_field_type is UnionType:
                     for type_option in expected_field_type:
                         if type_option is ipaddress.IPv4Address or type_option is ipaddress.IPv6Address:
                             reconstructedVal = ipaddress.ip_address(val)
                             break
+                            
+                elif isinstance(expected_field_type, GenericAlias): # Patch to fix failed test for serialization/deserialization of GraphUIUpdate Commands
+                    try:
+                        kv_types = get_args(expected_field_type)
+                        if kv_types is not None:
+                            try:
+                                key_type = Serializer._unforward_ref(kv_types[0])
+                                val_type = Serializer._unforward_ref(kv_types[1])
+                                
+                                if key_type is int and val_type is graph.StageState:
+                                    reconstructedVal = {}
+                                    try:
+                                        for k, v in val.items():
+                                            new_key = int(k)
+                                            reconstructedVal[new_key] = graph.StageState(v)
+                                            
+                                    except ValueError | TypeError:
+                                        raise ValueError("Failed to deserialize nested dict as dict[int, StageState]")
+                                
+                            except IndexError:
+                                pass # No val annotation, nothing to do
+                    except AttributeError:
+                        pass # No annotations, nothing to do
 
                 # else assume val is already good to go
 
@@ -262,9 +337,13 @@ class Serializer:
             ValueError if there is an incongruity between node_nums assigned to nodes and the node_num stored within that node
             ValueError if Node data is malformed
             ValueError if Node neighbor references are dangling
-            TypeError if a field in the supplied dict has the incorrect type for the field it seeks to populate in the Graph
+            TypeError if a field in the supplied dict has the incorrect type for the field it seeks to populate in the Graph]
+            TypeError if graph_data is not a dictionary
 
         """
+
+        if not isinstance(graph_data, dict):
+            raise TypeError(f"graph_data must be a dictionary, given {type(graph_data)}")
 
         required_keys = {'nodes', 'next_id'}
         if len(required_keys.intersection(graph_data.keys())) != len(required_keys):
@@ -336,6 +415,13 @@ class Serializer:
             The Type object which the ForwardRef refers to
 
         """
+        
+        if isinstance(ref, Type):
+            return ref
+            
+        elif isinstance(ref, str):
+            if ref in ["graph.StageState", "StageState"]: # Yes, I hate this too
+                return graph.StageState
 
         return ref._evaluate(globals(), locals(), recursive_guard=frozenset()) # TODO find a less nasty way to deal with forward type refs
         
