@@ -624,13 +624,44 @@ NODE_WIDGETS = {
 
         # illumina clip
         text_entry_widget('fasta_with_adapters', 'FASTA File Path (CHANGE LATER TO FILE UPLOAD!)', section='substep'),
-        num_input_widget('seed_mismatches', 'Maximum Seed Mismatches', max=100, section='substep'),
-        num_input_widget('palindrome_clip_threshold', 'Palindrome Clip Threshold', max=100, section='substep'),
-        num_input_widget('simple_clip_threshold', 'Simple Clip Threshold', max=100, section='substep'),
-        num_input_widget('min_adapter_length_palindrome', 'Min Adapter Length', nullable=True, max=100, section='substep'),
+        num_input_widget('seed_mismatches', 'Maximum Seed Mismatches', section='substep'),
+        num_input_widget('palindrome_clip_threshold', 'Palindrome Clip Threshold', section='substep'),
+        num_input_widget('simple_clip_threshold', 'Simple Clip Threshold', section='substep'),
+        num_input_widget('min_adapter_length_palindrome', 'Min Adapter Length', nullable=True, section='substep'),
         checkbox_widget('keep_both_reads', 'Keep Both Reads?', section='substep'),
 
         # leading
+        num_input_widget('leading', 'Trim Leading Below: ', section='substep'),
+
+        # trailing
+        num_input_widget('trailing', 'Trim Trailing Below: ', section='substep'),
+
+        # head_crop
+        num_input_widget('head_crop', 'Crop # from start of read:', section='substep'),
+
+        # tail_crop
+        num_input_widget('trail_crop', 'Trim tail', section='substep'),
+
+        # crop
+        num_input_widget('crop', 'Crop reads to this length: ', section='substep'),
+
+        # sliding window
+        num_input_widget('sliding_window_size', 'Sliding Window Size: ', section='substep'),
+        num_input_widget('required_quality', 'Minimum average quality required in the window: ', section='substep'),
+
+        # max info
+        num_input_widget('target_length', 'Target read length: ', section='substep'),
+        slider_widget('strictness', 'Strictness value', default=0.0, min=0.0, max=1.0, section='substep'),
+
+        # min_len, max_len, avg_qual
+        num_input_widget('min_len', 'Discard reads shorter than this length: ', section='substep'),
+        num_input_widget('max_len', 'Discard reads longer than this length: ', section='substep'),
+        num_input_widget('avg_qual', 'Discard reads with average quality below: ', section='substep'),
+
+        # base_count widgets
+        text_entry_widget('bases', 'Bases to count: ', section='substep'),
+        num_input_widget('min_count', 'Minimum allowed count: ', nullable=True, section='substep'),
+        num_input_widget('max_count', 'Maximum allowed count: ', nullable=True, section='substep')
         
     ]
 }
