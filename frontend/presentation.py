@@ -545,6 +545,24 @@ def num_input_widget(name, label, step=1, default=1, nullable=False, min=1, max=
 # common widgets
 threads_slider = slider_widget('threads', 'Number of Threads', min=1, max=128)
 quiet_check = checkbox_widget('quiet', 'Quiet')
+
+SECTION_CONFIGS = {
+    'trimmomatic': {
+        'ILLUMINACLIP': {'label': 'Illumina Clip'},
+        'LEADING': {'label': 'Leading'},
+        'TRAILING': {'label': 'Trailing'},
+        'HEADCROP': {'label': 'Head Crop'},
+        'TAILCROP': {'label': 'Tail Crop'},
+        'CROP': {'label': 'Crop'},
+        'SLIDINGWINDOW': {'label': 'Sliding Window'},
+        'MAXINFO': {'label': 'Max Info'},
+        'MINLEN': {'label': 'Min Length'},
+        'MAXLEN': {'label': 'Max Length'},
+        'AVGQUAL': {'label': 'Avg Quality'},
+        'BASECOUNT': {'label': 'Base Count'}
+    }
+}
+
 NODE_WIDGETS = {
     'fastqc' : [
         threads_slider,
@@ -625,57 +643,48 @@ NODE_WIDGETS = {
         quiet_check,
 
         # illumina clip
-        text_entry_widget('fasta_with_adapters', 'FASTA File Path (CHANGE LATER TO FILE UPLOAD!)', section='substep'),
-        num_input_widget('seed_mismatches', 'Maximum Seed Mismatches', section='substep'),
-        num_input_widget('palindrome_clip_threshold', 'Palindrome Clip Threshold', section='substep'),
-        num_input_widget('simple_clip_threshold', 'Simple Clip Threshold', section='substep'),
-        num_input_widget('min_adapter_length_palindrome', 'Min Adapter Length', nullable=True, section='substep'),
-        checkbox_widget('keep_both_reads', 'Keep Both Reads?', section='substep'),
+        text_entry_widget('fasta_with_adapters', 'FASTA File Path (CHANGE LATER TO FILE UPLOAD!)', section='ILLUMINACLIP'),
+        num_input_widget('seed_mismatches', 'Maximum Seed Mismatches', section='ILLUMINACLIP'),
+        num_input_widget('palindrome_clip_threshold', 'Palindrome Clip Threshold', section='ILLUMINACLIP'),
+        num_input_widget('simple_clip_threshold', 'Simple Clip Threshold', section='ILLUMINACLIP'),
+        num_input_widget('min_adapter_length_palindrome', 'Min Adapter Length', nullable=True, section='ILLUMINACLIP'),
+        checkbox_widget('keep_both_reads', 'Keep Both Reads?', section='ILLUMINACLIP'),
 
         # leading
-        num_input_widget('leading', 'Trim Leading Below: ', section='substep'),
+        num_input_widget('leading', 'Trim Leading Below: ', section='LEADING'),
 
         # trailing
-        num_input_widget('trailing', 'Trim Trailing Below: ', section='substep'),
+        num_input_widget('trailing', 'Trim Trailing Below: ', section='TRAILING'),
 
         # head_crop
-        num_input_widget('head_crop', 'Crop # from start of read:', section='substep'),
+        num_input_widget('head_crop', 'Crop # from start of read:', section='HEADCROP'),
 
         # tail_crop
-        num_input_widget('trail_crop', 'Trim tail', section='substep'),
+        num_input_widget('trail_crop', 'Trim tail', section='TAILCROP'),
 
         # crop
-        num_input_widget('crop', 'Crop reads to this length: ', section='substep'),
+        num_input_widget('crop', 'Crop reads to this length: ', section='CROP'),
 
         # sliding window
-        num_input_widget('sliding_window_size', 'Sliding Window Size: ', section='substep'),
-        num_input_widget('required_quality', 'Minimum average quality required in the window: ', section='substep'),
+        num_input_widget('sliding_window_size', 'Sliding Window Size: ', section='SLIDINGWINDOW'),
+        num_input_widget('required_quality', 'Minimum average quality required in the window: ', section='SLIDINGWINDOW'),
 
         # max info
-        num_input_widget('target_length', 'Target read length: ', section='substep'),
-        slider_widget('strictness', 'Strictness value', default=0.0, min=0.0, max=1.0, section='substep'),
+        num_input_widget('target_length', 'Target read length: ', section='MAXINFO'),
+        slider_widget('strictness', 'Strictness value', default=0.0, min=0.0, max=1.0, section='MAXINFO'),
 
         # min_len, max_len, avg_qual
-        num_input_widget('min_len', 'Discard reads shorter than this length: ', section='substep'),
-        num_input_widget('max_len', 'Discard reads longer than this length: ', section='substep'),
-        num_input_widget('avg_qual', 'Discard reads with average quality below: ', section='substep'),
+        num_input_widget('min_len', 'Discard reads shorter than this length: ', section='MINLEN'),
+        num_input_widget('max_len', 'Discard reads longer than this length: ', section='MAXLEN'),
+        num_input_widget('avg_qual', 'Discard reads with average quality below: ', section='AVGQUAL'),
 
         # base_count widgets
-        text_entry_widget('bases', 'Bases to count: ', section='substep'),
-        num_input_widget('min_count', 'Minimum allowed count: ', nullable=True, section='substep'),
-        num_input_widget('max_count', 'Maximum allowed count: ', nullable=True, section='substep')
+        text_entry_widget('bases', 'Bases to count: ', section='BASECOUNT'),
+        num_input_widget('min_count', 'Minimum allowed count: ', nullable=True, section='BASECOUNT'),
+        num_input_widget('max_count', 'Maximum allowed count: ', nullable=True, section='BASECOUNT')
         
     ]
 }
-
-# TODO come back to
-# WIDGET_FACTORY = {
-#     'slider' : create_slider,
-#     'text_entry' : create_text_entry,
-#     'combo_box' : create_combo_box,
-#     'checkbox' : create_checkbox,
-# }
-
 
 
 # Node responsible for representing a tool within the pipeline & its wrapper
@@ -690,8 +699,10 @@ class ToolNodeWrapper(NodeBaseWidget):
         self.widgets = {}
         self.mutable_labels = {}
         self.nullable_checks = {} # certain widgets can be nullable. this dictionary maps checkboxes to the nullable widgets
+
         self.substep_defs = []
         self.substep_vals = {}
+        self.section_states = {}
 
 
         if not tool:
@@ -713,7 +724,8 @@ class ToolNodeWrapper(NodeBaseWidget):
         # building widgets dynamically
         for widget_def in NODE_WIDGETS[tool]:
             # if it is a substep, we save it for the substep dialog and continue
-            if widget_def.get('section') == 'substep':
+            section = widget_def.get('section')
+            if section:
                 self.substep_defs.append(widget_def)
                 continue
 
@@ -750,8 +762,9 @@ class ToolNodeWrapper(NodeBaseWidget):
         container.setLayout(layout)
         self.set_custom_widget(container)
 
+
     @staticmethod
-    def build_widget_from_def(widget_def, parent_layout, update_callback=None):
+    def build_widget_from_def(widget_def, parent_layout, update_callback=None, widget_section=None):
         """
         Helper static function to build widgets in both the wrapper and subset dialog,
         given a layout and widget definition
@@ -808,6 +821,7 @@ class ToolNodeWrapper(NodeBaseWidget):
             # creates a space of widgets that are nullable by a checkbox (default nulled)
             if nullable:
                 checkbox = QtWidgets.QCheckBox()
+                
                 widget.setEnabled(False)
                 checkbox.toggled.connect(widget.setEnabled)
 
@@ -850,6 +864,8 @@ class ToolNodeWrapper(NodeBaseWidget):
 
 
         if dialog.exec() == QtWidgets.QDialog.Accepted:
+
+            # saving widget values
             for name, widget in dialog.widgets.items():
                 if isinstance(widget, QtWidgets.QSlider) or isinstance(widget, QtWidgets.QSpinBox):
                     self.substep_vals[name] = widget.value()
@@ -860,7 +876,13 @@ class ToolNodeWrapper(NodeBaseWidget):
                 elif isinstance(widget, QtWidgets.QComboBox):
                     self.substep_vals[name] = widget.currentText()
 
-            
+            # storing section states
+            self.section_states = {
+                section: data['checkbox'].isChecked()
+                for section, data in dialog.sections.items()
+            }
+
+            # retaining nullable widgets
             for name, check in dialog.nullable_checks.items():
                 self.nullable_checks[name] = check.isChecked()
 
@@ -902,7 +924,19 @@ class ToolNodeWrapper(NodeBaseWidget):
             else:
                 values[name] = None
 
-        values.update(self.substep_vals)
+        #values.update(self.substep_vals)
+
+        for name, val in self.substep_vals.items():
+            widget_def = next((w for w in self.substep_defs if w['name'] == name), None)
+
+            if widget_def:
+                section = widget_def.get('section')
+
+                if section:
+                    if not self.section_states.get(section, False):
+                        continue
+            
+            values[name] = val
 
         return values
 
@@ -951,38 +985,113 @@ class ToolNodeWrapper(NodeBaseWidget):
             self.setWindowTitle(f'{title} Settings')
             self.setMinimumWidth(400)
 
-            layout = QtWidgets.QVBoxLayout(self)
-            layout.setContentsMargins(5, 5, 5, 5)
+            layout = QtWidgets.QGridLayout(self)
+            layout.setContentsMargins(5,5,5,5)
+            layout.setHorizontalSpacing(10)
+            layout.setVerticalSpacing(8)
 
             self.widgets = {}
             self.nullable_checks = {}
             self.mutable_labels = {}
-            
+            self.sections = {}
+            section_layouts = {}
+
+            tool_sections = SECTION_CONFIGS.get(title, {})
+
+            section_layouts = {}
+
+            row = 0
+
             for widget_def in widgets_def:
+                section = widget_def.get('section')
+
+                # section handling
+                if section:
+                    if section not in section_layouts:
+                        section_container = QtWidgets.QWidget()
+                        section_box = QtWidgets.QVBoxLayout(section_container)
+                        section_box.setContentsMargins(5,5,5,5)
+
+                        section_container.setStyleSheet('background-color: #E3E3E3;')
+
+                        config = tool_sections.get(section, {})
+                        sec_label = config.get('label', section)
+        
+
+                        checkbox = QtWidgets.QCheckBox(f'Enable {sec_label}')
+                        checkbox.setChecked(False)
+
+
+                        
+                        inner_widget = QtWidgets.QWidget()
+                        inner_layout = QtWidgets.QHBoxLayout(inner_widget)
+                        inner_widget.setLayout(inner_layout)
+                        inner_widget.setEnabled(False)
+
+                        # checkbox.toggled.connect(
+                        #     lambda state, layout=inner : self.toggle_section(layout , state)
+                        # )
+                        def make_toggle(w):
+                            return lambda state: w.setEnabled(state)
+                        
+                        checkbox.toggled.connect(make_toggle(inner_widget))
+
+                        section_box.addWidget(checkbox)
+                        section_box.addWidget(inner_widget)
+
+                        layout.addWidget(section_container, row, 0, 1, 2)
+                        row += 1
+
+                        self.sections[section] = {
+                            'checkbox' : checkbox,
+                            'layout' : inner_layout
+                        }
+
+                        section_layouts[section] = inner_layout
+                    
+                    parent_layout = section_layouts[section]
+                else:
+                    parent_layout = None
                 
-                widget, checkbox, label = ToolNodeWrapper.build_widget_from_def(widget_def, layout, self.update_label_local)
+                # building widgets
+                widget, checkbox, label = ToolNodeWrapper.build_widget_from_def(widget_def, parent_layout, self.update_label_local)
 
                 if widget:
-                    name = widget_def['name']
-                    self.widgets[name] = widget
+                    w_name = widget_def['name']
+                    self.widgets[w_name] = widget
 
-                    # if the section is nullable
                     if checkbox:
-                        self.nullable_checks[name] = checkbox
-
-                    # if there is a slider we need a mutable label
+                        self.nullable_checks[w_name] = checkbox
+                    
                     if label and widget_def['type'] == 'slider':
-                        self.mutable_labels[name] = (label, widget_def.get('label_template'))
-
-            self.done_btn = QtWidgets.QPushButton('done')
+                        self.mutable_labels[w_name] = (label, widget_def)
+                    
+                    if not section:
+                        layout.addWidget(label if label else QtWidgets.QLabel(''), row, 0)
+                        layout.addWidget(widget, row, 1)
+                        row += 1
+                
+            self.done_btn = QtWidgets.QPushButton('Save Changes')
+            self.done_btn.setStyleSheet(
+                'background-color: green; color: white;'
+            )
             self.done_btn.clicked.connect(self.accept)
-            layout.addWidget(self.done_btn)
-        
+            layout.addWidget(self.done_btn, row, 0, 1, 2)
+    
         def update_label_local(self, name, val):
             data = self.mutable_labels.get(name)
             if data:
                 label, template = data
                 label.setText(template.format(val))
+            
+        def toggle_section(self, layout, enabled):
+            for idx in range(layout.count()):
+                item = layout.itemAt(idx)
+
+                if item.widget():
+                    item.widget().setEnabled(enabled)
+                elif item.layout():
+                    self.toggle_section(item.layout(), enabled)
                 
 
 class ToolNode(BaseNode):
@@ -1020,7 +1129,7 @@ class ToolNode(BaseNode):
         self.set_property('tool_type', tool)
         
         self.wrapper.set_name('_delete') # junk
-        #self.set_property('tool_data', self.wrapper.get_value())
+
         self.add_custom_widget(self.wrapper)
 
         if self.cache:
