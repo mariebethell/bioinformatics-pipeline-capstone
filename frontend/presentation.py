@@ -547,6 +547,9 @@ threads_slider = slider_widget('threads', 'Number of Threads', min=1, max=128)
 quiet_check = checkbox_widget('quiet', 'Quiet')
 
 SECTION_CONFIGS = {
+"""
+A dictionary of sub section configs for tools that require them
+"""
     'trimmomatic': {
         'ILLUMINACLIP': {'label': 'Illumina Clip'},
         'LEADING': {'label': 'Leading'},
@@ -573,62 +576,6 @@ NODE_WIDGETS = {
         text_entry_widget('contaminants', 'Contaminants', True),
         combo_box_widget('format', 'File Format', items=['fastq', 'sam', 'bam'])
     ],
-    #TRIMMOMATIC WIDGET NOTES
-    # arg(type, default, vals)
-    # notes:
-    # 
-    # _global argument widgets
-    # mode(str, 'SE', SE OR PE) dropdown
-    # threads(int, 0, 0-128) slider
-    # phred(str, None, 33 or 64) dropdown, nullable
-    # trimlog(str, None) checkbox? nullable delete
-    # summary(str, None) checkbox? nullable delete
-    # basein(str, None) checkbox? nullable delete
-    # baseout(str, None) checkbox? nullable delete
-    # validate_pairs(bool, false) checkbox
-    # compress_level(int, 1, 1-9) slider
-    # compression_mode(str, None, stream or block) dropdown, nullable needs checkbox
-    # quiet(bool, false) checkbox
-    # version unnecessary?
-    # step argument widgets
-    # will have to ask Ethan if this is the right way to go about it
-    # 
-    # _illumina clip widgets, in order of position
-    # illumina clip checkbox?
-    # fasta_with_adapters(str, None) checkbox? (FILE INPUT DIALOG)
-    # seed_mismatches(int, None) checkbox? 
-    # palindrome_clip_threshold(int, None) checkbox?
-    # simple_clip_threshold(int, None) checkbox?
-    # min_adapter_length_palindrome(int, 8, 1-inf) slider? or text entry? nullable needs check box
-    # keep_both_reads (bool, False) checkbox nullable
-    #
-    #
-    # leading(int, None, 0-inf) text entry
-    # trailing(int, None, 0-inf) text entry
-    # head_crop(int, None, 0-inf) text entry
-    # tail_crop(int, None 0-inf) text entry
-    # crop(int, None, 1-inf) text entry
-    # 
-    # _sliding window widgets, order of pos
-    # window_size(int, None, 1-inf) text entry
-    # required_quality(int, None, 0-inf) text entry
-    #
-    # _max_info widgets, order of pos
-    # parameters(int, None, 1) text entry
-    # strictness(float, 0.0, 0.0-1.0) slider
-    #
-    # min_len(int, None, 1-inf) text entry
-    # max_len(int, None, 1-inf) text entry
-    # avg_qual(int, None, 1-inf) text entry
-    #
-    # _base_count widgets, in order of pos
-    # bases(str, None, None) checkbox?
-    # min_count(int, None, 0-inf) text entry nullable
-    # max_count(int, None, 0-inf) text entry nullable
-
-    #order: type, name, label, default, need_label, extra*
-    #sliders and combo boxes need labels
-    # nullable checkboxes always after parent widget in dictionary order
     'trimmomatic' : [
         threads_slider,
         combo_box_widget('mode', 'Mode', items=['SE', 'PE']),
@@ -683,6 +630,11 @@ NODE_WIDGETS = {
         num_input_widget('min_count', 'Minimum allowed count: ', nullable=True, section='BASECOUNT'),
         num_input_widget('max_count', 'Maximum allowed count: ', nullable=True, section='BASECOUNT')
         
+    ],
+    'trinity' : [
+        combo_box_widget('seq_type', 'Sequence Type', items=['fq', 'fa']),
+        slider_widget('cpu', "Number of CPU Threads", max=128),
+        slider_widget('max_memory', 'Memory to Use (GB)', max=32)
     ]
 }
 
@@ -968,7 +920,6 @@ class ToolNodeWrapper(NodeBaseWidget):
 
     def update_label(self, w_name, val):
         data = self.mutable_labels.get(w_name)
-        print(f'data at toolnode {data}')
 
         if not data:
             print("Problem getting mutable label & template")
