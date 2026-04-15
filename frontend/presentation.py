@@ -862,6 +862,10 @@ class ToolNodeWrapper(NodeBaseWidget):
                     if index >= 0:
                         widget.setCurrentIndex(index)
 
+        for section, data in dialog.sections.items():
+            if section in self.section_states:
+                data['checkbox'].setChecked(self.section_states[section])
+                data['layout'].parentWidget().setEnabled(self.section_states[section])
 
         if dialog.exec() == QtWidgets.QDialog.Accepted:
 
@@ -884,7 +888,7 @@ class ToolNodeWrapper(NodeBaseWidget):
 
             # retaining nullable widgets
             for name, check in dialog.nullable_checks.items():
-                self.nullable_checks[name] = check.isChecked()
+                self.nullable_checks[name] = check
 
     def get_value(self):
         values = {} # this set will contain the values returned, in order of: slider, checkboxes, strings, then combo box
