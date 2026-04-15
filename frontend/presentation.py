@@ -671,7 +671,7 @@ NODE_WIDGETS = {
 
         # max info
         num_input_widget('target_length', 'Target read length: ', section='MAXINFO'),
-        slider_widget('strictness', 'Strictness value', default=0.0, min=0.0, max=1.0, section='MAXINFO'),
+        slider_widget('strictness', 'Strictness value', default=0, min=0, max=1, section='MAXINFO'),
 
         # min_len, max_len, avg_qual
         num_input_widget('min_len', 'Discard reads shorter than this length: ', section='MINLEN'),
@@ -964,6 +964,7 @@ class ToolNodeWrapper(NodeBaseWidget):
 
     def update_label(self, w_name, val):
         data = self.mutable_labels.get(w_name)
+        print(f'data at toolnode {data}')
 
         if not data:
             print("Problem getting mutable label & template")
@@ -1028,9 +1029,6 @@ class ToolNodeWrapper(NodeBaseWidget):
                         inner_widget.setLayout(inner_layout)
                         inner_widget.setEnabled(False)
 
-                        # checkbox.toggled.connect(
-                        #     lambda state, layout=inner : self.toggle_section(layout , state)
-                        # )
                         def make_toggle(w):
                             return lambda state: w.setEnabled(state)
                         
@@ -1078,11 +1076,18 @@ class ToolNodeWrapper(NodeBaseWidget):
             self.done_btn.clicked.connect(self.accept)
             layout.addWidget(self.done_btn, row, 0, 1, 2)
     
-        def update_label_local(self, name, val):
-            data = self.mutable_labels.get(name)
-            if data:
-                label, template = data
-                label.setText(template.format(val))
+        def update_label_local(self, w_name, val):
+            data = self.mutable_labels.get(w_name)
+            print(data)
+
+            if not data:
+                print('Problem getting mutable label & template in SubstepDialog')
+            
+            label, template = data
+            template2 = template['label_template'] # unsure why but a dict is being passed to template, brute forcing grabbing the label template for now
+
+            if template:
+                label.setText(template2.format(val))
             
         def toggle_section(self, layout, enabled):
             for idx in range(layout.count()):
