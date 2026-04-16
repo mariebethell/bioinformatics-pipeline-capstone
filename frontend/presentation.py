@@ -575,7 +575,6 @@ class HomeView(QtWidgets.QWidget):
 
 
 
-
         layout.addWidget(title)
         layout.addWidget(self.onedrive_status)
         layout.addWidget(onedrive)
@@ -1022,8 +1021,10 @@ class ToolNodeWrapper(NodeBaseWidget):
             
     def delete_node(self): # TODO add a warning pop up for deleting a node
         if self.node is not None:
-            graph = self.node.graph
-            graph.delete_nodes([self.node])
+            warning_dialog = PipelineWorkbenchVC.PopupWindow(parent=None, type='warn', warn_msg='Warning! \nAll unsaved Node data and parameters will be lost!', btn_label=f'Delete {self.tool} Node')
+            if warning_dialog.exec() == QtWidgets.QDialog.Accepted:
+                graph = self.node.graph
+                graph.delete_nodes([self.node])
 
     def update_label(self, w_name, val):
         data = self.mutable_labels.get(w_name)
