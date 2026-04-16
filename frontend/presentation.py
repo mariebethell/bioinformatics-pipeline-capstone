@@ -1019,7 +1019,7 @@ class ToolNodeWrapper(NodeBaseWidget):
                 if index >= 0:
                     widget.setCurrentIndex(index)
             
-    def delete_node(self): # TODO add a warning pop up for deleting a node
+    def delete_node(self): 
         if self.node is not None:
             warning_dialog = PipelineWorkbenchVC.PopupWindow(parent=None, type='warn', warn_msg='Warning! \nAll unsaved Node data and parameters will be lost!', btn_label=f'Delete {self.tool} Node')
             if warning_dialog.exec() == QtWidgets.QDialog.Accepted:
@@ -1125,7 +1125,7 @@ class ToolNodeWrapper(NodeBaseWidget):
                         self.nullable_checks[w_name] = checkbox
                     
                     if label and widget_def['type'] == 'slider':
-                        self.mutable_labels[w_name] = (label, widget_def)
+                        self.mutable_labels[w_name] = (label, widget_def.get('label_template'))
                     
                     if not section:
                         layout.addWidget(label if label else QtWidgets.QLabel(''), row, 0)
@@ -1146,10 +1146,9 @@ class ToolNodeWrapper(NodeBaseWidget):
                 print('Problem getting mutable label & template in SubstepDialog')
             
             label, template = data
-            template2 = template['label_template'] # unsure why but a dict is being passed to template, brute forcing grabbing the label template for now
 
             if template:
-                label.setText(template2.format(val))
+                label.setText(template.format(val))
             
         def toggle_section(self, layout, enabled):
             for idx in range(layout.count()):
