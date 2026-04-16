@@ -483,6 +483,42 @@ class PipelineWorkbenchVC(PanelController):
 
 #### VIEW SECTION ####
 
+# background_color = '#757575'
+# text_color = '#FFFFFF'
+
+title_text="""
+color:white;
+font-size:30px;
+font-weight:bold;
+"""
+header_text = """
+color: white;
+font-size:24px;
+font-weight:bold;
+"""
+body_text = """
+color:white;
+font-size:16px;
+"""
+onedrive_text_false ="""
+color:red;
+font-size:18px;
+font-weight:bold;
+"""
+
+onedrive_text_true ="""
+color:green;
+font-size:18px;
+font-weight:bold;
+"""
+
+link_text = """
+QLabel {
+font-size:12px;
+font-weight:bold
+}
+QLabel
+"""
 class HomeView(QtWidgets.QWidget):
     """
     This is the Home Page's view, which will display a place to log in to their OneDrive account
@@ -490,15 +526,85 @@ class HomeView(QtWidgets.QWidget):
     """
     def __init__(self):
         super().__init__()
-        layout = QtWidgets.QVBoxLayout()
 
-        welcome_text = 'Home PAGE PLACEHOLDER !!' # placeholder
-        self.welcome_label = QtWidgets.QLabel(welcome_text)
+        container = QtWidgets.QWidget()
+        layout = QtWidgets.QVBoxLayout(container)
+        layout.setContentsMargins(0,0,0,0)
+        layout.setSpacing(2)
+        container.setStyleSheet('background-color: #3D3D3D;')
+        
+        ### TITLE SECTION ###
 
-        # eventually use QTextEdit's setHTML to create a nicer, rich Home screen
+        title = QtWidgets.QLabel('NodePipe')
+        title.setStyleSheet(title_text)
+        title.setAlignment(QtCore.Qt.AlignCenter)
 
-        layout.addWidget(self.welcome_label)
-        self.setLayout(layout)
+        self.onedrive_status = QtWidgets.QLabel('Not logged in to OneDrive! Data will not be saved.')
+        self.onedrive_status.setStyleSheet(onedrive_text_false)
+        self.onedrive_status.setAlignment(QtCore.Qt.AlignCenter)
+        
+        onedrive = QtWidgets.QLabel('OneDrive PlaceHolder')
+        onedrive.setAlignment(QtCore.Qt.AlignCenter)
+
+        spacer = QtWidgets.QSpacerItem(100, 100)
+
+        ### CHANGELOG SECTION ###
+
+        version = 0 # get from somewhere else later.. 
+        changelog_title = QtWidgets.QLabel(f'What\'s New In Version: {version}')
+        changelog_title.setStyleSheet(header_text)
+        changelog_title.setAlignment(QtCore.Qt.AlignCenter)
+
+        changelog_text = QtWidgets.QLabel('Changelog')
+        changelog_text.setStyleSheet(body_text)
+        changelog_text.setAlignment(QtCore.Qt.AlignCenter)
+
+        ### WELCOME SECTION ###
+
+        welcome_title = QtWidgets.QLabel('Welcome to NodePipe!')
+        welcome_title.setStyleSheet(title_text)
+        welcome_title.setAlignment(QtCore.Qt.AlignCenter)
+
+        welcome_text = QtWidgets.QLabel('To get started, head to the Pipeline Workbench and create a NodeGraph!')
+        welcome_text.setStyleSheet(body_text)
+        welcome_text.setAlignment(QtCore.Qt.AlignCenter)
+
+        ### DOCUMENTATION SECTION ###
+
+        link = '<a href="https://github.com/mariebethell/bioinformatics-pipeline-capstone"><span style="color:#FFA100;">See Our Documentation</span></a>'
+        documentation_link = QtWidgets.QLabel(link)
+        documentation_link.setStyleSheet(link_text)
+        documentation_link.setAlignment(QtCore.Qt.AlignCenter)
+        documentation_link.setOpenExternalLinks(True)
+
+
+
+
+        layout.addWidget(title)
+        layout.addWidget(self.onedrive_status)
+        layout.addWidget(onedrive)
+        layout.addItem(spacer)
+        
+        layout.addWidget(changelog_title)
+        layout.addWidget(changelog_text)
+        layout.addItem(spacer)
+
+        layout.addWidget(welcome_title)
+        layout.addWidget(welcome_text)
+        layout.addItem(spacer)
+
+        layout.addStretch(1)
+        layout.addWidget(documentation_link)
+        container.setLayout(layout)
+
+        outer_layout = QtWidgets.QVBoxLayout()
+        outer_layout.addWidget(container)
+        
+        self.setLayout(outer_layout)
+
+
+
+
 
 class SettingsView(QtWidgets.QWidget):
     """
@@ -631,6 +737,7 @@ NODE_WIDGETS = {
         num_input_widget('max_count', 'Maximum allowed count: ', nullable=True, section='BASECOUNT')
         
     ],
+
     'trinity' : [
         combo_box_widget('seq_type', 'Sequence Type', items=['fq', 'fa']),
         slider_widget('cpu', "Number of CPU Threads", max=128),
@@ -642,6 +749,10 @@ NODE_WIDGETS = {
 # Node responsible for representing a tool within the pipeline & its wrapper
 #TODO Tooltips
 class ToolNodeWrapper(NodeBaseWidget):
+    """
+    This is the Tool Node's wrapper, responsible for the saving and retrieving of data within the ToolNode.
+    The wrapper also handles self-deletion
+    """
     def __init__(self, tool=None, parent=None):
         super().__init__(parent)
         
@@ -1033,7 +1144,6 @@ class ToolNodeWrapper(NodeBaseWidget):
     
         def update_label_local(self, w_name, val):
             data = self.mutable_labels.get(w_name)
-            print(data)
 
             if not data:
                 print('Problem getting mutable label & template in SubstepDialog')
