@@ -483,8 +483,7 @@ class PipelineWorkbenchVC(PanelController):
 
 #### VIEW SECTION ####
 
-# background_color = '#757575'
-# text_color = '#FFFFFF'
+#### view styles for text ####
 
 title_text="""
 color:white;
@@ -513,11 +512,8 @@ font-weight:bold;
 """
 
 link_text = """
-QLabel {
 font-size:12px;
 font-weight:bold
-}
-QLabel
 """
 class HomeView(QtWidgets.QWidget):
     """
