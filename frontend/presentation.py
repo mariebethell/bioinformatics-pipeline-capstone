@@ -240,12 +240,12 @@ class NodeBrowser(QtWidgets.QDialog):
         center = viewer.mapToScene(viewer.viewport().rect().center())
 
         self.node.set_pos(center.x(), center.y())
-
+        self.graph.clear_selection()
         self.close() # closes after a user picks a tool
     
     def create_input_node(self):
         node = self.graph.create_node('bioinformatics_capstone.InputNode', name='Input', pos=(40,40))
-        
+        self.graph.clear_selection()
         self.close()
 
     
@@ -371,6 +371,9 @@ class PipelineWorkbenchVC(PanelController):
         if file_dialog.exec():
             path = file_dialog.selectedFiles()[0]
             self.node_graph.load_session(path)
+    
+
+
 
     def run_pipeline(self):
         graph = GraphGenerator(self.node_graph)
@@ -779,6 +782,12 @@ class ToolNodeWrapper(NodeBaseWidget):
         layout = QtWidgets.QVBoxLayout(container)
         layout.setContentsMargins(0,0,0,0)
 
+        node_title = QtWidgets.QLabel(self.tool)
+        node_title.setAlignment(QtCore.Qt.AlignCenter)
+        node_title.setStyleSheet('color: orange; font-size:24px; font-weight:bold;')
+        layout.addWidget(node_title)
+
+
         # building widgets dynamically
         for widget_def in NODE_WIDGETS[tool]:
             # if it is a substep, we save it for the substep dialog and continue
@@ -786,7 +795,7 @@ class ToolNodeWrapper(NodeBaseWidget):
             if section:
                 self.substep_defs.append(widget_def)
                 continue
-
+            
             # building widgets by passing in the layout so the helper knows where to build widgets and passing in the update label callback in case a label needs to be updated
             widget, checkbox, label = self.build_widget_from_def(widget_def, layout, self.update_label)
 
@@ -1021,7 +1030,7 @@ class ToolNodeWrapper(NodeBaseWidget):
             
     def delete_node(self): 
         if self.node is not None:
-            warning_dialog = PipelineWorkbenchVC.PopupWindow(parent=None, type='warn', warn_msg='Warning! \nAll unsaved Node data and parameters will be lost!', btn_label=f'Delete {self.tool} Node')
+            warning_dialog = PipelineWorkbenchVC.PopupWindow(parent=None, type='warn', warn_msg=f'Warning! \nAll unsaved {self.tool} data and parameters will be lost!', btn_label=f'Delete {self.tool} Node')
             if warning_dialog.exec() == QtWidgets.QDialog.Accepted:
                 graph = self.node.graph
                 graph.delete_nodes([self.node])
@@ -1190,7 +1199,6 @@ class ToolNode(BaseNode):
         if not tool or self.wrapper is not None:
                 return
 
-        self.tool = tool
         self.wrapper = ToolNodeWrapper(tool, self.view)
         self.set_property('tool_type', tool)
         
