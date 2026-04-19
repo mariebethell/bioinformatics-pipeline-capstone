@@ -1,0 +1,28 @@
+[project]
+name = "nodepipe"
+version = "0.1.0"
+description = "Visual editor and executor for bioinformatics pipelines using NextFlow"
+authors = [
+    {name = "CSUSM-CSE-47-2026-CS-S03-Team-002",email = "you@example.com"}
+]
+readme = "README.md"
+requires-python = "~=3.11.0"
+dependencies = [
+    "django (==5.2.13)",
+    "django-rest-framework (>=0.1.0,<0.2.0)",
+    "pyside6 (>=6.11.0,<7.0.0)",
+    "nodegraphqt (>=0.6.44,<0.7.0)"
+]
+
+[dependency-groups]
+dev = [
+    "pytest (>=9.0.3,<10.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+package-mode = false
