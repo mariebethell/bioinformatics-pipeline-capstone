@@ -1,20 +1,19 @@
-import sys
-[sys.path.append(i) for i in ['.', '..']] # Tells Python to search for modules in the parent directories.
+from __future__ import annotations
 
-from shared.graph import Graph, Node
-from backend.tool_registry import ToolRegistry
-from backend.tools.fastqc import fastqc_tool
-from backend.tools.trimmomatic import trimmomatic_tool
-from backend.tools.base import apply_defaults
-from abc import ABC, abstractmethod
 import os
+import sys
+from abc import ABC, abstractmethod
 
-# Extensions have to be concatenated with the process name to form the output channel name
-OUTPUT_CHANNEL_EXTS = {
-    "fastqc": ".out.zip",
-    "trimmomatic": ".out.trimmed_reads",
-    "trinity": ".out.transcript_fasta"
-}
+[sys.path.append(i) for i in ['.', '..']]
+
+from backend.compiled_node import CompiledNode, get_module_spec
+from backend.modules_config_builder import (
+    build_ext_args2_for_tool,
+    build_ext_args_for_tool,
+    render_modules_config,
+)
+from shared.graph import Graph, Node
+
 
 class Pipeline(ABC):
     def __init__(self, graph: Graph, tool_registry):
@@ -29,51 +28,79 @@ class Pipeline(ABC):
     def stop_pipeline(self):
         pass
 
+
 class NextflowPipeline(Pipeline):
-    def __init__(self, graph: Graph, tool_registry, pipeline_script_path):
+    def __init__(
+        self,
+        graph: Graph,
+        tool_registry,
+        pipeline_script_path: str,
+        modules_config_path: str | None = None,
+    ):
         super().__init__(graph, tool_registry)
         self.pipeline_script_path = pipeline_script_path
+        self.modules_config_path = modules_config_path or os.path.join(
+            os.path.dirname(pipeline_script_path),
+            'modules.config',
+        )
 
     def run_pipeline(self):
         generator = NextflowGenerator(self.graph, self.registry)
 
         generator.prepare_graph()
-        script = generator.generate_pipeline(self.graph)
+        main_nf = generator.generate_pipeline()
+        modules_config = generator.generate_modules_config()
 
-        print("Generated pipeline:")
-        print(script)
-        
-        with open(self.pipeline_script_path, 'w') as f:
-            f.write(script)
+        pipeline_dir = os.path.dirname(self.pipeline_script_path)
+        modules_dir = os.path.dirname(self.modules_config_path)
+        if pipeline_dir:
+            os.makedirs(pipeline_dir, exist_ok=True)
+        if modules_dir:
+            os.makedirs(modules_dir, exist_ok=True)
 
-        # TODO: Execute generated script with Nextflow (use subprocess to call nextflow run with the generated script)
+        with open(self.pipeline_script_path, 'w', encoding='utf-8') as f:
+            f.write(main_nf)
+
+        with open(self.modules_config_path, 'w', encoding='utf-8') as f:
+            f.write(modules_config)
+
+        print('Generated pipeline script:')
+        print(main_nf)
+        print('\nGenerated modules config:')
+        print(modules_config)
+
+        # TODO: Execute Nextflow here.
+        # subprocess.run([
+        #     'nextflow', 'run', self.pipeline_script_path,
+        #     '-c', self.modules_config_path,
+        # ], check=True)
 
     def stop_pipeline(self):
-        # TODO: Write logic to stop the Nextflow pipeline
-        print("Stopping Nextflow pipeline...")
-        # subprocess.run(['pkill', '-f', 'nextflow'], check=True)
+        print('Stopping Nextflow pipeline...')
 
     def revise_stage_params(self, stage_num, param_key, new_val):
-        # TODO: Write logic to revise parameters of a specific stage in the pipeline
-        print(f"Revising parameters for stage {stage_num}: setting {param_key} to {new_val}")
+        print(f'Revising parameters for stage {stage_num}: setting {param_key} to {new_val}')
+
 
 class PipelineFactory:
     def __init__(self):
         self.pipelines = {}
 
     def build_pipeline(self, pipeline_type, graph, input_folder, tool_registry, **kwargs):
-        if pipeline_type == "nextflow":
-
+        if pipeline_type == 'nextflow':
             return NextflowPipeline(graph, tool_registry, **kwargs)
-        else:
-            raise ValueError(f"Unknown pipeline type: {pipeline_type}")
+        raise ValueError(f'Unknown pipeline type: {pipeline_type}')
+
 
 class NextflowGenerator:
     def __init__(self, graph: Graph, tool_registry):
         self.graph = graph
         self.registry = tool_registry
+        self._prepared = False
+        self._input_files: list[str] = []
+        self._compiled_nodes: list[CompiledNode] | None = None
 
-    def _linearize_graph(self):
+    def _linearize_graph(self) -> list[Node]:
         ordered = []
         curr = self.graph.get_first_node()
 
@@ -82,270 +109,265 @@ class NextflowGenerator:
             curr = curr.next_node
 
         return ordered
-    
-    def prepare_graph(self):
-        ordered_nodes = self._linearize_graph()
 
-        prev_outputs = None
+    def _normalize_input_reads(self, node: Node) -> list[str]:
+        payload = node.outputs
 
-        for node in ordered_nodes:
-            # validate using schema rules
-            if (node.tool != "input"):
-                errors = self.registry.validate_tool_args(node.tool, node.args)
-                if errors:
-                    raise Exception(f"{node.tool} validation failed: {errors}")
-                
-                # apply defaults
-                node.args = apply_defaults(
-                    node.args,
-                    self.registry.get_tool_arg_schema(node.tool)
-                )
+        while isinstance(payload, dict) and 'reads' in payload:
+            payload = payload['reads']
 
-                # resolve inputs
-                if node.inputs is None:
-                    if node.prev_node is None:
-                        node.inputs = node.outputs
-                    else:
-                        node.inputs = prev_outputs
+        if isinstance(payload, str):
+            return [payload]
+        if isinstance(payload, (list, tuple)):
+            return [str(item) for item in payload]
 
-                # resolve outputs
-                context = {
-                    "stage_work_dir": f"/work/stage_{node.node_num}",
-                    "output_prefix": f"sample{node.node_num}"
-                }
-
-                #import pdb; pdb.set_trace()
-                node.outputs = self.registry.resolve_tool_outputs(
-                    node.tool,
-                    node.args,
-                    context
-                )
-
-                prev_outputs = node.outputs
-
-    def generate_stage(self, node: Node) -> str:
-        """
-        Generate the command string for a single stage based on the node's tool, args, inputs, and outputs.
-        """
-        command = self.registry.render_tool_command(
-            node.tool,
-            node.args,
-            node.inputs,
-            node.outputs
+        raise ValueError(
+            'Input node outputs must contain reads as a string, list, or nested dict with a reads key.'
         )
 
-        # Convert list of command parts into a single string for Nextflow
-        command_string = ""
-        for part in command:
-            if ' ' in part:
-                part = f'"{part}"'  # Quote parts with spaces
-            command_string += part + " "
+    def _canonical_tool_key(self, tool_name: str) -> str:
+        normalize = getattr(self.registry, 'normalize_tool_key', None)
+        if callable(normalize):
+            return normalize(tool_name)
+        return (tool_name or '').strip().lower()
 
-        return command_string.strip()
-    
-    def generate_module(self, node: Node) -> str:
-        """
-        Generate a Nextflow module for the given node. 
-        Loads the module template and fills in the command and input/output definitions.
+    def _apply_registry_validation(self, tool: str, args: dict) -> None:
+        validate_fn = getattr(self.registry, 'validate_tool_args', None)
+        if not callable(validate_fn):
+            return
 
-        Returns the file path of the generated module script.
-        """
+        try:
+            errors = validate_fn(tool, args, context={'graph': self.graph})
+        except TypeError:
+            errors = validate_fn(tool, args)
 
-        template_file_path = os.path.join("backend", "templates", "module_template.nf")
-        output_file_path = os.path.join("backend", "modules", f"stage_{node.node_num}_{node.tool}.nf")
+        if errors:
+            raise ValueError(f'{tool} validation failed: {errors}')
 
-        print(template_file_path)
+    def _apply_registry_defaults(self, tool: str, args: dict) -> dict:
+        raw_args = dict(args or {})
 
-        with open(template_file_path, 'r') as f:
-            module_template = f.read()
+        get_defaults = getattr(self.registry, 'get_default_tool_args', None)
+        if callable(get_defaults):
+            defaults = dict(get_defaults(tool) or {})
+            defaults.update(raw_args)
+            return defaults
 
-            command = self.generate_stage(node)
-            process_name = node.tool.upper()
-            module_template = module_template.replace("TOOL_NAME", process_name)
-            module_template = module_template.replace("COMMAND", command)
-            module_template = module_template.replace("OUTPUT", node.outputs["outdir"])
+        get_schema = getattr(self.registry, 'get_tool_arg_schema', None)
+        if callable(get_schema):
+            try:
+                from backend.tools.base import apply_defaults
+            except Exception:
+                return raw_args
 
-            os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
-            with open(output_file_path, 'w') as out_f:
-                out_f.write(module_template)
+            schema = get_schema(tool)
+            if schema:
+                return apply_defaults(raw_args, schema)
 
-        return process_name, output_file_path
+        return raw_args
 
-    def generate_input_parameters(self, node: Node) -> str:
-        """
-        Generate the input parameters for the pipeline script based on the input node.
-        """
-        input_files = node.outputs["reads"]
-        input_param_string = "params.input = [\n"
-        input_param_string += ",\n".join([f'    "{file}"' for file in input_files])
-        input_param_string += "\n]\n"
-        return input_param_string
+    def _resolve_stage_outputs(self, node: Node, tool: str, normalized_args: dict):
+        resolve_fn = getattr(self.registry, 'resolve_tool_outputs', None)
+        if not callable(resolve_fn):
+            return node.outputs
+
+        context = {
+            'stage_work_dir': f'/work/stage_{node.node_num}',
+            'output_prefix': f'sample{node.node_num}',
+        }
+        return resolve_fn(tool, normalized_args, context)
+
+    def prepare_graph(self):
+        ordered_nodes = self._linearize_graph()
+        if not ordered_nodes:
+            raise ValueError('Cannot compile an empty graph.')
+
+        input_node = ordered_nodes[0]
+        if self._canonical_tool_key(input_node.tool) != 'input':
+            raise ValueError('The first node in the graph must be an input node.')
+
+        input_node.tool = 'input'
+        self._input_files = self._normalize_input_reads(input_node)
+
+        prev_outputs = input_node.outputs
+
+        for node in ordered_nodes[1:]:
+            tool = self._canonical_tool_key(node.tool)
+            raw_args = dict(node.args or {})
+
+            self._apply_registry_validation(tool, raw_args)
+            normalized_args = self._apply_registry_defaults(tool, raw_args)
+
+            node.tool = tool
+            node.args = normalized_args
+
+            if node.inputs is None:
+                if node.prev_node is None:
+                    node.inputs = node.outputs
+                else:
+                    node.inputs = prev_outputs
+
+            resolved_outputs = self._resolve_stage_outputs(node, tool, normalized_args)
+            if resolved_outputs is not None:
+                node.outputs = resolved_outputs
+
+            prev_outputs = node.outputs
+
+        self._prepared = True
+        self._compiled_nodes = None
+        return ordered_nodes
+
+    def _tool_counts(self, ordered_nodes: list[Node]) -> dict[str, int]:
+        counts: dict[str, int] = {}
+        for node in ordered_nodes:
+            if node.tool == 'input':
+                continue
+            counts[node.tool] = counts.get(node.tool, 0) + 1
+        return counts
+
+    def _build_alias(self, process_name: str, tool: str, alias_counts: dict[str, int], tool_counts: dict[str, int]) -> str:
+        if tool_counts.get(tool, 0) <= 1:
+            return process_name
+
+        alias_counts[tool] = alias_counts.get(tool, 0) + 1
+        return f'{process_name}{alias_counts[tool]}'
+
+    def _channel_name_from_alias(self, alias: str) -> str:
+        return f'ch_{alias.lower()}'
+
+    def compile_graph(self) -> tuple[list[str], list[CompiledNode]]:
+        if not self._prepared:
+            self.prepare_graph()
+        if self._compiled_nodes is not None:
+            return self._input_files, self._compiled_nodes
+
+        ordered_nodes = self._linearize_graph()
+        tool_counts = self._tool_counts(ordered_nodes)
+        alias_counts: dict[str, int] = {}
+        compiled_nodes: list[CompiledNode] = []
+        active_data_channel = 'reads_ch'
+
+        for node in ordered_nodes[1:]:
+            tool = node.tool
+            spec = get_module_spec(tool)
+            alias = self._build_alias(spec.process_name, tool, alias_counts, tool_counts)
+            output_channel = self._channel_name_from_alias(alias)
+
+            compiled_node = CompiledNode(
+                node_num=node.node_num,
+                tool=tool,
+                module_path=spec.module_path,
+                process_name=spec.process_name,
+                alias=alias,
+                input_channel=active_data_channel,
+                output_channel=output_channel,
+                output_accessor=spec.output_accessor,
+                advances_primary_channel=spec.advances_primary_channel,
+                normalized_args=node.args,
+                ext_args=build_ext_args_for_tool(tool, node.args),
+                ext_args2=build_ext_args2_for_tool(tool, node.args),
+                publish_subdir=spec.publish_subdir,
+            )
+            compiled_nodes.append(compiled_node)
+
+            if compiled_node.advances_primary_channel:
+                active_data_channel = compiled_node.output_channel
+
+        self._compiled_nodes = compiled_nodes
+        return self._input_files, compiled_nodes
+
+    def generate_input_parameters(self, input_files: list[str]) -> str:
+        lines = ['params.input = [']
+        lines.extend(f'    "{path}",' for path in input_files)
+        if input_files:
+            lines[-1] = lines[-1].rstrip(',')
+        lines.append(']')
+        return '\n'.join(lines)
 
     def generate_input_channel_str(self) -> str:
-        """
-        Generate the input channel definition for the pipeline script based on the input node.
-        """
-        input_channel_string = "    reads_ch = Channel.fromPath(params.input, checkIfExists: true)\n"
-        input_channel_string += """        .map { f ->
-        def name = f.getName()
+        return (
+            '    reads_ch = Channel.fromPath(params.input, checkIfExists: true)\n'
+            '        .map { f ->\n'
+            '            def name = f.getName()\n\n'
+            "            def sample_id = name\n"
+            "                .replaceAll(/_R?1(_\\d+)?\\.fastq$/, '')\n"
+            "                .replaceAll(/_R?2(_\\d+)?\\.fastq$/, '')\n\n"
+            '            tuple(sample_id, f)\n'
+            '        }\n'
+            '        .groupTuple()\n'
+            '        .map { sample_id, files ->\n'
+            '            def files_list = files.toList()\n'
+            '            def r1 = files_list.find { it.getName() ==~ /.*_R?1(_\\d+)?\\.fastq$/ }\n'
+            '            def r2 = files_list.find { it.getName() ==~ /.*_R?2(_\\d+)?\\.fastq$/ }\n'
+            '            def meta = [ id: sample_id ]\n\n'
+            '            if (r1 && r2) {\n'
+            '                tuple(meta, [ r1, r2 ])\n'
+            '            } else {\n'
+            '                tuple(meta, files_list[0])\n'
+            '            }\n'
+            '        }'
+        )
 
-        def sample_id = name
-            .replaceAll(/_R?1(_\d+)?\.fastq$/, '')
-            .replaceAll(/_R?2(_\d+)?\.fastq$/, '')
+    def generate_nfcore_include_statement(self, node: CompiledNode) -> str:
+        if node.alias == node.process_name:
+            return f"include {{ {node.process_name} }} from '{node.module_path}'"
+        return f"include {{ {node.process_name} as {node.alias} }} from '{node.module_path}'"
 
-        tuple(sample_id, f  )
-        }
-        .groupTuple()
-        .map { sample_id, files ->
+    def generate_execution_block(self, node: CompiledNode) -> str:
+        return f'    {node.alias}({node.input_channel})'
 
-            def files_list = files.toList()
+    def generate_output_channel_str(self, node: CompiledNode) -> str:
+        return f'    {node.output_channel} = {node.alias}.{node.output_accessor}'
 
-            def r1 = files_list.find { it.getName() ==~ /.*_R?1(_\d+)?\.fastq$/ }
-            def r2 = files_list.find { it.getName() ==~ /.*_R?2(_\d+)?\.fastq$/ }
+    def generate_pipeline(self, graph=None) -> str:
+        input_files, compiled_nodes = self.compile_graph()
 
-            def meta = [ id: sample_id ]
+        lines = [
+            'nextflow.enable.dsl=2',
+            '',
+            self.generate_input_parameters(input_files),
+            '',
+        ]
 
-            if (r1 && r2) {
-                tuple(meta, [ r1, r2 ])
-            } else {
-                tuple(meta, files_list[0])
-            }
-        }\n"""
-        return input_channel_string
-    
-    def generate_output_channel_str(self, node: Node, tool_alias: str=None) -> str:
-        """
-        Generate the output channel definition for the pipeline script based on the node's outputs.
-        """
-        channel_name = "ch_" + (tool_alias.lower() if tool_alias else node.tool.lower())
-        output_channel_string = f"    {channel_name} = {node.tool.upper()}{OUTPUT_CHANNEL_EXTS.get(node.tool.lower())}\n"
-        if tool_alias:
-            output_channel_string = f"    {channel_name} = {tool_alias}{OUTPUT_CHANNEL_EXTS.get(node.tool.lower())}\n"
-        return output_channel_string
+        for node in compiled_nodes:
+            lines.append(self.generate_nfcore_include_statement(node))
 
-    def generate_nfcore_include_statement(self, node: Node, tool_alias : str=None) -> str:
-        """
-        Given a node, generate the include statement for a nf-core module.
-        """
-        process_name = node.tool.upper()
-        module_path = f"./modules/nf-core/{node.tool}/main"
-        if tool_alias:
-            return f"include {{ {process_name} as {tool_alias} }} from '{module_path}'\n"
+        lines.extend(['', 'workflow {', '', self.generate_input_channel_str(), ''])
 
-        return f"include {{ {process_name} }} from '{module_path}'\n"
-    
-    def generate_execution_block(self, node: Node, tool_alias: str=None) -> str:
-        """
-        Given a node, generate the execution block for a nf-core module.
-        Assumes the module takes a single input channel called "reads_ch" and produces an output channel called "output_ch".
-        """
-        process_name = node.tool.upper()
+        for node in compiled_nodes:
+            lines.append(self.generate_execution_block(node))
+            lines.append(self.generate_output_channel_str(node))
+            lines.append('')
 
-        if tool_alias:
-            process_name = tool_alias
+        lines.append('}')
+        lines.append('')
+        return '\n'.join(lines)
 
-        if node.prev_node.tool == "input":
-            return f"    {process_name}(reads_ch)\n"
-        else:
-            prev_process_name = node.prev_node.tool.upper()
-            output_channel_name = self.generate_output_channel_str(node.prev_node, tool_alias=prev_process_name if node.prev_node.tool != "input" else None).strip().split()[0]
-            return f"    {process_name}({output_channel_name})\n"
+    def generate_modules_config(self) -> str:
+        _, compiled_nodes = self.compile_graph()
+        return render_modules_config(compiled_nodes)
 
-    
-    def generate_pipeline(self, graph) -> str:
-        """
-        Generate the Nextflow pipeline script as a string.
-        """
+    def render_main_nf(self, input_files: list[str] | None = None, compiled_nodes: list[CompiledNode] | None = None) -> str:
+        if input_files is None or compiled_nodes is None:
+            return self.generate_pipeline()
 
-        pipeline_script = ""
-        
-        tools_in_graph = {}
-        for node in graph.nodes.values():
-            if node.tool not in tools_in_graph:
-                tools_in_graph[node.tool] = 1
-            else:
-                tools_in_graph[node.tool] += 1
+        lines = [
+            'nextflow.enable.dsl=2',
+            '',
+            self.generate_input_parameters(input_files),
+            '',
+        ]
 
-        alias_counts = {}
+        for node in compiled_nodes:
+            lines.append(self.generate_nfcore_include_statement(node))
 
-        workflow_header = "nextflow.enable.dsl=2\n\n"
-        workflow_body = "\nworkflow {\n\n"
-        for node_num, node in graph.nodes.items():
-            if node.tool == "input":
-                workflow_header += self.generate_input_parameters(node) + "\n"
-                workflow_body += self.generate_input_channel_str() + "\n"
+        lines.extend(['', 'workflow {', '', self.generate_input_channel_str(), ''])
 
-            tool_alias = None
-            if node.tool != "input":
-                if tools_in_graph[node.tool] > 1:
-                    if node.tool not in alias_counts:
-                        alias_counts[node.tool] = 1
-                    else:
-                        alias_counts[node.tool] += 1
+        for node in compiled_nodes:
+            lines.append(self.generate_execution_block(node))
+            lines.append(self.generate_output_channel_str(node))
+            lines.append('')
 
-                    tool_alias = node.tool.upper() + str(alias_counts[node.tool])
-                    workflow_header += self.generate_nfcore_include_statement(node,tool_alias)
-                else:
-                    workflow_header += self.generate_nfcore_include_statement(node)
-                
-                workflow_body += self.generate_execution_block(node, tool_alias if tools_in_graph[node.tool] > 1 else None)
-                workflow_body += self.generate_output_channel_str(node, tool_alias=tool_alias if tools_in_graph[node.tool] > 1 else None) + "\n"
-            
-            """"
-            if (node.tool == "input"):
-                workflow_header = "workflow {\n"
-                workflow_body += f"    read_ch = Channel.fromPath('{node.outputs['reads'][0]}')\n"
-            if (node.tool != "input"):
-                process_name, module_path = self.generate_module(node) 
-                pipeline_script += f"include {{ {process_name} }} from '{module_path}'\n"
-                
-                workflow_body += f"    {process_name}(read_ch)\n"
-
-            """
-
-        workflow_body += "}\n"
-        pipeline_script += workflow_header + workflow_body
-
-        return pipeline_script
-    
-if __name__ == "__main__":
-    # Testing code to build and run a pipeline with the NextflowPipeline class.
-    # This would normally be triggered by the "Run Pipeline" button in the UI.
-    pipeline_factory = PipelineFactory()
-    tool_registry = ToolRegistry()
-    graph = Graph()
-
-    node0 = graph.create_node("input")
-    node0.outputs = {
-        "reads": ['../data/Test01_L001_R1_001.fastq', '../data/Test01_L001_R2_001.fastq', '../data/Test02_L001_R1_001.fastq', '../data/Test02_L001_R2_001.fastq']
-    }
-
-    node1 = graph.create_node("fastqc")
-    node1.args = {'threads': 1, 'kmers': 7, 'format': 'fastq'}
-
-    node2 = graph.create_node("trimmomatic")
-    node2.args = {'threads': 1, 'mode': 'SE', 'compress_level': 1, 'steps': [
-        {
-            "name": "sliding_window",
-            "parameters": {
-                "window_size": 4,
-                "required_quality": 20
-            }
-        }
-    ]}
-
-    node3 = graph.create_node("fastqc")
-    node3.args = {'threads': 1, 'kmers': 7, 'format': 'fastq'}
-
-    graph.add_node(node0, prev=None, next=node1)
-    graph.add_node(node1, prev=node0,next=node2)
-    graph.add_node(node2, prev=node0, next=node3)
-    graph.add_node(node3, prev=node2, next=None)
-
-    node1.inputs = {'reads': ['../data/Test01_L001_R1_001.fastq']} # use same input for testing, in reality this would be node0.outputs after resolution
-    node2.inputs = {'reads': ['../data/Test01_L001_R1_001.fastq']} # use same input for testing, in reality this would be node1.outputs after resolution
-    node3.inputs = {'reads': ['../data/Test01_L001_R1_001.fastq']} # use same input for testing, in reality this would be node2.outputs after resolution
-
-    pipeline = pipeline_factory.build_pipeline("nextflow", graph, "input_folder", tool_registry, pipeline_script_path="backend/main.nf")
-    
-    pipeline.run_pipeline()
+        lines.append('}')
+        lines.append('')
+        return '\n'.join(lines)
