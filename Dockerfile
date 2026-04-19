@@ -1,5 +1,6 @@
 FROM nextflow/nextflow:26.03.2-edge
 WORKDIR /usr/src/compute
+COPY __init__.py .
 COPY backend/ ./backend/
 COPY network/ ./network/
 COPY session ./session/
