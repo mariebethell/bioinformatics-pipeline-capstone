@@ -1,0 +1,176 @@
+import ipaddress
+import aiohttp
+import asyncio
+import uuid
+from datetime import datetime, timedelta
+from enum import Enum
+
+class RequestTypes(Enum):
+    """
+    Enumerates the various types of HTTP requests
+
+    """
+
+    GET = 0
+    POST = 1
+    PUT = 2
+    DELETE = 3
+    HEAD = 4
+    OPTIONS = 5
+    PATCH = 6
+
+class NetClient:
+    """
+    Handles network IO for the client networking layer
+
+    """
+
+    def __init__(self):
+        self.server_ip: ipaddress.IPv4Address | ipaddress.IPv6Address
+        self.server_port: int
+
+    def connect(self, user_uuid: uuid.UUID, server_ip: ipaddress.IPv4Address | ipaddress.IPv6Address, server_port: int):
+        """
+        Attempts to connect to the compute server at the specified IP
+            - Pings it first to see if it can reach it
+            - Stores IP and port for later use if successful
+            - Establishes websocket connection
+
+        Args:
+            user_uuid (UUID): Identifier for the user while talking to the compute server. Required for server to talk to us and remember us
+                                UUID itself is arbitrary. Just randomly generate it on first startup
+            server_ip (IPv4Address or IPv6Address): IP address for the server to connect to
+            server_port (int): Port for the server to connect to
+
+        Raises:
+            ValueError if given server address/port could not be connected to
+            aiohttp.ClientError if server couldn't be reached for some other reason
+
+        """
+
+        try:
+           asyncio.run(NetClient._ping_server(server_ip, server_port))
+
+        except asyncio.TimeoutError | aiohttp.ClientConnectorError | TypeError:
+            raise ValueError("Bad server address or port given")
+
+        except aiohttp.ClientError as e:
+            print(f"ERROR: Failed to connect to server due to {e}")
+            raise e # Rethrow for lower layer to deal with
+
+        self.server_ip = server_ip
+        self.server_port = server_port
+
+        self._connect_socket(user_uuid)
+
+    async def send(self, endpoint: str, req_type: RequestTypes, payload: str, mime_type: str = 'application/command') -> dict:
+        """
+        Sends a Command to the specified endpoint and returns the response
+
+        Args:
+            endpoint (str): Network endpoint to hit on the server, such as /api/client/pipeline/new/
+            req_type (RequestTypes enum): The type of HTTP request to use, such as GET, POST, PUT etc.
+            payload (str): Payload string to send to the server
+            mime_type (str): Type of data contained by the payload
+
+        Returns:
+            Dictionary containing the servers text response at key 'data' and the IP of whoever responded (hopefully the server???) at 'source_ip'
+
+        Raises:
+            RuntimeError if the client is not connected to a server
+            TypeError if given an unknown request type
+            ValueError if the server returns a status other than 200 OK
+
+        """
+
+        if self.server_ip is None or self.server_port is None:
+            raise RuntimeError("Not connected to a server")
+
+        async with aiohttp.ClientSession() as session:
+            req_method = session.get
+            match req_type:
+                case RequestTypes.GET:
+                    req_method = session.get
+
+                case RequestTypes.POST:
+                    req_method = session.post
+
+                case RequestTypes.PUT:
+                    req_method = session.put
+
+                case RequestTypes.DELETE:
+                    req_method = session.delete
+
+                case RequestTypes.HEAD:
+                    req_method = session.head
+
+                case RequestTypes.OPTIONS:
+                    req_method = session.options
+
+                case RequestTypes.PATCH:
+                    req_method = session.patch
+
+                case _:
+                    raise TypeError("Invalid request type")
+                
+            headers = {
+                'Content-Type': mime_type
+            }
+
+            async with req_method(f"http://{self.server_ip}:{self.server_port}{endpoint}", data=payload, headers=headers) as resp:
+                if resp.status != 200:
+                    raise ValueError("Server returned bad status")
+                
+                data_str = await resp.json() #aiohttp wraps our json from the server in a second json
+                return {'data': data_str, 'source_ip': resp.host}
+
+    def _connect_socket(self, user_uuid: uuid.UUID):
+        """
+        Establishes websocket connection with server
+
+        Not yet implemented
+
+        Raises RuntimeError if the client is not connected to a server
+
+        """
+
+        if self.server_ip is None or self.server_port is None:
+            raise RuntimeError("Not connected to a server")  
+        
+        # TODO setup websocket
+
+    @staticmethod
+    async def _ping_server(server_ip: ipaddress.IPv4Address | ipaddress.IPv6Address, server_port: int) -> timedelta:
+        """
+        Sends a ping request to the server and times the round trip time
+
+        Args:
+            server_ip (IPv4Address or IPv6Address): IP address for the server to ping
+            server_port (int): Port for the server to ping
+        
+        Returns:
+            timedelta containing the round trip time
+
+        Raises:
+            TypeError if server ip or port is None
+            asyncio.TimeoutError if connection times out
+            aiohttp.ClientConnectorError if connection could not be established
+            ValueError if the server responded but gave a status other than 200 OK
+
+        """
+
+        if server_ip is None or server_port is None:
+            raise TypeError("You must supply a server to ping")
+
+        starting_time = datetime.now()
+        async with aiohttp.ClientSession() as session:
+            req_method = session.get
+
+            async with req_method(f"http://{server_ip}:{server_port}/api/ping/") as resp:
+                if resp.status != 200:
+                    raise ValueError("Server returned bad status")
+                
+                midway_time = await resp.json()
+                ending_time = datetime.now()
+                
+                return ending_time - starting_time
