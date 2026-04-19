@@ -264,6 +264,9 @@ class NodeBrowser(QtWidgets.QDialog):
 
         out_port.connect_to(in_port)
 
+        out_port.lock()
+        in_port.lock()
+
 
 
     
@@ -360,6 +363,7 @@ class PipelineWorkbenchVC(PanelController):
             print(f'Saving to preset path: {preset_path}')
 
             try:
+                self._unlock_bwa_ports()
                 self.node_graph.save_session(str(preset_path))
             except:
                 print('Problem when saving the session.')
@@ -394,7 +398,20 @@ class PipelineWorkbenchVC(PanelController):
 
         if file_dialog.exec():
             path = file_dialog.selectedFiles()[0]
+            self._unlock_bwa_ports()
             self.node_graph.load_session(path)
+
+    def _unlock_bwa_ports(self):
+        for node in self.node_graph.all_nodes():
+            if not isinstance(node, ToolNode):
+                continue
+
+            if node.tool == 'bwa_index':
+                for port in node.output_ports():
+                    port.unlock()
+            elif node.tool == 'bwa_mem':
+                for port in node.input_ports():
+                    port.unlock()
     
 
 
@@ -404,7 +421,7 @@ class PipelineWorkbenchVC(PanelController):
         graph = graph.from_workbench()
 
         input_node = graph.get_first_node()
-        if not input_node or (graph.get_node(input_node.node_num).tool != "input"):
+        if not input_node: # or (graph.get_node(input_node.node_num).tool != "input"):
             print("ERROR: First node must be an input node with a FASTQ file input to run the pipeline!")
             return
         else:
@@ -428,6 +445,7 @@ class PipelineWorkbenchVC(PanelController):
         
         warning_dialog = self.PopupWindow(parent=self.app, type='warn', warn_msg='Warning! This will Delete the Current Pipeline!', btn_label='Create New Pipeline')
         if warning_dialog.exec() == QtWidgets.QDialog.Accepted:
+            self._unlock_bwa_ports()
             self.node_graph.clear_session()
     
     def node_browser(self):
@@ -1064,6 +1082,10 @@ class ToolNodeWrapper(NodeBaseWidget):
         if self.node is not None:
             warning_dialog = PipelineWorkbenchVC.PopupWindow(parent=None, type='warn', warn_msg=f'Warning! \nAll unsaved {self.tool} data and parameters will be lost!', btn_label=f'Delete {self.tool} Node')
             if warning_dialog.exec() == QtWidgets.QDialog.Accepted:
+                if self.tool == 'bwa_index':
+                    self.node.output(0).unlock()
+                elif self.tool == 'bwa_mem':
+                    self.node.input(0).unlock()
                 graph = self.node.graph
                 graph.delete_nodes([self.node])
 
@@ -1264,9 +1286,11 @@ class ToolNode(BaseNode):
     def on_input_connected(self, in_port, out_port):
         super(ToolNode, self).on_input_connected(in_port, out_port)
 
+        # rebuilds widgets for tools when loading a preset, as loading the preset sends an input connected signal
         t_type = self.get_property('tool_type')
         if t_type and not self.wrapper:
             self.build_widgets(t_type)
+
 
     def get_value(self):
         return self.wrapper.get_value() if self.wrapper else {}
