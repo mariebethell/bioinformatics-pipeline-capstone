@@ -210,6 +210,8 @@ class NodeBrowser(QtWidgets.QDialog):
 
         # gettin tools to create as buttons
         for tool in NODE_WIDGETS:
+            if '_' in tool: # if the widget is paired
+                continue
             btn = QtWidgets.QPushButton('Create ' + tool + ' Node')
 
             # lambda necessary here to capture current value, passes it to create tool node
@@ -231,17 +233,39 @@ class NodeBrowser(QtWidgets.QDialog):
 
     # interior function for creating a new tool node
     def create_tool_node(self, tool, non_tool=False):
-        
-        self.node = ToolNode(tool)
-
-        self.graph.add_node(self.node)
-
         viewer = self.graph.viewer()
         center = viewer.mapToScene(viewer.viewport().rect().center())
 
-        self.node.set_pos(center.x(), center.y())
+        if tool == 'bwa': # special case for paired node (bwa only)
+            self._create_bwa_nodes(center)
+        else: # default case
+            self.node = ToolNode(tool)
+            self.graph.add_node(self.node)
+            self.node.set_pos(center.x(), center.y())
+        
         self.graph.clear_selection()
         self.close() # closes after a user picks a tool
+
+    def _create_bwa_nodes(self, center):
+        x, y = center.x(), center.y()
+
+        index_node = ToolNode('bwa_index')
+        mem_node = ToolNode('bwa_mem')
+
+        self.graph.add_node(index_node)
+        self.graph.add_node(mem_node)
+
+        index_node.set_pos(x-150, y)
+        mem_node.set_pos(x+150, y)
+
+        # getting output port and input port for index and mem
+        out_port = index_node.output(0)
+        in_port = mem_node.input(0)
+
+        out_port.connect_to(in_port)
+
+
+
     
     def create_input_node(self):
         node = self.graph.create_node('bioinformatics_capstone.InputNode', name='Input', pos=(40,40))
@@ -740,6 +764,14 @@ NODE_WIDGETS = {
         combo_box_widget('seq_type', 'Sequence Type', items=['fq', 'fa']),
         slider_widget('cpu', "Number of CPU Threads", max=128),
         slider_widget('max_memory', 'Memory to Use (GB)', max=32)
+    ],
+
+    'bwa' : [], # empty as we need widgets for its two sub nodes
+    'bwa_index' : [
+
+    ],
+    'bwa_mem' : [
+
     ]
 }
 
