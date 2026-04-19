@@ -24,13 +24,15 @@ class ToolRegistry:
         }
 
         self.tool_aliases = {
+            "input": "input",
             "fastqc": "fastqc",
             "FastQC": "fastqc",
             "trimmomatic": "trimmomatic",
             "Trimmomatic": "trimmomatic",
+            "trinity": "trinity",
             "Trinity": "trinity",
             "De Novo Transcriptome Assembly": "trinity",
-        }
+}
 
     def normalize_tool_key(self, tool_name: str) -> str:
         """
@@ -43,10 +45,12 @@ class ToolRegistry:
         if not isinstance(tool_name, str) or not tool_name.strip():
             raise ValueError("Tool name must be a non-empty string.")
 
+        cleaned = tool_name.strip()
+
         if tool_name in self.tool_aliases:
             return self.tool_aliases[tool_name]
 
-        lowered = tool_name.strip().lower()
+        lowered = cleaned.lower()
         if lowered in self.tool_aliases:
             return self.tool_aliases[lowered]
 

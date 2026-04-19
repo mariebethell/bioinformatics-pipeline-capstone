@@ -97,9 +97,11 @@ def _collect_trimmomatic_steps(args: dict) -> list[dict]:
 
 def _render_trimmomatic_step(step: dict) -> str:
     name = _normalize_step_name(step.get("name"))
-    params = step.get("parameters", {}) or {}
 
-    if name == "illuminaclip":
+    raw_params = step.get("parameters")
+    params = raw_params if isinstance(raw_params, dict) else {}
+
+    if name in {"illuminaclip", "illumina_clip"}:
         tokens = [
             params.get("fasta_with_adapters"),
             params.get("seed_mismatches"),
@@ -116,33 +118,43 @@ def _render_trimmomatic_step(step: dict) -> str:
 
     if name == "leading":
         return f"LEADING:{params.get('quality')}" if params.get("quality") not in (None, "") else ""
+
     if name == "trailing":
         return f"TRAILING:{params.get('quality')}" if params.get("quality") not in (None, "") else ""
+
     if name == "headcrop":
         return f"HEADCROP:{params.get('length')}" if params.get("length") not in (None, "") else ""
+
     if name == "tailcrop":
         return f"TAILCROP:{params.get('length')}" if params.get("length") not in (None, "") else ""
+
     if name == "crop":
         return f"CROP:{params.get('length')}" if params.get("length") not in (None, "") else ""
+
     if name == "sliding_window":
         window_size = params.get("window_size")
         required_quality = params.get("required_quality")
         if window_size in (None, "") or required_quality in (None, ""):
             return ""
         return f"SLIDINGWINDOW:{window_size}:{required_quality}"
-    if name == "maxinfo":
+
+    if name in {"maxinfo", "max_info"}:
         target_length = params.get("target_length")
         strictness = params.get("strictness")
         if target_length in (None, "") or strictness in (None, ""):
             return ""
         return f"MAXINFO:{target_length}:{strictness}"
-    if name == "minlen":
+
+    if name in {"minlen", "min_len"}:
         return f"MINLEN:{params.get('length')}" if params.get("length") not in (None, "") else ""
-    if name == "maxlen":
+
+    if name in {"maxlen", "max_len"}:
         return f"MAXLEN:{params.get('length')}" if params.get("length") not in (None, "") else ""
-    if name == "avgqual":
+
+    if name in {"avgqual", "avg_qual"}:
         return f"AVGQUAL:{params.get('quality')}" if params.get("quality") not in (None, "") else ""
-    if name == "basecount":
+
+    if name in {"basecount", "base_count"}:
         bases = params.get("bases")
         min_count = params.get("min_count")
         max_count = params.get("max_count")
@@ -244,7 +256,7 @@ def render_modules_config_block(node: CompiledNode) -> str:
         [
             f"{INDENT * 2}publishDir = [",
             f"{INDENT * 3}path: {{ \"${{params.outdir}}/{node.publish_subdir}\" }},",
-            f"{INDENT * 3}mode: params.publish_dir_mode,",
+            f"{INDENT * 3}mode: 'copy',",
             f"{INDENT * 3}saveAs: {{ filename -> filename.equals('versions.yml') ? null : filename }}",
             f"{INDENT * 2}]",
             f"{INDENT}}}",
@@ -264,7 +276,7 @@ def render_modules_config(nodes: list[CompiledNode]) -> str:
         "",
         f"{INDENT}publishDir = [",
         f"{INDENT * 2}path: {{ \"${{params.outdir}}/${{task.process.tokenize(':')[-1].toLowerCase()}}\" }},",
-        f"{INDENT * 2}mode: params.publish_dir_mode,",
+        f"{INDENT * 2}mode: 'copy',",
         f"{INDENT * 2}saveAs: {{ filename -> filename.equals('versions.yml') ? null : filename }}",
         f"{INDENT}]",
     ]

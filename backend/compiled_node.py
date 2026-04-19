@@ -35,7 +35,7 @@ MODULE_SPECS: dict[str, ModuleSpec] = {
     "fastqc": ModuleSpec(
         tool="fastqc",
         process_name="FASTQC",
-        module_path="./modules/nf-core/fastqc/main",
+        module_path="./backend/modules/nf-core/fastqc",
         publish_subdir="fastqc",
         output_accessor="out.zip",
         advances_primary_channel=False,
@@ -43,7 +43,7 @@ MODULE_SPECS: dict[str, ModuleSpec] = {
     "trimmomatic": ModuleSpec(
         tool="trimmomatic",
         process_name="TRIMMOMATIC",
-        module_path="./modules/nf-core/trimmomatic/main",
+        module_path="./backend/modules/nf-core/trimmomatic",
         publish_subdir="trimmomatic",
         output_accessor="out.trimmed_reads",
         advances_primary_channel=True,
@@ -51,7 +51,7 @@ MODULE_SPECS: dict[str, ModuleSpec] = {
     "trinity": ModuleSpec(
         tool="trinity",
         process_name="TRINITY",
-        module_path="./modules/nf-core/trinity/main",
+        module_path="./backend/modules/nf-core/trinity",
         publish_subdir="trinity",
         output_accessor="out.transcript_fasta",
         advances_primary_channel=True,

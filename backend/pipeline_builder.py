@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+
 import os
 import sys
 from abc import ABC, abstractmethod
+from typing import Any
 
 [sys.path.append(i) for i in ['.', '..']]
 
@@ -12,11 +14,14 @@ from backend.modules_config_builder import (
     build_ext_args_for_tool,
     render_modules_config,
 )
+from backend.tool_registry import ToolRegistry
 from shared.graph import Graph, Node
+
+ArgDict = dict[str, Any]
 
 
 class Pipeline(ABC):
-    def __init__(self, graph: Graph, tool_registry):
+    def __init__(self, graph: Graph, tool_registry: ToolRegistry):
         self.graph = graph
         self.registry = tool_registry
 
@@ -41,7 +46,7 @@ class NextflowPipeline(Pipeline):
         self.pipeline_script_path = pipeline_script_path
         self.modules_config_path = modules_config_path or os.path.join(
             os.path.dirname(pipeline_script_path),
-            'modules.config',
+            'conf/modules.config',
         )
 
     def run_pipeline(self):
@@ -70,10 +75,19 @@ class NextflowPipeline(Pipeline):
         print(modules_config)
 
         # TODO: Execute Nextflow here.
-        # subprocess.run([
-        #     'nextflow', 'run', self.pipeline_script_path,
-        #     '-c', self.modules_config_path,
-        # ], check=True)
+        import subprocess
+        subprocess.run(
+            [
+                "nextflow",
+                "run",
+                self.pipeline_script_path,
+                "-c",
+                os.path.join(os.path.dirname(self.pipeline_script_path), "backend/nextflow.config"),
+                "-c",
+                self.modules_config_path,
+            ],
+            check=True,
+        )
 
     def stop_pipeline(self):
         print('Stopping Nextflow pipeline...')
@@ -93,7 +107,7 @@ class PipelineFactory:
 
 
 class NextflowGenerator:
-    def __init__(self, graph: Graph, tool_registry):
+    def __init__(self, graph: Graph, tool_registry: ToolRegistry):
         self.graph = graph
         self.registry = tool_registry
         self._prepared = False
@@ -111,7 +125,7 @@ class NextflowGenerator:
         return ordered
 
     def _normalize_input_reads(self, node: Node) -> list[str]:
-        payload = node.outputs
+        payload = node.outputs if node.outputs else node.inputs
 
         while isinstance(payload, dict) and 'reads' in payload:
             payload = payload['reads']
@@ -122,60 +136,30 @@ class NextflowGenerator:
             return [str(item) for item in payload]
 
         raise ValueError(
-            'Input node outputs must contain reads as a string, list, or nested dict with a reads key.'
+            'error.'
         )
-
+    
     def _canonical_tool_key(self, tool_name: str) -> str:
-        normalize = getattr(self.registry, 'normalize_tool_key', None)
-        if callable(normalize):
-            return normalize(tool_name)
-        return (tool_name or '').strip().lower()
-
-    def _apply_registry_validation(self, tool: str, args: dict) -> None:
-        validate_fn = getattr(self.registry, 'validate_tool_args', None)
-        if not callable(validate_fn):
-            return
-
-        try:
-            errors = validate_fn(tool, args, context={'graph': self.graph})
-        except TypeError:
-            errors = validate_fn(tool, args)
-
+        return self.registry.normalize_tool_key(tool_name)
+    
+    def _apply_registry_validation(self, tool: str, args: ArgDict) -> None:
+        errors = self.registry.validate_tool_args(tool, args, context={'graph': self.graph})
         if errors:
             raise ValueError(f'{tool} validation failed: {errors}')
-
-    def _apply_registry_defaults(self, tool: str, args: dict) -> dict:
-        raw_args = dict(args or {})
-
-        get_defaults = getattr(self.registry, 'get_default_tool_args', None)
-        if callable(get_defaults):
-            defaults = dict(get_defaults(tool) or {})
-            defaults.update(raw_args)
-            return defaults
-
-        get_schema = getattr(self.registry, 'get_tool_arg_schema', None)
-        if callable(get_schema):
-            try:
-                from backend.tools.base import apply_defaults
-            except Exception:
-                return raw_args
-
-            schema = get_schema(tool)
-            if schema:
-                return apply_defaults(raw_args, schema)
-
-        return raw_args
-
-    def _resolve_stage_outputs(self, node: Node, tool: str, normalized_args: dict):
-        resolve_fn = getattr(self.registry, 'resolve_tool_outputs', None)
-        if not callable(resolve_fn):
-            return node.outputs
-
+        
+    def _apply_registry_defaults(self, tool: str, args: ArgDict) -> ArgDict:
+        raw_args: ArgDict = dict(args or {})
+        defaults: ArgDict = dict(self.registry.get_default_tool_args(tool) or {})
+        defaults.update(raw_args)
+        return defaults
+    
+    def _resolve_stage_outputs(self, node: Node, tool: str, normalized_args: ArgDict) -> ArgDict:
         context = {
             'stage_work_dir': f'/work/stage_{node.node_num}',
             'output_prefix': f'sample{node.node_num}',
         }
-        return resolve_fn(tool, normalized_args, context)
+        return dict(self.registry.resolve_tool_outputs(tool, normalized_args, context) or {})
+
 
     def prepare_graph(self):
         ordered_nodes = self._linearize_graph()
@@ -183,7 +167,8 @@ class NextflowGenerator:
             raise ValueError('Cannot compile an empty graph.')
 
         input_node = ordered_nodes[0]
-        if self._canonical_tool_key(input_node.tool) != 'input':
+        input_tool = (input_node.tool or "").strip().lower()
+        if input_tool != 'input':
             raise ValueError('The first node in the graph must be an input node.')
 
         input_node.tool = 'input'
@@ -248,7 +233,9 @@ class NextflowGenerator:
         active_data_channel = 'reads_ch'
 
         for node in ordered_nodes[1:]:
-            tool = node.tool
+            tool = str(node.tool)
+            normalized_args: ArgDict = dict(node.args or {})
+
             spec = get_module_spec(tool)
             alias = self._build_alias(spec.process_name, tool, alias_counts, tool_counts)
             output_channel = self._channel_name_from_alias(alias)
@@ -263,11 +250,12 @@ class NextflowGenerator:
                 output_channel=output_channel,
                 output_accessor=spec.output_accessor,
                 advances_primary_channel=spec.advances_primary_channel,
-                normalized_args=node.args,
-                ext_args=build_ext_args_for_tool(tool, node.args),
-                ext_args2=build_ext_args2_for_tool(tool, node.args),
+                normalized_args=normalized_args,
+                ext_args=build_ext_args_for_tool(tool, normalized_args),
+                ext_args2=build_ext_args2_for_tool(tool, normalized_args),
                 publish_subdir=spec.publish_subdir,
             )
+
             compiled_nodes.append(compiled_node)
 
             if compiled_node.advances_primary_channel:
@@ -290,15 +278,15 @@ class NextflowGenerator:
             '        .map { f ->\n'
             '            def name = f.getName()\n\n'
             "            def sample_id = name\n"
-            "                .replaceAll(/_R?1(_\\d+)?\\.fastq$/, '')\n"
-            "                .replaceAll(/_R?2(_\\d+)?\\.fastq$/, '')\n\n"
+            "                .replaceAll(/_R?1(_\\d+)?\\.(fastq|fq)(\\.gz)?$/, '')\n"
+            "                .replaceAll(/_R?2(_\\d+)?\\.(fastq|fq)(\\.gz)?$/, '')\n\n"
             '            tuple(sample_id, f)\n'
             '        }\n'
             '        .groupTuple()\n'
             '        .map { sample_id, files ->\n'
             '            def files_list = files.toList()\n'
-            '            def r1 = files_list.find { it.getName() ==~ /.*_R?1(_\\d+)?\\.fastq$/ }\n'
-            '            def r2 = files_list.find { it.getName() ==~ /.*_R?2(_\\d+)?\\.fastq$/ }\n'
+            '            def r1 = files_list.find { it.getName() ==~ /.*_R?1(_\\d+)?\\.(fastq|fq)(\\.gz)?$/ }\n'
+            '            def r2 = files_list.find { it.getName() ==~ /.*_R?2(_\\d+)?\\.(fastq|fq)(\\.gz)?$/ }\n'
             '            def meta = [ id: sample_id ]\n\n'
             '            if (r1 && r2) {\n'
             '                tuple(meta, [ r1, r2 ])\n'
