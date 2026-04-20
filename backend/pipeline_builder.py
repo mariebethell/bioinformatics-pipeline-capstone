@@ -1,3 +1,26 @@
+"""
+Pipeline compilation and execution for the backend Nextflow workflow system.
+
+This module is responsible for taking the backend graph representation of a
+pipeline, validating and normalizing its nodes, compiling those nodes into
+nf-core module calls, generating the final `main.nf` workflow script plus the
+corresponding `conf/modules.config` overrides file, and then optionally
+launching the workflow with Nextflow.
+
+- this file is part of the newer nf-core-based architecture
+- it does not build raw shell commands for tools directly
+- tool-specific argument serialization is delegated to
+  `modules_config_builder.py`
+- nf-core module metadata such as process names, module paths, and output
+  accessors are defined in `compiled_node.py`
+
+  Current limitation:
+- the compiler currently assumes a primarily linear pipeline flow
+  (input -> stage -> stage -> ...)
+- branching and merge-heavy graphs will require a future refactor toward
+  explicit edge/channel-based compilation
+"""
+
 from __future__ import annotations
 
 
@@ -41,12 +64,23 @@ class NextflowPipeline(Pipeline):
         tool_registry,
         pipeline_script_path: str,
         modules_config_path: str | None = None,
+        nextflow_config_path: str | None = None,
     ):
         super().__init__(graph, tool_registry)
-        self.pipeline_script_path = pipeline_script_path
-        self.modules_config_path = modules_config_path or os.path.join(
-            os.path.dirname(pipeline_script_path),
-            'conf/modules.config',
+        self.pipeline_script_path = os.path.abspath(pipeline_script_path)
+
+        self.modules_config_path = os.path.abspath(
+            modules_config_path
+            or os.path.join(
+                os.path.dirname(self.pipeline_script_path),
+                "conf",
+                "modules.config",
+            )
+        )
+
+        self.nextflow_config_path = os.path.abspath(
+            nextflow_config_path
+            or os.path.join(os.path.dirname(__file__), "nextflow.config")
         )
 
     def run_pipeline(self):
@@ -58,23 +92,23 @@ class NextflowPipeline(Pipeline):
 
         pipeline_dir = os.path.dirname(self.pipeline_script_path)
         modules_dir = os.path.dirname(self.modules_config_path)
+
         if pipeline_dir:
             os.makedirs(pipeline_dir, exist_ok=True)
         if modules_dir:
             os.makedirs(modules_dir, exist_ok=True)
 
-        with open(self.pipeline_script_path, 'w', encoding='utf-8') as f:
+        with open(self.pipeline_script_path, "w", encoding="utf-8") as f:
             f.write(main_nf)
 
-        with open(self.modules_config_path, 'w', encoding='utf-8') as f:
+        with open(self.modules_config_path, "w", encoding="utf-8") as f:
             f.write(modules_config)
 
-        print('Generated pipeline script:')
+        print("Generated pipeline script:")
         print(main_nf)
-        print('\nGenerated modules config:')
+        print("\nGenerated modules config:")
         print(modules_config)
 
-        # TODO: Execute Nextflow here.
         import subprocess
         subprocess.run(
             [
@@ -82,7 +116,7 @@ class NextflowPipeline(Pipeline):
                 "run",
                 self.pipeline_script_path,
                 "-c",
-                os.path.join(os.path.dirname(self.pipeline_script_path), "backend/nextflow.config"),
+                self.nextflow_config_path,
                 "-c",
                 self.modules_config_path,
             ],

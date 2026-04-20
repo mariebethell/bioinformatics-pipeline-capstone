@@ -1,3 +1,18 @@
+"""
+Compiled node structures for backend Nextflow generation.
+
+This module defines the small data objects used after a graph node has been
+validated and compiled into an nf-core-ready pipeline stage.
+
+`ModuleSpec` stores static metadata for each supported tool, such as the
+process name, module path, output accessor, and whether the tool advances the
+main data channel.
+
+`CompiledNode` stores the per-node compiled result used during pipeline and
+modules.config generation, including aliases, channel names, normalized args,
+and rendered ext.args values.
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
