@@ -2,6 +2,7 @@ import ipaddress
 import aiohttp
 import asyncio
 import uuid
+import websockets
 from datetime import datetime, timedelta
 from enum import Enum
 
@@ -25,9 +26,11 @@ class NetClient:
 
     """
 
-    def __init__(self):
+    def __init__(self, dispatcher):
         self.server_ip: ipaddress.IPv4Address | ipaddress.IPv6Address
         self.server_port: int
+        self.socket_worker
+        self.cmd_dispatcher = dispatcher
 
     def connect(self, user_uuid: uuid.UUID, server_ip: ipaddress.IPv4Address | ipaddress.IPv6Address, server_port: int):
         """
@@ -128,16 +131,24 @@ class NetClient:
         """
         Establishes websocket connection with server
 
-        Not yet implemented
-
         Raises RuntimeError if the client is not connected to a server
 
         """
 
         if self.server_ip is None or self.server_port is None:
             raise RuntimeError("Not connected to a server")  
+            
+        self.socket_worker = asyncio.create_task(self._socket_worker())
         
-        # TODO setup websocket
+        
+    async def _socket_worker(self, uuid: UUID):
+        url = f"http://{self.server_ip}:{self.server_port}/api/client/connect/"
+        async with websockets.connect(url) as websocket:
+            print("INFO: Socket connected to server")
+            while True:
+                message = await websocket.recv()
+                print("INFO: Received message on websocket")
+                dispatcher.handle_async_update(message)
 
     @staticmethod
     async def _ping_server(server_ip: ipaddress.IPv4Address | ipaddress.IPv6Address, server_port: int) -> timedelta:

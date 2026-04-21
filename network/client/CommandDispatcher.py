@@ -20,7 +20,7 @@ class CommandDispatcher:
             raise TypeError("user_uuid must be given")
 
         self.user_uuid = user_uuid
-        self.net_client = NetClient()
+        self.net_client = NetClient(self)
 
     def connect(self, server_ip: ipaddress.IPv4Address | ipaddress.IPv6Address, server_port: int) -> Command.Response:
         """
@@ -344,11 +344,36 @@ class CommandDispatcher:
         """
         Event handler for incoming socket data. Triggers UI update on server side pipeline stage changes
 
-        Not yet implemented
+        Args:
+            payload: JSON string received from the server, expected to be a serialized GraphUIUpdate or WebsocketConnectResponse
+            
+        Raises:
+            Nothing, prints errors to console and continues
 
         """
 
-        raise NotImplementedError
+        cmd = None
+        try:
+            # 99% of the time it's going to be a GraphUIUpdate
+            cmd = CommandFactory.deserialize_command(Command.GraphUIUpdate, payload)
+            
+        except TypeError | ValueError:
+            # It's not a GraphUIUpdate. Only other possibility is that it's a WebsocketConnectResponse
+            cmd = CommandFactory.deserialize_command(Command.WebsocketConnectResponse, payload)
+            
+            except Exception as e:
+                print(f"ERROR: Failed to deserialize incoming websocket message due to: {e}")
+                
+        if cmd is Command.GraphUIUpdate:
+            #TODO pass to model when that is ready
+            print("TODO pass GraphUIUpdate to model")
+            return
+            
+        elif cmd is Command.WebsocketConnectResponse:
+            return # Don't really need this data right now
+            
+        print(f"ERROR: CommandDispatcher handle_async_update misconfigured, missing handler for Command type {type(cmd)}")
+        return
     
     @staticmethod
     def _inject_source(cmd: Command.Response, source: ipaddress.IPv4Address | ipaddress.IPv6Address):
