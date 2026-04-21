@@ -4,6 +4,8 @@ import sys
 from datetime import date, datetime
 import json
 import re
+from collections import deque
+import threading
 from pathlib import Path
 from platform import node
 from PySide6 import QtWidgets, QtCore, QtWebEngineWidgets
@@ -296,6 +298,12 @@ class PipelineWorkbenchVC(PanelController):
     def __init__(self, app):
         self.node_graph = NodeGraph()
 
+        self.update_queue = deque(maxlen=100)
+        self.update_lock = threading.Lock()
+
+
+
+
         self.view = QtWidgets.QWidget()
         self.app = app
 
@@ -421,8 +429,9 @@ class PipelineWorkbenchVC(PanelController):
                 for port in node.input_ports():
                     port.unlock()
     
-
-
+    def enqueue_update(self, update):
+        with self.update_lock:
+            self.update_queue.append(update)
 
     def run_pipeline(self):
         graph = GraphGenerator(self.node_graph)
