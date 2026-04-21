@@ -154,6 +154,11 @@ class GetArtifactDownloadResponse(Response):
 ###########################################################
 
 @dataclass
+class WebsocketConnectResponse(Response):
+    pass
+    # Difference is in semantics, not syntax
+
+@dataclass
 class GraphUIUpdate(Command):
     PIPELINE_ID: Annotated[uuid.UUID, Nullable(False)] = None
     UPDATES: Annotated[dict[int, "graph.StageState"], Nullable(False)] = None
