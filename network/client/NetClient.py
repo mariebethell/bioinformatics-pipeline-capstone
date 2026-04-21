@@ -129,26 +129,54 @@ class NetClient:
 
     def _connect_socket(self, user_uuid: uuid.UUID):
         """
-        Establishes websocket connection with server
+        Establishes websocket connection with server for client UI updates (such as on stage completion)
 
-        Raises RuntimeError if the client is not connected to a server
+        Args:
+            user_uuid: UUID which represents this user's identity to the server
+                        Should never change even between client restarts
+
+        Raises:
+            RuntimeError if the client is not connected to a server
 
         """
 
         if self.server_ip is None or self.server_port is None:
             raise RuntimeError("Not connected to a server")  
             
-        self.socket_worker = asyncio.create_task(self._socket_worker())
+        self.socket_worker = asyncio.create_task(self._socket_worker(user_uuid))
         
         
-    async def _socket_worker(self, uuid: UUID):
+    async def _socket_worker(self, uuid: uuid.UUID):
+        """
+        Worker function which handles the websocket connection with the server
+            Should be called as a task or this will stall the program
+
+        Args:
+            user_uuid: UUID which represents this user's identity to the server
+                        Should never change even between client restarts
+        
+        """
+
         url = f"http://{self.server_ip}:{self.server_port}/api/client/connect/"
         async with websockets.connect(url) as websocket:
             print("INFO: Socket connected to server")
             while True:
-                message = await websocket.recv()
-                print("INFO: Received message on websocket")
-                dispatcher.handle_async_update(message)
+                try:
+                    message = await websocket.recv()
+                    print("INFO: Received message on websocket")
+                    self.cmd_dispatcher.handle_async_update(message)
+
+                except websockets.ConnectionClosedOK:
+                    print("INFO: Websocket connection closed")
+                    return
+
+                except websockets.ConnectionClosedError as e:
+                    print(f"ERROR: Websocket connection closed due to error: {e}")
+                    return    
+
+                except Exception as e:
+                    print(f"ERROR: Exception during receipt of websocket message: {e}\n\n Continuing...")
+                    
 
     @staticmethod
     async def _ping_server(server_ip: ipaddress.IPv4Address | ipaddress.IPv6Address, server_port: int) -> timedelta:

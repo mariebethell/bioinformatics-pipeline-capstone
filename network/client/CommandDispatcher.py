@@ -359,7 +359,8 @@ class CommandDispatcher:
             
         except TypeError | ValueError:
             # It's not a GraphUIUpdate. Only other possibility is that it's a WebsocketConnectResponse
-            cmd = CommandFactory.deserialize_command(Command.WebsocketConnectResponse, payload)
+            try:
+                cmd = CommandFactory.deserialize_command(Command.WebsocketConnectResponse, payload)
             
             except Exception as e:
                 print(f"ERROR: Failed to deserialize incoming websocket message due to: {e}")
