@@ -20,6 +20,8 @@ class AppFrame(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.setWindowTitle('NodePipe: Bioinformatics Pipeline System')
+
         # a top bar for navigating between the panels
         top_bar_layout = QtWidgets.QHBoxLayout()
         main_layout = QtWidgets.QVBoxLayout()
