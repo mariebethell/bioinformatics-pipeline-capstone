@@ -6,7 +6,7 @@ import json
 import re
 from pathlib import Path
 from platform import node
-from PySide6 import QtWidgets, QtCore
+from PySide6 import QtWidgets, QtCore, QtWebEngineWidgets
 from NodeGraphQt import NodeGraph, BaseNode, NodeBaseWidget
 from NodeGraphQt.qgraphics.node_base import NodeItem
 from abc import ABC, abstractmethod
@@ -16,6 +16,8 @@ from backend.tool_registry import ToolRegistry
 
 
 # handles what window is displayed to user
+
+app = QtWidgets.QApplication([])
 class AppFrame(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
@@ -173,11 +175,6 @@ class HomeController(PanelController):
     
         self.app.content.setCurrentWidget(self.view)
 
-    def show_documentation(self):
-        pass
-
-    def close(self):
-        print('Closing Home')
 
 
 class SettingsController(PanelController):
@@ -420,8 +417,9 @@ class PipelineWorkbenchVC(PanelController):
         graph = GraphGenerator(self.node_graph)
         graph = graph.from_workbench()
 
+
         input_node = graph.get_first_node()
-        if not input_node: # or (graph.get_node(input_node.node_num).tool != "input"):
+        if not input_node: 
             print("ERROR: First node must be an input node with a FASTQ file input to run the pipeline!")
             return
         else:
@@ -584,8 +582,27 @@ class HomeView(QtWidgets.QWidget):
         self.onedrive_status.setStyleSheet(onedrive_text_false)
         self.onedrive_status.setAlignment(QtCore.Qt.AlignCenter)
         
-        onedrive = QtWidgets.QLabel('OneDrive PlaceHolder')
-        onedrive.setAlignment(QtCore.Qt.AlignCenter)
+        #onedrive = QtWidgets.QLabel('OneDrive PlaceHolder')
+        #onedrive.setAlignment(QtCore.Qt.AlignCenter)
+        
+        ## ONEDRIVE SUBSECTION ##
+        self.onedrive_container = QtWidgets.QGroupBox('OneDrive Access')
+        self.onedrive_container.setStyleSheet('color:white; font-weight:bold')
+        self.onedrive_container.setMaximumHeight(600)
+        self.onedrive_container.setMaximumWidth(450)
+        self.onedrive_container.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.web_view = QtWebEngineWidgets.QWebEngineView()
+        web_settings = self.web_view.settings()
+        web_settings.setAttribute(web_settings.WebAttribute.JavascriptCanOpenWindows, True)
+
+        od_cont_layout = QtWidgets.QVBoxLayout()
+        od_cont_layout.addWidget(self.web_view)
+        self.onedrive_container.setLayout(od_cont_layout)
+
+        login_url = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize'
+        self.web_view.setUrl(QtCore.QUrl(login_url))
+
 
         spacer = QtWidgets.QSpacerItem(100, 100)
 
@@ -618,12 +635,10 @@ class HomeView(QtWidgets.QWidget):
         documentation_link.setAlignment(QtCore.Qt.AlignCenter)
         documentation_link.setOpenExternalLinks(True)
 
-
-
         layout.addWidget(title)
         layout.addWidget(self.onedrive_status)
-        layout.addWidget(onedrive)
-        layout.addItem(spacer)
+        layout.addWidget(self.onedrive_container, alignment=QtCore.Qt.AlignCenter)
+        #layout.addItem(spacer)
         
         layout.addWidget(changelog_title)
         layout.addWidget(changelog_text)
@@ -646,29 +661,68 @@ class HomeView(QtWidgets.QWidget):
 
 
 
+
 class SettingsView(QtWidgets.QWidget):
     """
     This is the Setting Page's view, which actually displays information to the user to change app-wide settings
     """
     def __init__(self):
         super().__init__()
-        layout = QtWidgets.QVBoxLayout()
 
-        placeholder_text = 'Settings placeholder !!'
-        self.placeholder_label = QtWidgets.QLabel(placeholder_text)
+        container = QtWidgets.QWidget()
+        layout = QtWidgets.QVBoxLayout(container)
+        layout.setContentsMargins(0,0,0,0)
+        layout.setSpacing(2)
+        container.setStyleSheet('background-color: #3D3D3D;')
+        
+        ### TITLE SECTION ###
+        title = QtWidgets.QLabel('NodePipe Settings')
+        title.setStyleSheet(title_text)
+        title.setAlignment(QtCore.Qt.AlignCenter)
 
-        layout.addWidget(self.placeholder_label)
-        self.setLayout(layout)
+        ### SETTINGS SECTION ###
+        window_size_combo = QtWidgets.QComboBox()
+        window_size_combo.addItems(str(self._get_screen_sizes()))
+
+        
+
+        self.done_btn = QtWidgets.QPushButton('Save Changes')
+        self.done_btn.setStyleSheet(
+            'background-color: green; color: white;'
+            )
+        
+        layout.addWidget(window_size_combo, alignment=QtCore.Qt.AlignCenter)
+        
+        layout.addWidget(self.done_btn, alignment=QtCore.Qt.AlignCenter)
+
+        outer_layout = QtWidgets.QVBoxLayout()
+        outer_layout.addWidget(container)
+
+        self.setLayout(outer_layout)
+        
+    def _get_screen_sizes(self):
+        screen = app.primaryScreen()
+        size = screen.size()
+        scr_w = size.width()
+        scr_h = size.height()
+        
+        mod = 0.5 # screen size modifier
+    
+
+        sizes = []
+
+        # appending screen sizes up to 100% of the user's screen size (from 50%)
+        while mod != 1:
+            sizes.append( (int(scr_w * mod), int(scr_h * mod) ))
+            mod += 0.1
+
+        return sizes
+
+
 
 #### NODE SECTION ####
-"""
-Future idea and maybe a bit of a stretch goal but I wanted to record this here. I was thinking that perhaps one way to implement the ability to add
-new nodes (atleast in the front end) is that I could store these widgets in a JSON or some other similar file, and make a separate window called
-Node Builder where basically future devs could basically 'design' the node by dragging widgets to a blank node, and save it to the JSON, with the
-added ability to share this tool JSON around so that others may import it. Might have to come back to this, but didn't want to lose this idea. - Max
-"""
+
 # a dictionary of a list for each tool, containing a dictionary of widget types where each tool will contain what type of widget it will have and the fields for each widget
-# perhaps find a way to get the tool's version to display in the node to the user
 
 # widget definitions to increase readability and make it easier to add widgets
 #TODO add tooltips to each widget
@@ -683,10 +737,6 @@ def combo_box_widget(name, label, default=None, items=[], nullable=False, sectio
     return {'type': 'combo_box', 'name': name, 'label': label, 'default': default, 'need_label': True, 'items': items, 'nullable': nullable, 'section' : section }
 def num_input_widget(name, label, step=1, default=1, nullable=False, min=1, max=100, section=None):
     return {'type': 'num_input', 'name': name, 'label': label, 'step' : step, 'default': default, 'need_label': True, 'min': min, 'max': max, 'nullable' : nullable, 'section' : section }
-
-
-
-
 
 # common widgets
 threads_slider = slider_widget('threads', 'Number of Threads', min=1, max=128)
@@ -1388,7 +1438,7 @@ class OutputNode(DataNode):
 
 
 if __name__ == '__main__':
-    app = QtWidgets.QApplication([])
+
 
     #gets user's screen size for resizing the window
     screen = app.primaryScreen()
