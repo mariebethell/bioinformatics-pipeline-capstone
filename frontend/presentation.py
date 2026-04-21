@@ -1468,8 +1468,6 @@ class OutputNodeWrapper(NodeBaseWidget):
         container.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         layout = QtWidgets.QVBoxLayout()
 
-        layout.setContentsMargins(5,5,5,5)
-        layout.setAlignment(QtCore.Qt.AlignCenter)
 
         self.tool_label = QtWidgets.QLabel('Connected Tool: None')
         self.data_label = QtWidgets.QLabel('Data Name: None')
