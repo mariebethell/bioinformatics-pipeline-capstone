@@ -1330,7 +1330,9 @@ class ToolNode(BaseNode):
 
     def build_widgets(self, tool):
         if not tool or self.wrapper is not None:
-                return
+                return 
+
+        self.tool = tool
 
         self.wrapper = ToolNodeWrapper(tool, self.view)
         self.set_property('tool_type', tool)
@@ -1463,7 +1465,11 @@ class OutputNodeWrapper(NodeBaseWidget):
         self.tool = None
 
         container = QtWidgets.QWidget()
+        container.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         layout = QtWidgets.QVBoxLayout()
+
+        layout.setContentsMargins(5,5,5,5)
+        layout.setAlignment(QtCore.Qt.AlignCenter)
 
         self.tool_label = QtWidgets.QLabel('Connected Tool: None')
         self.data_label = QtWidgets.QLabel('Data Name: None')
@@ -1488,11 +1494,11 @@ class OutputNodeWrapper(NodeBaseWidget):
 
         for label in [self.tool_label, self.data_label, self.timestamp_label]:
             label.setStyleSheet('color:white; font-weight:bold;')
-            layout.addWidget(label)
+            layout.addWidget(label, alignment=QtCore.Qt.AlignCenter)
 
         for button in [dl_button, purge_button, stats_button]:
             button.setEnabled(False)
-            layout.addWidget(button)
+            layout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
 
         container.setLayout(layout)
         self.set_custom_widget(container)
@@ -1534,6 +1540,7 @@ class OutputNode(DataNode):
         self.wrapper.set_name('output_data')
 
         self.add_custom_widget(self.wrapper)
+
 
     def on_input_connected(self, in_port, out_port):
         super().on_input_connected(in_port, out_port)
