@@ -276,14 +276,15 @@ class NodeBrowser(QtWidgets.QDialog):
 
     
     def create_input_node(self):
-        node = self.graph.create_node('bioinformatics_capstone.InputNode', name='Input', pos=(40,40))
+        self.graph.create_node('bioinformatics_capstone.InputNode', name='Input', pos=(40,40))
         self.graph.clear_selection()
         self.close()
 
     
     def create_output_node(self):
-        pass
-        
+        self.graph.create_node('bioinformatics_capstone.OutputNode', name='Output Checkpoint', pos=(40,40))
+        self.graph.clear_selection()
+        self.close()
 
 class PipelineWorkbenchVC(PanelController):
     """
@@ -1448,18 +1449,107 @@ class InputNode(DataNode):
 
     
 
-# Node responsible for the exporting of data
-# maybe it'd just be better if each tool node was able to export data once it was done processing?
+class OutputNodeWrapper(NodeBaseWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.uri = None
+        self.dataTimestamp = None
+        self.dataName = None
+        self.is_available = False
+
+        self.tool = None
+
+        container = QtWidgets.QWidget()
+        layout = QtWidgets.QVBoxLayout()
+
+        self.tool_label = QtWidgets.QLabel('Connected Tool: None')
+        self.data_label = QtWidgets.QLabel('Data Name: None')
+        self.timestamp_label = QtWidgets.QLabel('Timestamp: None')
+        
+
+    
+        
+
+        dl_button = QtWidgets.QPushButton('Download Results')
+        dl_button.setStyleSheet('background-color: green; color: white;')
+        dl_button.clicked.connect(self.download_data)
+        
+
+        purge_button = QtWidgets.QPushButton('Purge Data')
+        purge_button.setStyleSheet('background-color: red; color:white;')
+        purge_button.clicked.connect(self._purge_data)
+
+        stats_button = QtWidgets.QPushButton('View Stats')
+        stats_button.setStyleSheet('background-color: orange; color:white')
+        stats_button.clicked.connect(self.view_stats)
+
+        for label in [self.tool_label, self.data_label, self.timestamp_label]:
+            label.setStyleSheet('color:white; font-weight:bold;')
+            layout.addWidget(label)
+
+        for button in [dl_button, purge_button, stats_button]:
+            button.setEnabled(False)
+            layout.addWidget(button)
+
+        container.setLayout(layout)
+        self.set_custom_widget(container)
+
+
+    def download_data(self):
+        pass
+
+    def open_data(self):
+        pass
+
+    def view_stats(self):
+        pass
+    
+    def _update(self, uri):
+        pass
+
+    def _purge_data(self):
+        pass
+
+    def _update_tool_label(self, tool):
+        self.tool = tool
+        self.tool_label.setText(f'Connected Tool: {tool}')
+
+    def get_value(self):
+        pass
+
+    def set_value(self, val):
+        pass
 class OutputNode(DataNode):
     __identifier__ = 'bioinformatics_capstone'
-    NODE_NAME = 'Output'
+    NODE_NAME = 'Output Checkpoint'
 
     def __init__(self):
         super().__init__()
         self.add_input('input', color=(0,0,255))
 
-        # self.wrapper = None
-        # self.add_custom_widget(self.wrapper)
+        self.wrapper = OutputNodeWrapper(self.view)
+        self.wrapper.set_name('output_data')
+
+        self.add_custom_widget(self.wrapper)
+
+    def on_input_connected(self, in_port, out_port):
+        super().on_input_connected(in_port, out_port)
+
+        src_node = out_port.node()
+
+        if hasattr(src_node, 'tool'):
+            self.wrapper._update_tool_label(src_node.tool)
+        else:
+            pass
+
+
+    def on_input_disconnected(self, in_port, out_port):
+        super().on_input_disconnected(in_port, out_port)
+
+        self.wrapper._update_tool_label('None')
+
+        
 
 
 
