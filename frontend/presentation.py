@@ -15,8 +15,6 @@ from backend.pipeline_builder import PipelineFactory
 from backend.tool_registry import ToolRegistry
 
 
-# handles what window is displayed to user
-
 app = QtWidgets.QApplication([])
 class AppFrame(QtWidgets.QMainWindow):
     def __init__(self):
@@ -187,9 +185,19 @@ class SettingsController(PanelController):
     
     def init_view(self):
         self.view = SettingsView()
+        self.view.save_requested.connect(self.change_app_resolution)
         self.app.content.addWidget(self.view)
 
         self.app.content.setCurrentWidget(self.view)
+
+    def change_app_resolution(self, size_str):
+        try:
+            w, h = map(int, size_str.split('x'))
+
+            self.app.setFixedSize(w, h)
+        except:
+            print('Error when trying to change screen size.')
+
 
     def commit_changes(self):
         pass
@@ -666,6 +674,8 @@ class SettingsView(QtWidgets.QWidget):
     """
     This is the Setting Page's view, which actually displays information to the user to change app-wide settings
     """
+
+    save_requested = QtCore.Signal(str)
     def __init__(self):
         super().__init__()
 
@@ -681,8 +691,15 @@ class SettingsView(QtWidgets.QWidget):
         title.setAlignment(QtCore.Qt.AlignCenter)
 
         ### SETTINGS SECTION ###
-        window_size_combo = QtWidgets.QComboBox()
-        window_size_combo.addItems(str(self._get_screen_sizes()))
+        window_size_label = QtWidgets.QLabel('Change App Size')
+        window_size_label.setStyleSheet(body_text)
+        window_size_label.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.window_size_combo = QtWidgets.QComboBox()
+
+        self.window_size_combo.setStyleSheet('background-color: white; color:black;')
+        self.window_size_combo.addItems(self._get_screen_sizes())
+        self.window_size_combo.setMinimumContentsLength(100)
 
         
 
@@ -690,8 +707,10 @@ class SettingsView(QtWidgets.QWidget):
         self.done_btn.setStyleSheet(
             'background-color: green; color: white;'
             )
+        self.done_btn.clicked.connect(self._on_save_clicked)
         
-        layout.addWidget(window_size_combo, alignment=QtCore.Qt.AlignCenter)
+        layout.addWidget(window_size_label)
+        layout.addWidget(self.window_size_combo, alignment=QtCore.Qt.AlignCenter)
         
         layout.addWidget(self.done_btn, alignment=QtCore.Qt.AlignCenter)
 
@@ -712,11 +731,18 @@ class SettingsView(QtWidgets.QWidget):
         sizes = []
 
         # appending screen sizes up to 100% of the user's screen size (from 50%)
-        while mod != 1:
-            sizes.append( (int(scr_w * mod), int(scr_h * mod) ))
+        while mod <= 0.8:
+            w = int(scr_w * mod)
+            h = int(scr_h * mod)
+
+            sizes.append(f'{w}x{h}')
             mod += 0.1
 
-        return sizes
+        return sizes   
+    
+    def _on_save_clicked(self):
+        selected_size = self.window_size_combo.currentText()
+        self.save_requested.emit(selected_size)
 
 
 
