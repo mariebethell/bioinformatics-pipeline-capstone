@@ -4,14 +4,15 @@ URL configuration for computeServer app.
 from django.contrib import admin
 from django.urls import path
 
-from . import views
+from network.server.computeServer import views
 
 urlpatterns = [
     path('test/', views.test, name='test'),
+    path ('ping/', views.ping, name='ping'),
     
     # Client API
     path('client/connect/', views.connect, name='connect'),
-    path('client/pipeline/new/', views.get_pipeline, name='get_pipeline'),
+    path('client/pipeline/get/', views.get_pipeline, name='get_pipeline'),
     path('client/pipeline/new/', views.new_pipeline, name='new_pipeline'),
     path('client/pipeline/overwrite/', views.overwrite_pipeline, name='overwrite_pipeline'),
     path('client/pipeline/modifyparams/', views.modify_pipeline_params, name='modify_pipeline_params'),

@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class ComputeserverConfig(AppConfig):
-    name = 'computeServer'
+    name = 'network.server.computeServer'
