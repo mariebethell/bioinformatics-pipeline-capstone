@@ -3,6 +3,7 @@ from rest_framework.request import Request
 from typing import Type
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from uuid import UUID
 
 from network.server.computeServer.gateway.LocalPolicy import LocalPolicy
 from network.server.computeServer.gateway.DatagramTools import DatagramTools
@@ -66,10 +67,19 @@ class ComputeServer:
         return RestResp(result_json)
 
         
-    def send_to_target_async(user_uuid, cmd):
+    def send_to_target_async(self, user_uuid: UUID, cmd: Command):
+        """
+        Attempts to send a command to the specified user over their websocket connection
+
+        Args:
+            user_uuid (UUID): The user to send the Command to
+            cmd (Command): The command to send to the user
+        
+        """
+
         channel = get_channel_layer()
         
-        async_to_sync(channel_layer.group_send)(
+        async_to_sync(channel.group_send)(
             str(user_uuid),
             {
                 "type": "send_command",
