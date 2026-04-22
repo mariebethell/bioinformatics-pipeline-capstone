@@ -10,5 +10,6 @@ COPY poetry.lock .
 COPY docker ./docker/
 RUN ./docker/installEnv.sh
 RUN ./docker/installDeps.sh
+RUN chmod +x ./docker/*
 CMD ["./docker/runCompute.sh"]
 EXPOSE 8000/tcp
