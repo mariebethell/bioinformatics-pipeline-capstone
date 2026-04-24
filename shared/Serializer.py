@@ -224,15 +224,15 @@ class Serializer:
                                 key_type = Serializer._unforward_ref(kv_types[0])
                                 val_type = Serializer._unforward_ref(kv_types[1])
                                 
-                                if key_type is int and val_type is graph.StageState:
+                                if key_type is int or key_type is str and val_type is graph.StageState:
                                     reconstructedVal = {}
                                     try:
                                         for k, v in val.items():
-                                            new_key = int(k)
+                                            new_key = int(k) if key_type is int else k
                                             reconstructedVal[new_key] = graph.StageState(v)
                                             
                                     except ValueError | TypeError:
-                                        raise ValueError("Failed to deserialize nested dict as dict[int, StageState]")
+                                        raise ValueError("Failed to deserialize nested dict as dict[int | str, StageState]")
                                 
                             except IndexError:
                                 pass # No val annotation, nothing to do
