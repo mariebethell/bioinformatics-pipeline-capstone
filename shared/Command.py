@@ -179,3 +179,10 @@ class OnPipelineError(Command):
     stage_num: Annotated[int, Nullable(False)] = None
     error: Annotated["APIStatus.APIStatus", Nullable(False)] = None
     
+###########################################################
+# DEBUG COMMANDS
+###########################################################
+
+@dataclass
+class SendDummyWebsocketUpdate(Response):
+    pipeline_id: Annotated[uuid.UUID, Nullable(False)] = None

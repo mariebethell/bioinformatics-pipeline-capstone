@@ -8,6 +8,7 @@ from network.server.computeServer.gateway.ComputeServer import ComputeServer, co
 from shared.Command import Command, NewPipeline, Response
 from shared.CommandFactory import CommandFactory
 from shared.APIStatus import APIStatus
+from shared.graph import StageState
 
 #For stub, remove when done with stub
 from shared.Command import ClientConnect, ClientConnectResponse, NewPipelineResponse
@@ -87,6 +88,12 @@ class SessionManagerStub(SessionManager):
         elif (type(cmd) is NewPipeline):
             test_params = {"PIPELINE_ID": uuid4(), "STATUS": APIStatus.SUCCESS}
             test_resp = CommandFactory.new_command(NewPipelineResponse, test_params)
+
+        elif (type(cmd) is SendDummyWebsocketUpdate):
+            dummy_update = {1: APIStatus.SUCCESS, 2: StageState.COMPLETED}
+            test_params = {
+                
+            }
 
 
         if test_resp is None:

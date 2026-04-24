@@ -26,6 +26,9 @@ urlpatterns = [
     # Container API
     path('container/onstagecomplete/', views.on_stage_complete, name='on_stage_complete'),
     path('container/onpipelineerror/', views.on_pipeline_error, name='on_pipeline_error')
+
+    # Debug/Testing
+    path('client/debug/websockettest', views.websocket_test, name='websocket_test'),
 ]
 
 ws_urlpatterns = [

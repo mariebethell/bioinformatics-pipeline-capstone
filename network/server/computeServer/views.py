@@ -88,3 +88,11 @@ def on_pipeline_error(request: Request):
     cmd_type = OnPipelineError
     request.parser_context['cmd_type'] = cmd_type
     return ComputeServer.compute_server.ingest_datagram(cmd_type, request)
+
+# Debug/testing
+
+@api_view(['GET'])
+def on_pipeline_error(request: Request):
+    cmd_type = SendDummyWebsocketUpdate
+    request.parser_context['cmd_type'] = cmd_type
+    return ComputeServer.compute_server.ingest_datagram(cmd_type, request)

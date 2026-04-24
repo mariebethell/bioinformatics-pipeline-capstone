@@ -15,12 +15,23 @@ class CommandDispatcher:
 
     """
 
-    def __init__(self, user_uuid: uuid.UUID):
+    def __init__(self, model, user_uuid: uuid.UUID):
+        """
+        Constructor for CommandDispatcher
+            - Inject dependency for the model into here so it can call it back for graph UI updates
+            
+        Args:
+            model: The model class which should receive the graph UI update data
+            user_uuid: The user's UUID. This should never change after installation/should persist between restarts
+        
+        """
+
         if user_uuid is None:
             raise TypeError("user_uuid must be given")
 
         self.user_uuid = user_uuid
         self.net_client = NetClient(self)
+        self.model = model
 
     def connect(self, server_ip: ipaddress.IPv4Address | ipaddress.IPv6Address, server_port: int) -> Command.Response:
         """
@@ -366,8 +377,7 @@ class CommandDispatcher:
                 print(f"ERROR: Failed to deserialize incoming websocket message due to: {e}")
                 
         if cmd is Command.GraphUIUpdate:
-            #TODO pass to model when that is ready
-            print("TODO pass GraphUIUpdate to model")
+            self.model.update_presented_graph(cmd.UPDATES)
             return
             
         elif cmd is Command.WebsocketConnectResponse:
@@ -375,6 +385,16 @@ class CommandDispatcher:
             
         print(f"ERROR: CommandDispatcher handle_async_update misconfigured, missing handler for Command type {type(cmd)}")
         return
+    
+    def trigger_websocket_test(self, pipeline_id: uuid.UUID):
+        params = {
+            'pipeline_id': pipeline_id
+        }
+
+        cmd = CommandFactory.new_command(Command.SendDummyWebsocketUpdate, params)
+        cmd_str = CommandFactory.serialize_command(cmd)
+
+        asyncio.run(self.net_client.send("/api/client/debug/websockettest/", RequestTypes.GET, cmd_str))
     
     @staticmethod
     def _inject_source(cmd: Command.Response, source: ipaddress.IPv4Address | ipaddress.IPv6Address):
