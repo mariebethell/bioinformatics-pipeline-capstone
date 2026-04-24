@@ -1,7 +1,7 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 from urllib.parse import parse_qs
-from UUID import uuid
+from uuid import UUID
 
 from shared.CommandFactory import CommandFactory
 from shared import Command
@@ -24,7 +24,7 @@ class SocketHandler(AsyncWebsocketConsumer):
         """
         
         try:
-            # Need to check if IP is valid
+            # TODO Need to check if IP is valid
             
             client_data = self.scope['client']
             user_ip = client_data[0]
@@ -39,7 +39,7 @@ class SocketHandler(AsyncWebsocketConsumer):
                 
             user_uuid = None
             try: 
-                user_uuid = uuid(user_uuid_str)
+                user_uuid = UUID(user_uuid_str)
                 
             except ValueError:
                 print("ERROR: Websocket connection attempted with malformed UUID. Rejecting...")
@@ -50,16 +50,11 @@ class SocketHandler(AsyncWebsocketConsumer):
             # Make a group for this client (if it doesn't exist already)
             self.user_room = user_uuid_str
             await self.channel_layer.group_add(
-                self.user_room,
+                user_uuid_str,
                 self.channel_name
             )
             
-            
             await self.accept()
-            
-            params = {"STATUS": APIStatus.SUCCESS}
-            resp = CommandFactory.new_command(Command.WebsocketConnectResponse, params)
-            await self.send_command(resp)
         
         except Exception as e:
             
@@ -81,17 +76,17 @@ class SocketHandler(AsyncWebsocketConsumer):
         print('WARNING: Unexpectedly received data on websocket. Dropping...')
         return # Server doesn't expect to receive data on websocket, only send
         
-    async def send_command(self, command: Command):
+    async def send_command(self, djangoPayload: dict):
         """
-        Method which handles transformation of Commands into strings which can be sent over the websocket
+        Method which handles transformation of Commands into strings which are then sent over the websocket
 
         Args:
-            command (Command): The command to send over the socket connection
+            djangoPayload (dict): Dictionary containing Command object at message key
         
         """
 
         try:
-            respStr = CommandFactory.serialize_command(command)
+            respStr = CommandFactory.serialize_command(djangoPayload['message'])
             await self.send(text_data=respStr)
             
         except Exception as e:

@@ -3,6 +3,7 @@ import aiohttp
 import asyncio
 import uuid
 import websockets
+from threading import Thread
 from datetime import datetime, timedelta
 from enum import Enum
 
@@ -29,7 +30,7 @@ class NetClient:
     def __init__(self, dispatcher):
         self.server_ip: ipaddress.IPv4Address | ipaddress.IPv6Address
         self.server_port: int
-        self.socket_worker
+        self.socket_worker = None
         self.cmd_dispatcher = dispatcher
 
     def connect(self, user_uuid: uuid.UUID, server_ip: ipaddress.IPv4Address | ipaddress.IPv6Address, server_port: int):
@@ -143,7 +144,11 @@ class NetClient:
         if self.server_ip is None or self.server_port is None:
             raise RuntimeError("Not connected to a server")  
             
-        self.socket_worker = asyncio.create_task(self._socket_worker(user_uuid))
+        def worker_task():
+            asyncio.run(self._socket_worker(user_uuid))
+
+        self.socket_worker = Thread(target=worker_task, daemon=True)
+        self.socket_worker.start()
         
         
     async def _socket_worker(self, uuid: uuid.UUID):
@@ -157,13 +162,14 @@ class NetClient:
         
         """
 
-        url = f"http://{self.server_ip}:{self.server_port}/api/client/connect/"
+        url = f"ws://{self.server_ip}:{self.server_port}/api/client/connect?uuid={str(uuid)}"
+        print(url)
         async with websockets.connect(url) as websocket:
             print("INFO: Socket connected to server")
             while True:
                 try:
                     message = await websocket.recv()
-                    print("INFO: Received message on websocket")
+                    print(f"INFO: Received message on websocket: {message}")
                     self.cmd_dispatcher.handle_async_update(message)
 
                 except websockets.ConnectionClosedOK:

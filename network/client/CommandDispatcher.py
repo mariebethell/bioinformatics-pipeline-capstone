@@ -376,11 +376,11 @@ class CommandDispatcher:
             except Exception as e:
                 print(f"ERROR: Failed to deserialize incoming websocket message due to: {e}")
                 
-        if cmd is Command.GraphUIUpdate:
+        if type(cmd) is Command.GraphUIUpdate:
             self.model.update_presented_graph(cmd.UPDATES)
             return
             
-        elif cmd is Command.WebsocketConnectResponse:
+        elif type(cmd) is Command.WebsocketConnectResponse:
             return # Don't really need this data right now
             
         print(f"ERROR: CommandDispatcher handle_async_update misconfigured, missing handler for Command type {type(cmd)}")
@@ -388,6 +388,7 @@ class CommandDispatcher:
     
     def trigger_websocket_test(self, pipeline_id: uuid.UUID):
         params = {
+            'user_id': self.user_uuid,
             'pipeline_id': pipeline_id
         }
 

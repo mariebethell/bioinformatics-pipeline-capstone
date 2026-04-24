@@ -3,9 +3,7 @@ from datetime import datetime
 
 from session.Session import Session
 
-from network.server.computeServer.gateway.ComputeServer import ComputeServer, compute_server
-
-from shared.Command import Command, NewPipeline, Response
+from shared.Command import Command, NewPipeline, Response, SendDummyWebsocketUpdate, GraphUIUpdate
 from shared.CommandFactory import CommandFactory
 from shared.APIStatus import APIStatus
 from shared.graph import StageState
@@ -21,7 +19,8 @@ class SessionManager:
     
     """
 
-    def __init__(self):
+    def __init__(self, compute_server):
+        self.compute_server = compute_server
         self.user_uuid_map: dict[UUID, Session] = {} # Maps user UUID to their session
         self.pipeline_uuid_map: dict[UUID, Session] = {} # Maps pipeline UUID to it's parent session
 
@@ -71,7 +70,7 @@ class SessionManager:
             print("WARNING: Pipeline attempted to send update to nonexistant user session")
             return # Just drop it
             
-        compute_server.send_to_target_async(user_uuid, cmd)
+        self.compute_server.send_to_target_async(user_uuid, cmd)
 
 
 class SessionManagerStub(SessionManager):
@@ -90,10 +89,18 @@ class SessionManagerStub(SessionManager):
             test_resp = CommandFactory.new_command(NewPipelineResponse, test_params)
 
         elif (type(cmd) is SendDummyWebsocketUpdate):
-            dummy_update = {1: APIStatus.SUCCESS, 2: StageState.COMPLETED}
-            test_params = {
-                
+            dummy_update = {1: StageState.COMPLETED, 2: StageState.RUNNING}
+            async_params = {
+                'PIPELINE_ID': cmd.pipeline_id,
+                'UPDATES': dummy_update
             }
+            async_cmd = CommandFactory.new_command(GraphUIUpdate, async_params)
+
+            self.compute_server.send_to_target_async(cmd.user_id, async_cmd)
+
+            params = {'STATUS': APIStatus.SUCCESS}
+            test_resp = CommandFactory.new_command(Response, params)
+
 
 
         if test_resp is None:
@@ -102,5 +109,3 @@ class SessionManagerStub(SessionManager):
 
         return test_resp
         
-
-session_manager = SessionManager() # Singleton

@@ -184,5 +184,6 @@ class OnPipelineError(Command):
 ###########################################################
 
 @dataclass
-class SendDummyWebsocketUpdate(Response):
+class SendDummyWebsocketUpdate(Command):
+    user_id: Annotated[uuid.UUID, Nullable(False)] = None
     pipeline_id: Annotated[uuid.UUID, Nullable(False)] = None

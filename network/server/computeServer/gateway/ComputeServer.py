@@ -12,7 +12,7 @@ from shared.Command import Command, Response
 from shared.CommandFactory import CommandFactory
 from shared.APIStatus import APIStatus
 
-from session.SessionManager import SessionManager, session_manager
+from session.SessionManager import SessionManager
 from session.SessionManager import SessionManagerStub #TODO remove after testing
 
 
@@ -24,7 +24,7 @@ class ComputeServer:
 
     def __init__(self):
         self.filter = LocalPolicy()
-        self.session_manager = SessionManagerStub() #TODO change to session_manager when ready
+        self.session_manager = SessionManagerStub(self) #TODO change to SessionManager when ready
     
     def ingest_datagram(self, cmd_type: Type[Command], request: Request):
         """
@@ -77,7 +77,10 @@ class ComputeServer:
         
         """
 
+        print(f"Sending websocket update to user: {user_uuid}")
+
         channel = get_channel_layer()
+        print(channel.groups)
         
         async_to_sync(channel.group_send)(
             str(user_uuid),
