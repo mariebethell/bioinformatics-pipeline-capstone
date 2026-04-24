@@ -4,6 +4,7 @@ import sys
 from datetime import date, datetime
 import json
 import re
+import queue
 from pathlib import Path
 from platform import node
 from PySide6 import QtWidgets, QtCore, QtWebEngineWidgets
@@ -133,6 +134,7 @@ class GraphGenerator():
                 continue
 
             node = self.graph.create_node(tool)
+            node.id = qt_node.id
             if isinstance(qt_node, InputNode):
                 node.outputs = {
                     "reads": qt_node.get_value()
@@ -323,8 +325,13 @@ class PipelineWorkbenchVC(PanelController):
         self.node_graph.register_node(ToolNode)
         self.node_graph.register_node(InputNode)
         self.node_graph.register_node(OutputNode)
-        
 
+        self.bridge = self.EventBrige()
+
+        self.poll_timer = QtCore.QTimer()
+
+        self.poll_timer.timeout.connect(self._check_for_updates)
+        self.poll_timer.start(200) # checks for updates 5 times a second
         
         self.tool_palette = None # this external window is responsible for holding the Node Browser window
 
@@ -470,7 +477,7 @@ class PipelineWorkbenchVC(PanelController):
             input_folder = input_node.outputs["reads"]["reads"][0] # gets the file URI of the input node's reads, which is the input folder for the pipeline
 
         for node_num, node in graph.nodes.items(): # shows the tools being ran sequentially and their args
-            print(f"Node {node_num}: tool={node.tool}, args={node.args}")
+            print(f"Node ID: {node.id} Node Num: {node_num}: tool={node.tool}, args={node.args}")
 
         pipeline_factory = PipelineFactory()
         pipeline = pipeline_factory.build_pipeline("nextflow", graph, input_folder, ToolRegistry(), pipeline_script_path="backend/pipeline.nf")
@@ -506,6 +513,32 @@ class PipelineWorkbenchVC(PanelController):
         """       
         self.app.content.addWidget(self.view)
         self.app.content.setCurrentWidget(self.view)
+
+    def _check_for_updates(self):
+        pass
+
+    def _apply_backend_state(self, data):
+        pass
+
+    def _update_output(self, result_data):
+        pass
+
+    class EventBrige(QtCore.QObject):
+        """
+        An inner class that is designed to be a bridge between the presentation layer and the networking layer
+        Enqueueing new graphs to the queue so that the nodegraph can be updated, without threads being blocked
+        """
+        refresh = QtCore.Signal()
+
+        def __init__(self):
+            super().__init__()
+            self.graph_queue = queue.Queue()
+
+
+        def _push_new_graph(self, new_graph):
+            # this gets called by the network layer
+            self.graph_queue.put(new_graph)
+            self.refresh.emit() # emits a signal that a new graph was put in
 
 
     class PopupWindow(QtWidgets.QDialog):
@@ -846,17 +879,12 @@ NODE_WIDGETS = {
         threads_slider,
         combo_box_widget('mode', 'Mode', items=['SE', 'PE']),
         combo_box_widget('phred', 'Phred', items=['33', '64'], nullable=True),
-        #checkbox_widget('trimlog', 'Trimlog'),
-        #checkbox_widget('summary', 'Summary'),
-        #checkbox_widget('basein', 'Basein'),
-        #checkbox_widget('baseout', 'Baseout'),
         checkbox_widget('validate_pairs', 'Validate Pairs'),
         slider_widget('compress_level', 'Compression Level', max=9),
         combo_box_widget('compression_mode', 'Compression Mode', items=['stream', 'block'], nullable=True),
         quiet_check,
 
         # illumina clip
-        #text_entry_widget('fasta_with_adapters', 'FASTA File Path (CHANGE LATER TO FILE UPLOAD!)', section='ILLUMINACLIP'),
         file_picker_widget('fasta_with_adapters', 'Select FASTA file', filter='*.fasta *.fa',section='ILLUMINACLIP'),
         num_input_widget('seed_mismatches', 'Maximum Seed Mismatches', section='ILLUMINACLIP'),
         num_input_widget('palindrome_clip_threshold', 'Palindrome Clip Threshold', section='ILLUMINACLIP'),
@@ -901,13 +929,12 @@ NODE_WIDGETS = {
 
     'trinity' : [
         combo_box_widget('seq_type', 'Sequence Type', items=['fq', 'fa']),
-        slider_widget('cpu', "Number of CPU Threads", max=128),
+        threads_slider,
         slider_widget('max_memory', 'Memory to Use (GB)', max=32)
     ],
 
     'bwa' : [], # empty as we need widgets for its two sub nodes
     'bwa_index' : [
-        #text_entry_widget('ref_file', 'Select Reference File'),
         file_picker_widget('ref_file', 'Select Reference File'),
         combo_box_widget('algorithm', 'Algorithm', items=['is', 'bwtsw']),
         text_entry_widget('output_prefix', 'Output Prefix')
@@ -930,19 +957,19 @@ class ToolNodeWrapper(NodeBaseWidget):
         super().__init__(parent)
         
         self.tool = tool
-        
-        # inner storage
-        self.widgets = {}
-        self.mutable_labels = {}
-        self.nullable_checks = {} # certain widgets can be nullable. this dictionary maps checkboxes to the nullable widgets
-
-        self.substep_defs = []
-        self.substep_vals = {}
-        self.section_states = {}
-
 
         if not tool:
             return
+        
+        # inner storage
+        self.widgets = {} # contains all of the widgets to be accessed later by get_value, set_value, etc
+        self.mutable_labels = {} # contains all of the mutable labels within the node, such as slider labels which will be updated with their current value
+        self.nullable_checks = {} # certain widgets can be nullable. this dictionary maps checkboxes to the nullable widgets
+        
+        # inner substep storage
+        self.substep_defs = []
+        self.substep_vals = {}
+        self.section_states = {}
 
         container = QtWidgets.QWidget()
 
@@ -962,9 +989,17 @@ class ToolNodeWrapper(NodeBaseWidget):
         node_title.setStyleSheet('color: orange; font-size:24px; font-weight:bold;')
         layout.addWidget(node_title)
 
+        self.node_status = False # a boolean storing whether or not the current node is running or not
+
+        self.node_status_label = QtWidgets.QLabel('Not Running')
+        self.node_status_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.node_status_label.setStyleSheet('color: red; font-size:18px; font-weight:bold;')
+        layout.addWidget(self.node_status_label)
+
 
         # building widgets dynamically
         for widget_def in NODE_WIDGETS[tool]:
+
             # if it is a substep, we save it for the substep dialog and continue
             section = widget_def.get('section')
             if section:
@@ -1466,6 +1501,7 @@ class ToolNode(BaseNode):
 
 
     def get_value(self):
+        print(self.id)
         return self.wrapper.get_value() if self.wrapper else {}
 
     
