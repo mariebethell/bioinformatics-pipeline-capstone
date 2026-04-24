@@ -24,7 +24,7 @@ from pipeline_builder import NextflowPipeline
 
 class PipelineManager:
     def __init__(self):
-        self.session_manager = session_manager # Use singleton (netcode-v3 branch)
+        self.session_manager = session_manager # Use singleton (netcode-v3 branch) for sending commands to client
         self.pipelines = dict[str, NextflowPipeline] # pipeline_id -> pipeline object
 
     def handlePipelineCommand(self, cmd:Command.Command):
@@ -39,17 +39,17 @@ class PipelineManager:
             pipeline = self.pipelines.get(cmd.pipeline_id)
 
             if pipeline is None:
-                # Send error response to client - no pipeline with given ID
-                self.session_manager.send_client_update_async(Command.GetPipelineResponse(ERROR_INFO=APIStatus.ERR_BAD_PIPELINE_ID))
+                # Return error response - no pipeline with given ID
+                return Command.GetPipelineResponse(ERROR_INFO=APIStatus.ERR_BAD_PIPELINE_ID)
             else:
-                # Send pipeline graph info to client
-                self.session_manager.send_client_update_async(Command.GetPipelineResponse(graph=pipeline.graph))
+                # Return pipeline graph info
+                return Command.GetPipelineResponse(graph=pipeline.graph)
 
         elif isinstance(cmd, Command.NewPipeline):
             pipeline_uid = self.newPipeline(cmd.graph)
 
-            # Send new pipeline response to client with pipeline ID
-            self.session_manager.send_client_update_async(Command.NewPipelineResponse(PIPELINE_ID=pipeline_uid))
+            # Return new pipeline response with pipeline ID
+            return Command.NewPipelineResponse(PIPELINE_ID=pipeline_uid)
         
         elif isinstance(cmd, Command.OverwritePipeline):
             pipeline = self.pipelines.get(cmd.pipeline_id)
@@ -63,43 +63,43 @@ class PipelineManager:
 
             self.pipelines[pipeline.uid] = pipeline
 
-            self.session_manager.send_client_update_async(Command.OverwritePipelineResponse(PIPELINE_ID=pipeline.uid))
+            return Command.OverwritePipelineResponse(PIPELINE_ID=pipeline.uid)
 
         elif isinstance(cmd, Command.ModifyPipelineParams):
             pipeline = self.pipelines.get(cmd.pipeline_id)
             if pipeline is None:
-                self.session_manager.send_client_update_async(Command.ModifyPipelineParamsResponse(ERROR_INFO=APIStatus.ERR_BAD_PIPELINE_ID))
+                return Command.ModifyPipelineParamsResponse(ERROR_INFO=APIStatus.ERR_BAD_PIPELINE_ID)
             else:
                 node = pipeline.graph.get_node(cmd.node_num)
                 node.args = cmd.new_args
                 pipeline.graph.nodes[cmd.node_num] = node
 
-                self.session_manager.send_client_update_async(Command.ModifyPipelineParamsResponse())
+                return Command.ModifyPipelineParamsResponse()
 
         elif isinstance(cmd, Command.RunPipeline):
             pipeline = self.pipelines.get(cmd.pipeline_id)
             if pipeline is None:
-                self.session_manager.send_client_update_async(Command.RunPipelineResponse(ERROR_INFO=APIStatus.ERR_BAD_PIPELINE_ID))
+                return Command.RunPipelineResponse(ERROR_INFO=APIStatus.ERR_BAD_PIPELINE_ID)
             else:
                 pipeline.run_pipeline()
-                self.session_manager.send_client_update_async(Command.RunPipelineResponse())
+                return Command.RunPipelineResponse()
 
         elif isinstance(cmd, Command.StopPipeline):
             pipeline = self.pipelines.get(cmd.pipeline_id)
             if pipeline is None:
-                self.session_manager.send_client_update_async(Command.StopPipelineResponse(ERROR_INFO=APIStatus.ERR_BAD_PIPELINE_ID))
+                return Command.StopPipelineResponse(ERROR_INFO=APIStatus.ERR_BAD_PIPELINE_ID)
             else:
                 pipeline.stop_pipeline()
-                self.session_manager.send_client_update_async(Command.StopPipelineResponse())
+                return Command.StopPipelineResponse()
 
         elif isinstance(cmd, Command.RerunStage):
             # nothing here for now since we don't have a way to rerun a stage yet.
-            self.session_manager.send_client_update_async(Command.RerunStageResponse())
+            return Command.RerunStageResponse()
             pass
 
         elif isinstance(cmd, Command.GetArtifactDownload):
             # return path to bindmount (not implemented)
-            self.session_manager.send_client_update_async(Command.GetArtifactDownloadResponse(URI="/path/to/bindmount"))
+            return Command.GetArtifactDownloadResponse(URI="/path/to/bindmount")
             pass
 
     def newPipeline(self, graph: Graph) -> str:
