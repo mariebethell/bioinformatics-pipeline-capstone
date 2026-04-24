@@ -90,8 +90,4 @@ class ComputeServer:
             }
         )
         
-    def serve_file(self, cmd):
-        raise NotImplementedError()
-
-        
 compute_server = ComputeServer() # Singleton

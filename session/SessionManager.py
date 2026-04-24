@@ -24,6 +24,8 @@ class SessionManager:
         self.user_uuid_map: dict[UUID, Session] = {} # Maps user UUID to their session
         self.pipeline_uuid_map: dict[UUID, Session] = {} # Maps pipeline UUID to it's parent session
 
+        #self.pipeline_manager = TODO spawn pipeline manager here when ready
+
     def route_pipeline_command(self, cmd: Command) -> Response:
         """
         Routes an incoming Command to a users Pipeline by looking up their Session. Useful if the user closes their client and opens it later
@@ -59,11 +61,25 @@ class SessionManager:
             
         user_session.last_update_time = datetime.now()
         
-        #TODO call PipelineManager
+        # self.pipeline_manager.handle_pipeline_command(cmd) TODO call PipelineManager when it is ready
         #TODO if cmd was NewPipeline make a new session, add to user_uuid_map and pipeline_uuid_map
         raise NotImplementedError
         
-    def send_client_update_async(self, pipeline_uuid, cmd: Command):
+    def send_client_update_async(self, pipeline_uuid: UUID, cmd: Command):
+        """
+        Sends the given command to the owner of the given pipeline over websocket connection.
+            - Mostly intended for sending GraphUIUpdate commands
+
+        Args:
+            pipeline_uuid (UUID): The UUID for the pipeline which is issuing the Command
+            cmd (Command): The command to send over the websocket
+
+        Raises:
+            Nothing, it will just print a warning and drop the command. This should not be used for
+                state critical updates
+        
+        """
+
         user_uuid = self.pipeline_uuid_map.get(pipeline_uuid, None)
         
         if user_uuid is None:
@@ -75,9 +91,10 @@ class SessionManager:
 
 class SessionManagerStub(SessionManager):
     """
-    Temporary stub until pipeline layer is ready
+    Temporary stub for testing until pipeline layer is ready
 
     """
+
     def route_pipeline_command(self, cmd: Command) -> Response:
         test_resp = None
         if (type(cmd) is ClientConnect):

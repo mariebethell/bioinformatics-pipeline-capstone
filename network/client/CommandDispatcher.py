@@ -43,6 +43,8 @@ class CommandDispatcher:
 
         Returns:
             ClientConnectResponse with server's response. Upon server error, may be of base Response type
+                - Use this to get the active pipeline ID in the case of a client reconnecting to the server,
+                    such as after a crash
 
         Raises:
             ValueError if given server address/port could not be connected to
@@ -154,6 +156,7 @@ class CommandDispatcher:
             aiohttp.ClientError if server couldn't be reached
 
         """
+
         params = {
             'user_uuid': self.user_uuid,
             'pipeline_id': pipeline_uuid
@@ -387,6 +390,17 @@ class CommandDispatcher:
         return
     
     def trigger_websocket_test(self, pipeline_id: uuid.UUID):
+        """
+        Sends a special command which asks the server to send a hardcoded GraphUIUpdate command over websocket
+            - Only used for testing. Do not call this in real code.
+            - Used in pytest tests
+
+        Args:
+            pipeline_id (UUID): A pipeline ID to send for the test. Doesn't matter what it is as long as it's consistent within
+                the test
+                
+        """
+
         params = {
             'user_id': self.user_uuid,
             'pipeline_id': pipeline_id

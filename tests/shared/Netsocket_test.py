@@ -12,6 +12,14 @@ from shared.APIStatus import APIStatus
 
 
 class TestSockets:
+    """
+    Test harness to test websocket connection between client and server. Server must be running for tests to be performed
+        - Connects to the server
+        - Requests server to send test GraphUIUpdate over the websocket
+        - Waits 5 seconds for the GraphUIUpdate to arrive
+
+    """
+    
     @staticmethod
     def test_pipeline_update():
         async_resp = []
