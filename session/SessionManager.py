@@ -13,6 +13,7 @@ from shared.APIStatus import APIStatus
 from shared.Command import ClientConnect, ClientConnectResponse, NewPipelineResponse
 from uuid import uuid4
 
+from backend.pipeline_manager import PipelineManager
 
 class SessionManager:
     """
@@ -60,6 +61,9 @@ class SessionManager:
         user_session.last_update_time = datetime.now()
         
         #TODO call PipelineManager
+        pipeline_manager = PipelineManager()
+        pipeline_manager.handlePipelineCommand(cmd)
+
         #TODO if cmd was NewPipeline make a new session, add to user_uuid_map and pipeline_uuid_map
         raise NotImplementedError
         
