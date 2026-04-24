@@ -40,6 +40,8 @@ from backend.modules_config_builder import (
 from backend.tool_registry import ToolRegistry
 from shared.graph import Graph, Node
 
+from uuid import uuid4
+
 ArgDict = dict[str, Any]
 
 
@@ -61,13 +63,16 @@ class NextflowPipeline(Pipeline):
     def __init__(
         self,
         graph: Graph,
-        tool_registry,
-        pipeline_script_path: str,
+        tool_registry: ToolRegistry,
+        uid: str | None = None,
+        pipeline_script_path: str | None = None,
         modules_config_path: str | None = None,
         nextflow_config_path: str | None = None,
     ):
         super().__init__(graph, tool_registry)
         self.pipeline_script_path = os.path.abspath(pipeline_script_path)
+
+        self.uid = uid if uid is not None else str(uuid4())
 
         self.modules_config_path = os.path.abspath(
             modules_config_path
