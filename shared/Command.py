@@ -161,7 +161,7 @@ class WebsocketConnectResponse(Response):
 @dataclass
 class GraphUIUpdate(Command):
     PIPELINE_ID: Annotated[uuid.UUID, Nullable(False)] = None
-    UPDATES: Annotated[dict[int, "graph.StageState"], Nullable(False)] = None
+    UPDATES: Annotated[dict[str, "graph.StageState"], Nullable(False)] = None
 
 
 ###########################################################
@@ -179,3 +179,11 @@ class OnPipelineError(Command):
     stage_num: Annotated[int, Nullable(False)] = None
     error: Annotated["APIStatus.APIStatus", Nullable(False)] = None
     
+###########################################################
+# DEBUG COMMANDS
+###########################################################
+
+@dataclass
+class SendDummyWebsocketUpdate(Command):
+    user_id: Annotated[uuid.UUID, Nullable(False)] = None
+    pipeline_id: Annotated[uuid.UUID, Nullable(False)] = None
