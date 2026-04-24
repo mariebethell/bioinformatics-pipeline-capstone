@@ -3,6 +3,8 @@ from datetime import datetime
 
 from session.Session import Session
 
+from network.server.computeServer.gateway.ComputeServer import ComputeServer, compute_server
+
 from shared.Command import Command, NewPipeline, Response
 from shared.CommandFactory import CommandFactory
 from shared.APIStatus import APIStatus
@@ -19,7 +21,8 @@ class SessionManager:
     """
 
     def __init__(self):
-        self.uuid_map: dict[UUID, Session] = {} # Maps user UUID to their session
+        self.user_uuid_map: dict[UUID, Session] = {} # Maps user UUID to their session
+        self.pipeline_uuid_map: dict[UUID, Session] = {} # Maps pipeline UUID to it's parent session
 
     def route_pipeline_command(self, cmd: Command) -> Response:
         """
@@ -47,7 +50,7 @@ class SessionManager:
         except AttributeError:
             raise ValueError("Command lacks user UUID? Dev, command is malformed OR command should have been handled in networking layer")
         
-        user_session = self.uuid_map.get(user_uuid, None)
+        user_session = self.user_uuid_map.get(user_uuid, None)
 
         if user_session is None:
             if cmd is not NewPipeline:
@@ -57,7 +60,17 @@ class SessionManager:
         user_session.last_update_time = datetime.now()
         
         #TODO call PipelineManager
+        #TODO if cmd was NewPipeline make a new session, add to user_uuid_map and pipeline_uuid_map
         raise NotImplementedError
+        
+    def send_client_update_async(self, pipeline_uuid, cmd: Command):
+        user_uuid = self.pipeline_uuid_map.get(pipeline_uuid, None)
+        
+        if user_uuid is None:
+            print("WARNING: Pipeline attempted to send update to nonexistant user session")
+            return # Just drop it
+            
+        compute_server.send_to_target_async(user_uuid, cmd)
 
 
 class SessionManagerStub(SessionManager):
@@ -81,3 +94,6 @@ class SessionManagerStub(SessionManager):
             test_resp = CommandFactory.new_command(Response, params)
 
         return test_resp
+        
+
+session_manager = SessionManager() # Singleton

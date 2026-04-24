@@ -1,6 +1,9 @@
 from rest_framework.response import Response as RestResp
 from rest_framework.request import Request
 from typing import Type
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from uuid import UUID
 
 from network.server.computeServer.gateway.LocalPolicy import LocalPolicy
 from network.server.computeServer.gateway.DatagramTools import DatagramTools
@@ -9,7 +12,7 @@ from shared.Command import Command, Response
 from shared.CommandFactory import CommandFactory
 from shared.APIStatus import APIStatus
 
-from session.SessionManager import SessionManager
+from session.SessionManager import SessionManager, session_manager
 from session.SessionManager import SessionManagerStub #TODO remove after testing
 
 
@@ -21,7 +24,7 @@ class ComputeServer:
 
     def __init__(self):
         self.filter = LocalPolicy()
-        self.session_manager = SessionManagerStub() #TODO change to real class when ready
+        self.session_manager = SessionManagerStub() #TODO change to session_manager when ready
     
     def ingest_datagram(self, cmd_type: Type[Command], request: Request):
         """
@@ -64,8 +67,25 @@ class ComputeServer:
         return RestResp(result_json)
 
         
-    def send_to_target_async(self, IP, port, cmd):
-        raise NotImplementedError()
+    def send_to_target_async(self, user_uuid: UUID, cmd: Command):
+        """
+        Attempts to send a command to the specified user over their websocket connection
+
+        Args:
+            user_uuid (UUID): The user to send the Command to
+            cmd (Command): The command to send to the user
+        
+        """
+
+        channel = get_channel_layer()
+        
+        async_to_sync(channel.group_send)(
+            str(user_uuid),
+            {
+                "type": "send_command",
+                "message": cmd
+            }
+        )
         
     def serve_file(self, cmd):
         raise NotImplementedError()
