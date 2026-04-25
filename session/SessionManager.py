@@ -55,7 +55,7 @@ class SessionManager:
         user_session = self.user_uuid_map.get(user_uuid, None)
 
         if user_session is None:
-            if cmd is not NewPipeline:
+            if type(cmd) is not NewPipeline:
                 params = {'STATUS': APIStatus.ERR_BAD_PIPELINE_ID} # User has no session and therefore no pipeline. User needs to send a NewPipeline command
                 return CommandFactory.new_command(Response, params)
             
