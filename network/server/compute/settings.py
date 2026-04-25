@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    'channels',
     'network.server.computeServer',
     'rest_framework',
     'django.contrib.admin',
@@ -68,7 +70,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'network.server.compute.wsgi.application'
+ASGI_APPLICATION = 'network.server.compute.asgi.application'
 
 
 # Database
@@ -129,4 +131,10 @@ REST_FRAMEWORK = {
         'network.server.computeServer.gateway.CmdParser.CommandParser', # Deserializes Commands automatically
         'rest_framework.parsers.JSONParser', # Recommended to keep default
     ]
+}
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
 }

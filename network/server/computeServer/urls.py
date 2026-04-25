@@ -1,10 +1,12 @@
 """
 URL configuration for computeServer app.
+
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 
 from network.server.computeServer import views
+from network.server.computeServer import consumers
 
 urlpatterns = [
     path('test/', views.test, name='test'),
@@ -23,5 +25,12 @@ urlpatterns = [
     
     # Container API
     path('container/onstagecomplete/', views.on_stage_complete, name='on_stage_complete'),
-    path('container/onpipelineerror/', views.on_pipeline_error, name='on_pipeline_error')
+    path('container/onpipelineerror/', views.on_pipeline_error, name='on_pipeline_error'),
+
+    # Debug/Testing
+    path('client/debug/websockettest/', views.websocket_test, name='websocket_test'),
+]
+
+ws_urlpatterns = [
+    re_path(r'api/client/connect$', consumers.SocketHandler.as_asgi())
 ]
