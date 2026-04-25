@@ -51,4 +51,4 @@ class TestSockets:
             elapsedTime += sleep_time
             time.sleep(sleep_time)
 
-        assert async_resp[0][1] == StageState.COMPLETED and async_resp[0][2] == StageState.RUNNING
+        assert async_resp[0]["1"] == StageState.COMPLETED and async_resp[0]["2"] == StageState.RUNNING
