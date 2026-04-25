@@ -187,7 +187,7 @@ def get_download_resp():
 def graph_ui_update():
     params = {
         "PIPELINE_ID": uuid.uuid4(),
-        "UPDATES": {0: StageState.COMPLETED, 1: StageState.INIT, 2: StageState.NEW}
+        "UPDATES": {"0": StageState.COMPLETED, "1": StageState.INIT, "2": StageState.NEW}
     }
     
     cmd = CommandFactory.new_command(Command.GraphUIUpdate, params=params)
