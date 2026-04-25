@@ -22,3 +22,6 @@ results/
 
 # Local test / temp outputs
 *.log
+
+# Virtual environment
+.venv/

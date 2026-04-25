@@ -25,7 +25,7 @@ class SessionManager:
         self.user_uuid_map: dict[UUID, Session] = {} # Maps user UUID to their session
         self.pipeline_uuid_map: dict[UUID, Session] = {} # Maps pipeline UUID to it's parent session
 
-        #self.pipeline_manager = TODO spawn pipeline manager here when ready
+        self.pipeline_manager = PipelineManager() # TODO spawn pipeline manager here when ready
 
     def route_pipeline_command(self, cmd: Command) -> Response:
         """
@@ -43,7 +43,7 @@ class SessionManager:
 
         """
 
-        if cmd is not Command:
+        if not isinstance(cmd, Command):
             raise TypeError("cmd must be a Command or derivative thereof")
         
         user_uuid = None
@@ -56,18 +56,19 @@ class SessionManager:
         user_session = self.user_uuid_map.get(user_uuid, None)
 
         if user_session is None:
-            if cmd is not NewPipeline:
+            if not isinstance(cmd, Command):
                 params = {'STATUS': APIStatus.ERR_BAD_PIPELINE_ID} # User has no session and therefore no pipeline. User needs to send a NewPipeline command
                 return CommandFactory.new_command(Response, params)
-            
-        user_session.last_update_time = datetime.now()
-        
+         
         #TODO call PipelineManager
-        pipeline_manager = PipelineManager()
-        pipeline_manager.handlePipelineCommand(cmd)
+        response = self.pipeline_manager.handlePipelineCommand(cmd)
 
         #TODO if cmd was NewPipeline make a new session, add to user_uuid_map and pipeline_uuid_map
-        raise NotImplementedError
+        if isinstance(cmd, Command.NewPipeline):
+            user_session = Session()
+
+        user_session.last_update_time = datetime.now()
+
         
     def send_client_update_async(self, pipeline_uuid: UUID, cmd: Command):
         """
