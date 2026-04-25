@@ -5,15 +5,13 @@ import time
 
 from network.client.CommandDispatcher import CommandDispatcher
 
-from shared import Command
-from shared.CommandFactory import CommandFactory
-from shared.graph import Graph, StageState, Node
-from shared.APIStatus import APIStatus
+from shared.graph import StageState
 
 
 class TestSockets:
     """
     Test harness to test websocket connection between client and server. Server must be running for tests to be performed
+        !!! Server must be configured to run the testing SessionManager stub !!!
         - Connects to the server
         - Requests server to send test GraphUIUpdate over the websocket
         - Waits 5 seconds for the GraphUIUpdate to arrive
