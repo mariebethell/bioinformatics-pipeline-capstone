@@ -106,7 +106,7 @@ class SessionManagerStub(SessionManager):
             test_resp = CommandFactory.new_command(NewPipelineResponse, test_params)
 
         elif (type(cmd) is SendDummyWebsocketUpdate):
-            dummy_update = {1: StageState.COMPLETED, 2: StageState.RUNNING}
+            dummy_update = {"1": StageState.COMPLETED, "2": StageState.RUNNING}
             async_params = {
                 'PIPELINE_ID': cmd.pipeline_id,
                 'UPDATES': dummy_update
