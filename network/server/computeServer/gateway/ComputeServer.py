@@ -80,7 +80,6 @@ class ComputeServer:
         print(f"Sending websocket update to user: {user_uuid}")
 
         channel = get_channel_layer()
-        print(channel.groups)
         
         async_to_sync(channel.group_send)(
             str(user_uuid),

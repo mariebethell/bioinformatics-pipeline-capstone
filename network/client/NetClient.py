@@ -180,7 +180,6 @@ class NetClient:
         """
 
         url = f"ws://{self.server_ip}:{self.server_port}/api/client/connect?uuid={str(uuid)}"
-        print(url)
         async with websockets.connect(url) as websocket:
             print("INFO: Socket connected to server")
             while True:
