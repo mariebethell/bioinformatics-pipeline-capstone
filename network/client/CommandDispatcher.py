@@ -69,11 +69,11 @@ class CommandDispatcher:
     def disconnect(self):
         """
         Disconnects from the compute server's web socket
-
-        Not yet implemented
+            - This can take up to one second to finish, but this method will return immediately!
 
         """
-        raise NotImplementedError #Should just disconnect the websocket
+
+        self.net_client.disconnect()
 
     def new_pipeline(self, graph: Graph, input_data_uri: str) -> Command.Response:
         """
