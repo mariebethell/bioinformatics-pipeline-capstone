@@ -321,13 +321,13 @@ class CommandDispatcher:
 
         return self.rerun_from_stage(pipeline_uuid, 0)
 
-    def get_result_data_uri(self, pipeline_uuid: uuid.UUID, stage_num: int) -> Command.Response:
+    def get_result_data_uri(self, pipeline_uuid: uuid.UUID, stage_num: int | None = None) -> Command.Response:
         """
         Requests the server to move result files to the bind mount and return their URI so the client may retrieve them
 
         Args:
             pipeline_uuid (UUID): The UUID for the pipeline which holds the results
-            stage_num (int): The ID for the pipeline stage which holds the results you want
+            stage_num (int): The ID for the pipeline stage which holds the results you want, or None to get the root folder for all available data
 
         Returns:
             GetArtifactDownloadResponse containing the server's response. Upon server error, may be of base Response type

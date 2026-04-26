@@ -77,3 +77,10 @@ class TestNetworkingSystems(BaseCmdTest):
 
         resp = dispatcher.get_result_data_uri(pipeline_id, 1)
         assert TestNetworkingSystems.compare_param_to_cmd(expected_params, resp)
+
+    def test_cmd_get_download_no_node_num(build_graph):
+        pipeline_id = UUID('7d44c86f-2a0d-4ea8-84d4-542c341ec7f4')
+        expected_params = {"URI": 'some/dir/relative/to/bindmount', "STATUS": APIStatus.SUCCESS}
+
+        resp = dispatcher.get_result_data_uri(pipeline_id)
+        assert TestNetworkingSystems.compare_param_to_cmd(expected_params, resp)
