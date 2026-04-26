@@ -58,12 +58,12 @@ class SessionManager:
             if type(cmd) is not NewPipeline:
                 params = {'STATUS': APIStatus.ERR_BAD_PIPELINE_ID} # User has no session and therefore no pipeline. User needs to send a NewPipeline command
                 return CommandFactory.new_command(Response, params)
-            
-        user_session.last_update_time = datetime.now()
         
         # self.pipeline_manager.handle_pipeline_command(cmd) TODO call PipelineManager when it is ready
         #TODO if cmd was NewPipeline make a new session, add to user_uuid_map and pipeline_uuid_map
         raise NotImplementedError
+    
+        user_session.last_update_time = datetime.now()
         
     def send_client_update_async(self, pipeline_uuid: UUID, cmd: Command):
         """
