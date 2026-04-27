@@ -73,6 +73,8 @@ class SessionManager:
 
         user_session.last_update_time = datetime.now()
 
+        return response
+
         
     def send_client_update_async(self, pipeline_uuid: UUID, cmd: Command):
         """
