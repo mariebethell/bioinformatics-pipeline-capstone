@@ -2,26 +2,4 @@ __pycache__
 .nextflow*
 
 .vscode/
-.idea/
-.DS_Store
-Thumbs.db
-
-# Nextflow runtime
-work/
-results/
-.nextflow/
-.nextflow.log
-.nextflow.log.*
-.nextflow.cache/
-.nextflow.history
-.nextflow.trace
-.nextflow.timeline.*
-.nextflow.report.*
-.nextflow.dag.*
-.nextflow.html
-
-# Local test / temp outputs
-*.log
-
-# Virtual environment
-.venv/
+db.sqlite3
