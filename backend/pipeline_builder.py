@@ -70,9 +70,9 @@ class NextflowPipeline(Pipeline):
         nextflow_config_path: str | None = None,
     ):
         super().__init__(graph, tool_registry)
-        self.pipeline_script_path = os.path.abspath(pipeline_script_path)
+        self.pipeline_script_path = os.path.abspath(pipeline_script_path or os.path.join(os.path.dirname(__file__), "main.nf"))
 
-        self.uuid: UUID = pipeline_id if pipeline_id is not None else uuid4()
+        self.uuid: UUID = uuid if uuid is not None else uuid4()
 
         self.modules_config_path = os.path.abspath(
             modules_config_path

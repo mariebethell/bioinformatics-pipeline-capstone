@@ -19,11 +19,14 @@ Commands sent by this class to client:
 from shared import Command, APIStatus, CommandFactory
 from shared.graph import Graph, Node
 from backend.pipeline_builder import NextflowPipeline
+from backend.tool_registry import ToolRegistry
+from uuid import UUID
 
 class PipelineManager:
     def __init__(self):
-        self.pipelines = dict[str, NextflowPipeline] # pipeline_id -> pipeline object
+        self.pipelines: dict[UUID, NextflowPipeline] = {} # pipeline_id -> pipeline object
         self.command_factory = CommandFactory.CommandFactory()
+        self.tool_registry = ToolRegistry()
 
     def handlePipelineCommand(self, cmd:Command.Command):
         """
@@ -33,27 +36,27 @@ class PipelineManager:
 
         if isinstance(cmd, Command.ClientConnect):
             # How are we handling when the user opens a new session (with no active pipeline) vs when the user has an existing pipeline already?
-            return command_factory.new_command(Command.ClientConnectResponse)
+            return self.command_factory.new_command(Command.ClientConnectResponse)
 
         elif isinstance(cmd, Command.GetPipeline):
             pipeline = self.pipelines.get(cmd.pipeline_id)
 
             if pipeline is None:
                 # Return error response - no pipeline with given ID
-                params = {"ERROR_INFO": APIStatus.ERR_BAD_PIPELINE_ID}
-                return command_factory.new_command(Command.GetPipelineResponse, params)
+                params = {"ERROR_INFO": APIStatus.APIStatus.ERR_BAD_PIPELINE_ID}
+                return self.command_factory.new_command(Command.GetPipelineResponse, params)
             else:
                 # Return pipeline graph info
                 params = {"graph": pipeline.graph}
-                return command_factory.new_command(Command.GetPipelineResponse, params)
+                return self.command_factory.new_command(Command.GetPipelineResponse, params)
 
         elif isinstance(cmd, Command.NewPipeline):
             pipeline_uuid = self.newPipeline(cmd.graph)
 
             print(pipeline_uuid)
             # Return new pipeline response with pipeline ID
-            params = {"PIPELINE_ID": pipeline_uuid}
-            return command_factory.new_command(Command.NewPipelineResponse, params)
+            params = {"PIPELINE_ID": pipeline_uuid, "STATUS": APIStatus.APIStatus.SUCCESS}
+            return self.command_factory.new_command(Command.NewPipelineResponse, params)
         
         elif isinstance(cmd, Command.OverwritePipeline):
             pipeline = self.pipelines.get(cmd.pipeline_id)
@@ -63,45 +66,45 @@ class PipelineManager:
                 pipeline.stop_pipeline()
                 existing_id = pipeline.uuid
             
-            pipeline = NextflowPipeline(graph=cmd.graph, uuid=existing_id) # Preserve pipeline ID for overwrite. If id was none initially, a new one will have been created by NextflowPipeline constructor.
+            pipeline = NextflowPipeline(graph=cmd.graph, tool_registry=self.tool_registry, uuid=existing_id) # Preserve pipeline ID for overwrite. If id was none initially, a new one will have been created by NextflowPipeline constructor.
 
             self.pipelines[pipeline.uuid] = pipeline
 
             params = {"PIPELINE_ID": pipeline.uuid}
-            return command_factory.new_command(Command.OverwritePipelineResponse)
+            return self.command_factory.new_command(Command.OverwritePipelineResponse)
 
         elif isinstance(cmd, Command.ModifyPipelineParams):
             pipeline = self.pipelines.get(cmd.pipeline_id)
             if pipeline is None:
-                return Command.ModifyPipelineParamsResponse(ERROR_INFO=APIStatus.ERR_BAD_PIPELINE_ID)
+                return self.Command.ModifyPipelineParamsResponse(ERROR_INFO=APIStatus.APIStatus.ERR_BAD_PIPELINE_ID)
             else:
                 node = pipeline.graph.get_node(cmd.node_num)
                 node.args = cmd.new_args
                 pipeline.graph.nodes[cmd.node_num] = node
 
-                return command_factory.new_command(Command.ModifyPipelineParamsResponse)
+                return self.command_factory.new_command(Command.ModifyPipelineParamsResponse)
 
         elif isinstance(cmd, Command.RunPipeline):
             pipeline = self.pipelines.get(cmd.pipeline_id)
             if pipeline is None:
-                params = {"ERROR_INFO": APIStatus.ERR_BAD_PIPELINE_ID}
-                return command_factory.new_command(Command.RunPipelineResponse, params)
+                params = {"ERROR_INFO": APIStatus.APIStatus.ERR_BAD_PIPELINE_ID}
+                return self.command_factory.new_command(Command.RunPipelineResponse, params)
             else:
                 pipeline.run_pipeline()
-                return command_factory.new_command(Command.RunPipelineResponse)
+                return self.command_factory.new_command(Command.RunPipelineResponse)
 
         elif isinstance(cmd, Command.StopPipeline):
             pipeline = self.pipelines.get(cmd.pipeline_id)
             if pipeline is None:
-                params = {"ERROR_INFO": APIStatus.ERR_BAD_PIPELINE_ID}
-                return command_factory.new_command(Command.StopPipelineResponse, params)
+                params = {"ERROR_INFO": APIStatus.APIStatus.ERR_BAD_PIPELINE_ID}
+                return self.command_factory.new_command(Command.StopPipelineResponse, params)
             else:
                 pipeline.stop_pipeline()
-                return command_factory.new_command(Command.StopPipelineResponse)
+                return self.command_factory.new_command(Command.StopPipelineResponse)
 
         elif isinstance(cmd, Command.RerunStage):
             # nothing here for now since we don't have a way to rerun a stage yet.
-            return command_factory.new_command(Command.RerunStageResponse)
+            return self.command_factory.new_command(Command.RerunStageResponse)
 
         elif isinstance(cmd, Command.GetArtifactDownload):
             # return path to bindmount (not implemented)
@@ -110,10 +113,10 @@ class PipelineManager:
             # Client will combine this with the environment variable set by installer
             # Nextflow needs to output files to bindmount
             params = {"URI": "path/to/bindmount"} 
-            return command_factory.new_command(Command.GetArtifactDownloadResponse, params)
+            return self.command_factory.new_command(Command.GetArtifactDownloadResponse, params)
 
     def newPipeline(self, graph: Graph) -> str:
-        pipeline = NextflowPipeline(graph)
+        pipeline = NextflowPipeline(graph=graph, tool_registry=self.tool_registry)
         self.pipelines[pipeline.uuid] = pipeline
 
         return pipeline.uuid
