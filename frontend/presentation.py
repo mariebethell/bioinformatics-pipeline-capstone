@@ -1330,8 +1330,7 @@ class OutputNode(DataNode):
         # self.add_custom_widget(self.wrapper)
 
 
-
-if __name__ == '__main__':
+def start_app():
     app = QtWidgets.QApplication([])
 
     #gets user's screen size for resizing the window
@@ -1356,4 +1355,6 @@ if __name__ == '__main__':
     window.show()
 
     app.exec()
-    
+
+if __name__ == '__main__':
+    start_app()
