@@ -64,8 +64,12 @@ class SessionManager:
         response = self.pipeline_manager.handlePipelineCommand(cmd)
 
         #TODO if cmd was NewPipeline make a new session, add to user_uuid_map and pipeline_uuid_map
-        if isinstance(cmd, Command.NewPipeline):
-            user_session = Session()
+        if type(cmd) is NewPipeline:
+            pipeline_uuid = response.PIPELINE_ID
+            user_session = Session(user_uuid, pipeline_uuid)
+
+            self.user_uuid_map[user_uuid] = user_session
+            self.pipeline_uuid_map[pipeline_uuid] = user_session
 
         user_session.last_update_time = datetime.now()
 
