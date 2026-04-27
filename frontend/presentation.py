@@ -387,6 +387,7 @@ class PipelineWorkbenchVC(PanelController):
             'Save Preset' : self.save_preset,
             'Load Preset' : self.load_preset,
             'Run Pipeline' : self.run_pipeline,
+            'Stop Pipeline': self.stop_pipeline,
             'Purge All Data' : self.purge_all_data,
             'Node Browser' : self.node_browser,
             'Create New Pipeline' : self.new_pipeline
@@ -401,7 +402,8 @@ class PipelineWorkbenchVC(PanelController):
 
             if label == 'Run Pipeline': # flag to make the run pipeline button green
                 btn.setStyleSheet('background-color: green; color: white;')
-            
+            elif label == 'Stop Pipeline': # flag to make the stop pipeline button red
+                btn.setStyleSheet('background-color: red; color:white;')
             top_bar_layout.addWidget(btn)
 
         layout = QtWidgets.QVBoxLayout(self.view)
@@ -550,8 +552,10 @@ class PipelineWorkbenchVC(PanelController):
             return
         
         print('Pipeline successfully started in workbench.')
-        print(self.app._uuid_map)
         
+    def stop_pipeline(self):
+        pass
+    
     def purge_all_data(self):
         pass
         
