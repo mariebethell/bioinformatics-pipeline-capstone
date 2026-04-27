@@ -3,7 +3,7 @@ import aiohttp
 import asyncio
 import uuid
 import websockets
-from threading import Thread
+from threading import Thread, Event
 from datetime import datetime, timedelta
 from enum import Enum
 
@@ -31,6 +31,7 @@ class NetClient:
         self.server_ip: ipaddress.IPv4Address | ipaddress.IPv6Address
         self.server_port: int
         self.socket_worker = None
+        self.socket_worker_kill_sig = Event()
         self.cmd_dispatcher = dispatcher
 
     def connect(self, user_uuid: uuid.UUID, server_ip: ipaddress.IPv4Address | ipaddress.IPv6Address, server_port: int):
@@ -47,10 +48,14 @@ class NetClient:
             server_port (int): Port for the server to connect to
 
         Raises:
+            RuntimeError if we are already connected to a websocket
             ValueError if given server address/port could not be connected to
             aiohttp.ClientError if server couldn't be reached for some other reason
 
         """
+
+        if self.socket_worker is not None:
+            raise RuntimeError("Already connected to a websocket!")
 
         try:
            asyncio.run(NetClient._ping_server(server_ip, server_port))
@@ -66,6 +71,18 @@ class NetClient:
         self.server_port = server_port
 
         self._connect_socket(user_uuid)
+
+    def disconnect(self):
+        """
+        Raises a signal event to tell the socket worker thread to terminate itself
+            - This can take up to one second to finish, but this method will return immediately!
+
+        """
+                
+        if self.socket_worker is None:
+            return
+        
+        self.socket_worker_kill_sig.set()
 
     async def send(self, endpoint: str, req_type: RequestTypes, payload: str, mime_type: str = 'application/command') -> dict:
         """
@@ -163,12 +180,11 @@ class NetClient:
         """
 
         url = f"ws://{self.server_ip}:{self.server_port}/api/client/connect?uuid={str(uuid)}"
-        print(url)
         async with websockets.connect(url) as websocket:
             print("INFO: Socket connected to server")
             while True:
                 try:
-                    message = await websocket.recv()
+                    message = await asyncio.wait_for(websocket.recv(), timeout=1.0)
                     print(f"INFO: Received message on websocket: {message}")
                     self.cmd_dispatcher.handle_async_update(message)
 
@@ -178,7 +194,14 @@ class NetClient:
 
                 except websockets.ConnectionClosedError as e:
                     print(f"ERROR: Websocket connection closed due to error: {e}")
-                    return    
+                    return
+                
+                except asyncio.TimeoutError:
+                    # Check if thread should be stopped
+                    if self.socket_worker_kill_sig.is_set():
+                        self.socket_worker_kill_sig.clear()
+                        self.socket_worker = None
+                        return
 
                 except Exception as e:
                     print(f"ERROR: Exception during receipt of websocket message: {e}\n\n Continuing...")

@@ -142,7 +142,7 @@ class RerunStageResponse(Response):
 class GetArtifactDownload(Command):
     user_uuid: Annotated[uuid.UUID, Nullable(False)] = None
     pipeline_id: Annotated[uuid.UUID, Nullable(False)] = None
-    node_num: Annotated[int, Nullable(False)] = None
+    node_num: Annotated[int, Nullable(True)] = None
 
 @dataclass
 class GetArtifactDownloadResponse(Response):
