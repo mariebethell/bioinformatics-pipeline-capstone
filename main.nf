@@ -1,8 +1,8 @@
 nextflow.enable.dsl=2
 
 params.input = [
-    "/home/ethancode/capstone/bioinformatics-pipeline-capstone/data/Test01_L001_R1_001.fastq",
-    "/home/ethancode/capstone/bioinformatics-pipeline-capstone/data/Test01_L001_R2_001.fastq"
+    "/home/marie_bethell/bioinformatics-pipeline-capstone/data/Test01_L001_R1_001.fastq",
+    "/home/marie_bethell/bioinformatics-pipeline-capstone/data/Test01_L001_R2_001.fastq"
 ]
 
 include { FASTQC as FASTQC1 } from './backend/modules/nf-core/fastqc'

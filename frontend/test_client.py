@@ -30,8 +30,8 @@ if __name__ == "__main__":
     n1 = g.create_node("input")
     n1.outputs = {
         "reads": [
-            os.path.join(PROJECT_ROOT, "data", "Test01_L001_R1_001.fastq"),
-            os.path.join(PROJECT_ROOT, "data", "Test01_L001_R2_001.fastq"),
+            os.path.join("./shared-data", "Test01_L001_R1_001.fastq"),
+            os.path.join("./shared-data", "Test01_L001_R2_001.fastq"),
         ]
     }
     n1.args = {}  # input nodes don’t have args

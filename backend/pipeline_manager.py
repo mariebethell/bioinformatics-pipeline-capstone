@@ -39,7 +39,7 @@ class PipelineManager:
 
             if pipeline is None:
                 # Return error response - no pipeline with given ID
-                params = {"ERROR_INFO": APIStatus.APIStatus.ERR_BAD_PIPELINE_ID}
+                params = {"ERROR_INFO": APIStatus.APIStatus.ERR_BAD_PIPELINE_ID, "STATUS": APIStatus.APIStatus.ERR_BAD_PIPELINE_ID}
                 return CommandFactory.new_command(Command.GetPipelineResponse, params)
             else:
                 # Return pipeline graph info
