@@ -43,7 +43,7 @@ class PipelineManager:
                 return CommandFactory.new_command(Command.GetPipelineResponse, params)
             else:
                 # Return pipeline graph info
-                params = {"graph": pipeline.graph, "STATUS": APIStatus.APIStatus.SUCCESS}
+                params = {"GRAPH": pipeline.graph, "STATUS": APIStatus.APIStatus.SUCCESS}
                 return CommandFactory.new_command(Command.GetPipelineResponse, params)
 
         elif isinstance(cmd, Command.NewPipeline):
