@@ -19,7 +19,8 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "pytest (>=9.0.3,<10.0.0)"
+    "pytest (>=9.0.3,<10.0.0)",
+    "briefcase (>=0.4.1,<0.5.0)"
 ]
 
 
@@ -29,3 +30,126 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 package-mode = false
+
+
+# This project was generated with 0.4.1 using template: https://github.com/beeware/briefcase-template @ v0.4.1
+[tool.briefcase]
+project_name = "NodePipe"
+bundle = "com.csusm.capstone.nodepipe"
+version = "0.0.1"
+url = "https://github.com/mariebethell/bioinformatics-pipeline-capstone"
+license.file = "LICENSE"
+author = "CSUSM-CSE-47-2026-CS-S03-Team-002"
+author_email = "lopez2349@csusm.edu"
+
+[tool.briefcase.app.nodepipe]
+formal_name = "NodePipe"
+description = "Visual editor and executor for bioinformatics pipelines using NextFlow"
+long_description = """More details about the app should go here.
+"""
+sources = [
+    "src/nodepipe",
+]
+test_sources = [
+    "tests",
+]
+
+requires-python = "~=3.11.0"
+
+requires = [
+	"django (==5.2.13)",
+    "django-rest-framework (>=0.1.0,<0.2.0)",
+    "pyside6 (>=6.11.0,<7.0.0)",
+    "nodegraphqt (>=0.6.44,<0.7.0)",
+    "daphne (>=4.2.1,<5.0.0)",
+    "channels (>=4.3.2,<5.0.0)",
+    "websockets (>=16.0,<17.0)",
+]
+test_requires = [
+    "pytest",
+]
+
+[tool.briefcase.app.nodepipe.macOS]
+universal_build = true
+# As of Pyside 6.8, PySide enforces a macOS 12 minimum on wheels.
+min_os_version = "12.0"
+requires = [
+    "std-nslog~=1.0.3",
+]
+
+[tool.briefcase.app.nodepipe.linux]
+requires = [
+]
+
+[tool.briefcase.app.nodepipe.linux.system.debian]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "libgl1",
+    "libqt6dbus6",
+    "libqt6gui6",
+    "libxcb-cursor0",
+    # The following packages are explicit dependencies on recent Debian-based
+    # distros, but not on Ubuntu 22.04.
+    "libxcb-icccm4",
+    "libxcb-keysyms1",
+    "libxcb-shape0",
+    "libxkbcommon-x11-0",
+]
+
+[tool.briefcase.app.nodepipe.linux.system.rhel]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "qt6-qtbase-gui",
+]
+
+[tool.briefcase.app.nodepipe.linux.system.suse]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "libgthread-2_0-0",
+    "libQt6Gui6",
+]
+
+[tool.briefcase.app.nodepipe.linux.system.arch]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "qt6-base",
+]
+
+[tool.briefcase.app.nodepipe.linux.appimage]
+manylinux = "manylinux_2_28"
+
+system_requires = [
+# ?? FIXME
+]
+
+linuxdeploy_plugins = [
+]
+
+[tool.briefcase.app.nodepipe.linux.flatpak]
+flatpak_runtime = "org.kde.Platform"
+flatpak_runtime_version = "6.9"
+flatpak_sdk = "org.kde.Sdk"
+
+[tool.briefcase.app.nodepipe.windows]
+requires = [
+]
+
+# Mobile deployments
+[tool.briefcase.app.nodepipe.iOS]
+supported = false
+
+[tool.briefcase.app.nodepipe.android]
+supported = false
+
+# Web deployments
+[tool.briefcase.app.nodepipe.web]
+supported = false
+

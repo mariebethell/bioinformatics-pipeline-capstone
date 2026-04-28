@@ -1,0 +1,451 @@
+Date/Time:       2026-04-27 21:36:48 
+Command line:    C:\miniconda\envs\bioinf\Scripts\briefcase run windows
+
+OS Release:      Windows 10
+OS Version:      10.0.19045
+Architecture:    AMD64
+Platform:        Windows-10-10.0.19045-SP0
+
+Python exe:      C:\miniconda\envs\bioinf\python.exe
+Python version:  3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]
+Virtual env:     False
+Conda env:       True
+
+Briefcase:       0.4.1
+Target platform: windows
+Target format:   app
+
+Environment Variables:
+	3DVPATH=C:\AMD\Chipset_Software\Binaries\3D_V-Cache_Performance_Optimizer_Driver\
+	ALLUSERSPROFILE=C:\ProgramData
+	ANDROID_SDK_HOME=C:\Android
+	APPDATA=C:\Users\Kenneth Lopez\AppData\Roaming
+	BRIEFCASE_HOME=D:\briefcase\Cache
+	CHOCOLATEYINSTALL=C:\ProgramData\chocolatey
+	CHOCOLATEYLASTPATHUPDATE=133198649952473088
+	COMMONPROGRAMFILES=C:\Program Files\Common Files
+	COMMONPROGRAMFILES(X86)=C:\Program Files (x86)\Common Files
+	COMMONPROGRAMW6432=C:\Program Files\Common Files
+	COMPUTERNAME=DESKTOP-I4E6VFG
+	COMSPEC=C:\WINDOWS\system32\cmd.exe
+	CONDA_DEFAULT_ENV=bioinf
+	CONDA_EXE=C:\miniconda\Scripts\conda.exe
+	CONDA_PREFIX=C:\miniconda\envs\bioinf
+	CONDA_PREFIX_1=C:\miniconda
+	CONDA_PROMPT_MODIFIER=(bioinf) 
+	CONDA_PYTHON_EXE=C:\miniconda\python.exe
+	CONDA_SHLVL=2
+	CUDA_PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.1
+	CUDA_PATH_V11_1=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.1
+	DRIVERDATA=C:\Windows\System32\Drivers\DriverData
+	GIT_LFS_PATH=C:\Program Files\Git LFS
+	HOMEDRIVE=C:
+	HOMEPATH=\Users\Kenneth Lopez
+	INTELLIJ IDEA COMMUNITY EDITION=C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2025.2.1\bin
+	INTEL_DEV_REDIST=C:\Program Files (x86)\Common Files\Intel\Shared Libraries\
+	JAVA_HOME=C:\Program Files\Java\jdk-25
+	KEYSHOT10=********************
+	KEYSHOT9=********************
+	KEYSHOT_EXTERNAL_LICENSE_FOLDER=********************
+	LOCALAPPDATA=C:\Users\Kenneth Lopez\AppData\Local
+	LOGONSERVER=\\DESKTOP-I4E6VFG
+	NUMBER_OF_PROCESSORS=32
+	NVM_HOME=C:\Users\Kenneth Lopez\AppData\Roaming\nvm
+	NVM_SYMLINK=C:\Program Files\nodejs
+	OCULUSBASE=C:\Program Files\Oculus\
+	ONEDRIVE=C:\Users\Kenneth Lopez\OneDrive
+	ONEDRIVECONSUMER=C:\Users\Kenneth Lopez\OneDrive
+	OS=Windows_NT
+	PATH=C:\miniconda\envs\bioinf\Scripts;C:\miniconda\envs\bioinf;C:\miniconda\envs\bioinf\Library\mingw-w64\bin;C:\miniconda\envs\bioinf\Library\usr\bin;C:\miniconda\envs\bioinf\Library\bin;C:\miniconda\envs\bioinf\Scripts;C:\miniconda\envs\bioinf\bin;C:\miniconda\condabin;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\ImageMagick-7.1.2-Q16-HDRI;D:\OracleDB\dbhomeXE\bin;D:\OracleDatabaseXE\dbhomeXE\bin;C:\Program Files (x86)\VMware\VMware Player\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Python311\Scripts;C:\Python311;C:\Program Files\Oculus\Support\oculus-runtime;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64_win\compiler;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\Program Files\ffmpeg;D:\Program Files\CMake\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Program Files\dotnet;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\110\Tools\Binn;C:\Program Files (x86)\Microsoft SQL Server\120\Tools\Binn;C:\Program Files\Microsoft SQL Server\120\Tools\Binn;C:\Program Files\Microsoft SQL Server\120\DTS\Binn;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit;C:\platform-tools;C:\Program Files\VideoLAN\VLC;C:\mingw64\bin;C:\Android;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\Git\cmd;C:\ProgramData\chocolatey\bin;C:\Program Files\Git LFS;C:\Program Files\PuTTY;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit;C:\Users\Kenneth Lopez\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\Strings;C:\Program Files\7-Zip;C:\Program Files\NVIDIA Corporation\NVIDIA app\NvDLISR;C:\Program Files\Mullvad VPN\resources;C:\Program Files\gs\gs10.05.1\bin;C:\Program Files\Tesseract-OCR;C:\Program Files\PowerToys\DSCModules;C:\Program Files\PowerShell\7;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files (x86)\Arm GNU Toolchain arm-none-eabi\12.2 mpacbti-bet1\bin;C:\Users\Kenneth Lopez\AppData\Local\Microsoft\WindowsApps;C:\Users\Kenneth Lopez\.dotnet\tools;C:\Program Files (x86)\Nmap;C:\Users\Kenneth Lopez\AppData\Roaming\npm;C:\Users\Kenneth Lopez\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Users\Kenneth Lopez\AppData\Local\Microsoft\WinGet\Packages\DuckDB.cli_Microsoft.Winget.Source_8wekyb3d8bbwe;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2025.2.1\bin;C:\Users\Kenneth Lopez\AppData\Local\Python\bin
+	PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL
+	PICO_EXTRAS_PATH=D:\Documents\Pico Projects\SDK\pico-extras"
+	PICO_SDK_PATH=D:\Documents\Pico Projects\SDK\pico-sdk"
+	POWERSHELL_DISTRIBUTION_CHANNEL=MSI:Windows 10 Pro
+	PROCESSOR_ARCHITECTURE=AMD64
+	PROCESSOR_IDENTIFIER=AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD
+	PROCESSOR_LEVEL=25
+	PROCESSOR_REVISION=6102
+	PROGRAMDATA=C:\ProgramData
+	PROGRAMFILES=C:\Program Files
+	PROGRAMFILES(X86)=C:\Program Files (x86)
+	PROGRAMW6432=C:\Program Files
+	PROMPT=$P$G
+	PSEXECUTIONPOLICYPREFERENCE=Bypass
+	PSMODULEPATH=D:\Documents\WindowsPowerShell\Modules;C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules;C:\Program Files (x86)\Microsoft SQL Server\120\Tools\PowerShell\Modules\
+	PUBLIC=C:\Users\Public
+	PYTHONPATH=C:\Python311\Lib;C:\Python311\DLLs;
+	P_SCHEMA=C:\Program Files\Siemens\Solid Edge 2022\Schema
+	SESSIONNAME=Console
+	SE_LICENSE_SERVER=C:\Program Files\Siemens\Solid Edge 2022\Preferences\SELicense.lic
+	SSL_CERT_DIR=C:\miniconda\envs\bioinf\Library\ssl\certs
+	SSL_CERT_FILE=C:\miniconda\envs\bioinf\Library\ssl\cacert.pem
+	SYSTEMDRIVE=C:
+	SYSTEMROOT=C:\WINDOWS
+	TEMP=C:\Users\KENNET~1\AppData\Local\Temp
+	TMP=C:\Users\KENNET~1\AppData\Local\Temp
+	USERDOMAIN=DESKTOP-I4E6VFG
+	USERDOMAIN_ROAMINGPROFILE=DESKTOP-I4E6VFG
+	USERNAME=Kenneth Lopez
+	USERPROFILE=C:\Users\Kenneth Lopez
+	VBOX_MSI_INSTALL_PATH=C:\Program Files\Oracle\VirtualBox\
+	VIRTUAL_ENV=C:\miniconda\envs\bioinf
+	WINDIR=C:\WINDOWS
+	_CONDA_EXE=C:\miniconda\Scripts\conda.exe
+	_CONDA_ROOT=C:\miniconda
+	__CONDA_OPENSSL_CERT_DIR_SET=1
+	__CONDA_OPENSSL_CERT_FILE_SET=1
+	__PSLOCKDOWNPOLICY=0
+
+pyproject.toml:
+[project]
+name = "nodepipe"
+version = "0.1.0"
+description = "Visual editor and executor for bioinformatics pipelines using NextFlow"
+authors = [
+    {name = "CSUSM-CSE-47-2026-CS-S03-Team-002",email = "you@example.com"}
+]
+readme = "README.md"
+requires-python = "~=3.11.0"
+dependencies = [
+    "django (==5.2.13)",
+    "django-rest-framework (>=0.1.0,<0.2.0)",
+    "pyside6 (>=6.11.0,<7.0.0)",
+    "nodegraphqt (>=0.6.44,<0.7.0)",
+    "daphne (>=4.2.1,<5.0.0)",
+    "channels (>=4.3.2,<5.0.0)",
+    "websockets (>=16.0,<17.0)",
+]
+
+[dependency-groups]
+dev = [
+    "pytest (>=9.0.3,<10.0.0)",
+    "briefcase (>=0.4.1,<0.5.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+package-mode = false
+
+
+# This project was generated with 0.4.1 using template: https://github.com/beeware/briefcase-template @ v0.4.1
+[tool.briefcase]
+project_name = "NodePipe"
+bundle = "com.csusm.capstone.nodepipe"
+version = "0.0.1"
+url = "https://github.com/mariebethell/bioinformatics-pipeline-capstone"
+license.file = "LICENSE"
+author = "CSUSM-CSE-47-2026-CS-S03-Team-002"
+author_email = "lopez2349@csusm.edu"
+
+[tool.briefcase.app.nodepipe]
+formal_name = "NodePipe"
+description = "Visual editor and executor for bioinformatics pipelines using NextFlow"
+long_description = """More details about the app should go here.
+"""
+sources = [
+    "src/nodepipe",
+]
+test_sources = [
+    "tests",
+]
+
+requires-python = "~=3.11.0"
+
+requires = [
+	"django (==5.2.13)",
+    "django-rest-framework (>=0.1.0,<0.2.0)",
+    "pyside6 (>=6.11.0,<7.0.0)",
+    "nodegraphqt (>=0.6.44,<0.7.0)",
+    "daphne (>=4.2.1,<5.0.0)",
+    "channels (>=4.3.2,<5.0.0)",
+    "websockets (>=16.0,<17.0)",
+]
+test_requires = [
+    "pytest",
+]
+
+[tool.briefcase.app.nodepipe.macOS]
+universal_build = true
+# As of Pyside 6.8, PySide enforces a macOS 12 minimum on wheels.
+min_os_version = "12.0"
+requires = [
+    "std-nslog~=1.0.3",
+]
+
+[tool.briefcase.app.nodepipe.linux]
+requires = [
+]
+
+[tool.briefcase.app.nodepipe.linux.system.debian]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "libgl1",
+    "libqt6dbus6",
+    "libqt6gui6",
+    "libxcb-cursor0",
+    # The following packages are explicit dependencies on recent Debian-based
+    # distros, but not on Ubuntu 22.04.
+    "libxcb-icccm4",
+    "libxcb-keysyms1",
+    "libxcb-shape0",
+    "libxkbcommon-x11-0",
+]
+
+[tool.briefcase.app.nodepipe.linux.system.rhel]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "qt6-qtbase-gui",
+]
+
+[tool.briefcase.app.nodepipe.linux.system.suse]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "libgthread-2_0-0",
+    "libQt6Gui6",
+]
+
+[tool.briefcase.app.nodepipe.linux.system.arch]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "qt6-base",
+]
+
+[tool.briefcase.app.nodepipe.linux.appimage]
+manylinux = "manylinux_2_28"
+
+system_requires = [
+# ?? FIXME
+]
+
+linuxdeploy_plugins = [
+]
+
+[tool.briefcase.app.nodepipe.linux.flatpak]
+flatpak_runtime = "org.kde.Platform"
+flatpak_runtime_version = "6.9"
+flatpak_sdk = "org.kde.Sdk"
+
+[tool.briefcase.app.nodepipe.windows]
+requires = [
+]
+
+# Mobile deployments
+[tool.briefcase.app.nodepipe.iOS]
+supported = false
+
+[tool.briefcase.app.nodepipe.android]
+supported = false
+
+# Web deployments
+[tool.briefcase.app.nodepipe.web]
+supported = false
+
+Briefcase Log:
+[21:35:46]                                                                                                                                                         windows_sdk.py:82
+           [Windows SDK] Finding Suitable Installation...                                                                                                          windows_sdk.py:82
+           Evaluating Registry SDK version '10.0.26100.0' at C:\Program Files (x86)\Windows Kits\10                                                               windows_sdk.py:133
+                                                                                                                                                                   subprocess.py:839
+           >>> Running Command:                                                                                                                                    subprocess.py:839
+           >>>     'C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe' '-?'                                                                 subprocess.py:839
+           >>> Working Directory:                                                                                                                                  subprocess.py:839
+           >>>     D:\Documents\School\CSUSM\CS490\Project\bioinformatics-pipeline-capstone-installer                                                              subprocess.py:839
+           >>> Command Output:                                                                                                                                     subprocess.py:839
+           >>>     Usage: signtool <command> [options] or signtool @<response file>                                                                                subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>>       Valid commands:                                                                                                                               subprocess.py:839
+           >>>         sign       --  Sign files using an embedded signature.                                                                                      subprocess.py:839
+           >>>         timestamp  --  Timestamp previously-signed files.                                                                                           subprocess.py:839
+           >>>         verify     --  Verify embedded or catalog signatures.                                                                                       subprocess.py:839
+           >>>         catdb      --  Modify a catalog database.                                                                                                   subprocess.py:839
+           >>>         remove     --  Remove embedded signature(s) or reduce the size of an                                                                        subprocess.py:839
+           >>>                        embedded signed file.                                                                                                        subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>>                        For help on a specific command, enter "signtool <command> /?"                                                                subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>>       Respsonse files should be formatted with one argument per line, with the first argument being the command.                                    subprocess.py:839
+           >>>       Multiple commands may be specified by separating with an empty line. For example, a file containing:                                          subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>>         sign                                                                                                                                        subprocess.py:839
+           >>>         /n "My cert"                                                                                                                                subprocess.py:839
+           >>>         /fd SHA256                                                                                                                                  subprocess.py:839
+           >>>         myfile.exe                                                                                                                                  subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>>         verify                                                                                                                                      subprocess.py:839
+           >>>         myfile.exe                                                                                                                                  subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>>       can be used to sign and verify myfile.exe by calling "signtool @responsefile".                                                                subprocess.py:839
+           >>> Return code: 0                                                                                                                                      subprocess.py:839
+                                                                                                                                                                   subprocess.py:839
+           Using Windows SDK v10.0.26100.0 at C:\Program Files (x86)\Windows Kits\10                                                                              windows_sdk.py:233
+                                                                                                                                                                           app.py:64
+           [nodepipe] Building App...                                                                                                                                      app.py:64
+           Renaming stub binary... started                                                                                                                                 app.py:74
+           Renaming stub binary... done                                                                                                                                    app.py:74
+           Removing any digital signatures from stub app... started                                                                                                        app.py:81
+                                                                                                                                                                   subprocess.py:839
+           >>> Running Command:                                                                                                                                    subprocess.py:839
+           >>>     'C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe' remove -s 'src\NodePipe.exe'                                         subprocess.py:839
+           >>> Working Directory:                                                                                                                                  subprocess.py:839
+           >>>     D:\Documents\School\CSUSM\CS490\Project\bioinformatics-pipeline-capstone-installer\build\nodepipe\windows\app                                   subprocess.py:839
+           >>> Command Output:                                                                                                                                     subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>>     Number of errors: 1                                                                                                                             subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>>     SignTool Error: CryptSIPRemoveSignedDataMsg returned error: 0x00000057                                                                          subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>>             The parameter is incorrect.                                                                                                             subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>> Return code: 1                                                                                                                                      subprocess.py:839
+                                                                                                                                                                   subprocess.py:839
+           Removing any digital signatures from stub app... done                                                                                                           app.py:81
+           Setting stub app details... started                                                                                                                            app.py:109
+                                                                                                                                                                   subprocess.py:839
+           >>> Running Command:                                                                                                                                    subprocess.py:839
+           >>>     'D:\briefcase\Cache\tools\rcedit-x64.exe' 'src\NodePipe.exe' --set-version-string CompanyName CSUSM-CSE-47-2026-CS-S03-Team-002                 subprocess.py:839
+           --set-version-string FileDescription NodePipe --set-version-string FileVersion 0.0.1 --set-version-string InternalName nodepipe --set-version-string                     
+           OriginalFilename NodePipe.exe --set-version-string ProductName NodePipe --set-version-string ProductVersion 0.0.1 --set-icon icon.ico                                    
+           >>> Working Directory:                                                                                                                                  subprocess.py:839
+           >>>     D:\Documents\School\CSUSM\CS490\Project\bioinformatics-pipeline-capstone-installer\build\nodepipe\windows\app                                   subprocess.py:839
+           >>> Return code: 0                                                                                                                                      subprocess.py:839
+                                                                                                                                                                   subprocess.py:839
+           Setting stub app details... done                                                                                                                               app.py:109
+                                                                                                                                                                         build.py:96
+           [nodepipe] Built build\nodepipe\windows\app\src\NodePipe.exe                                                                                                  build.py:96
+                                                                                                                                                                          run.py:290
+           [nodepipe] Starting app...                                                                                                                                     run.py:290
+                                                                                                                                                                   subprocess.py:839
+           >>> Running Command:                                                                                                                                    subprocess.py:839
+           >>>     'D:\Documents\School\CSUSM\CS490\Project\bioinformatics-pipeline-capstone-installer\build\nodepipe\windows\app\src\NodePipe.exe'                subprocess.py:839
+           >>> Working Directory:                                                                                                                                  subprocess.py:839
+           >>>     C:\Users\Kenneth Lopez                                                                                                                          subprocess.py:839
+           ===========================================================================                                                                                    run.py:175
+[21:36:05] query returned: b''                                                                                                                                     subprocess.py:196
+[21:36:06] query returned: b'{\n    "SessionID": "bfdca027-111d-4443-a1b6-049f4469dc0b",\n    "Status": "starting"\n}\n\n'                                         subprocess.py:196
+[21:36:07] query returned: b'{\n    "SessionID": "bfdca027-111d-4443-a1b6-049f4469dc0b",\n    "Status": "starting"\n}\n\n'                                         subprocess.py:196
+[21:36:08] query returned: b'{\n    "SessionID": "bfdca027-111d-4443-a1b6-049f4469dc0b",\n    "Status": "starting"\n}\n\n'                                         subprocess.py:196
+[21:36:10] query returned: b'{\n    "SessionID": "bfdca027-111d-4443-a1b6-049f4469dc0b",\n    "Status": "starting"\n}\n\n'                                         subprocess.py:196
+[21:36:11] query returned: b'{\n    "SessionID": "bfdca027-111d-4443-a1b6-049f4469dc0b",\n    "Status": "starting"\n}\n\n'                                         subprocess.py:196
+[21:36:12] query returned: b'{\n    "SessionID": "bfdca027-111d-4443-a1b6-049f4469dc0b",\n    "Status": "running"\n}\n\n'                                          subprocess.py:196
+           query returned: b'{\n    "SessionID": "bfdca027-111d-4443-a1b6-049f4469dc0b",\n    "Status": "running"\n}\n\n'                                          subprocess.py:196
+[21:36:13] no configuration file provided: not found                                                                                                               subprocess.py:196
+[21:36:48]                                                                                                                                                            __main__.py:42
+           Problem running app nodepipe.                                                                                                                              __main__.py:43
+           Saving log... started                                                                                                                                      console.py:443
+
+Main thread traceback:
+╭─────────────────────────────────────────────────────────────────────── Traceback (most recent call last) ────────────────────────────────────────────────────────────────────────╮
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\__main__.py:27 in main                                                                                                      │
+│                                                                                                                                                                                  │
+│   24 │   │   │   Path.cwd() / "pyproject.toml",                                                                                                                                  │
+│   25 │   │   │   overrides=overrides,                                                                                                                                            │
+│   26 │   │   )                                                                                                                                                                   │
+│ ❱ 27 │   │   command(**options)                                                                                                                                                  │
+│   28 │   except HelpText as e:                                                                                                                                                   │
+│   29 │   │   console.info()                                                                                                                                                      │
+│   30 │   │   console.info(str(e))                                                                                                                                                │
+│                                                                                                                                                                                  │
+│ ╭────────────────────────────────────────────── locals ───────────────────────────────────────────────╮                                                                          │
+│ │       command = <briefcase.platforms.windows.app.WindowsAppRunCommand object at 0x0000024A168D98D0> │                                                                          │
+│ │       console = <briefcase.console.Console object at 0x0000024A16386050>                            │                                                                          │
+│ │             e = BriefcaseCommandError('Problem running app nodepipe.')                              │                                                                          │
+│ │ extra_cmdline = []                                                                                  │                                                                          │
+│ │       options = {                                                                                   │                                                                          │
+│ │                 │   'appname': None,                                                                │                                                                          │
+│ │                 │   'update': False,                                                                │                                                                          │
+│ │                 │   'update_requirements': False,                                                   │                                                                          │
+│ │                 │   'update_support': False,                                                        │                                                                          │
+│ │                 │   'update_stub': False,                                                           │                                                                          │
+│ │                 │   'update_resources': False,                                                      │                                                                          │
+│ │                 │   'no_update': False,                                                             │                                                                          │
+│ │                 │   'test_mode': False,                                                             │                                                                          │
+│ │                 │   'debugger': None,                                                               │                                                                          │
+│ │                 │   'debugger_host': 'localhost',                                                   │                                                                          │
+│ │                 │   ... +2                                                                          │                                                                          │
+│ │                 }                                                                                   │                                                                          │
+│ │     overrides = {}                                                                                  │                                                                          │
+│ │        result = 200                                                                                 │                                                                          │
+│ ╰─────────────────────────────────────────────────────────────────────────────────────────────────────╯                                                                          │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\commands\run.py:415 in __call__                                                                                             │
+│                                                                                                                                                                                  │
+│   412 │   │   │   │   "(apps defining 'external_package_path') cannot be run."                                                                                                   │
+│   413 │   │   │   )                                                                                                                                                              │
+│   414 │   │                                                                                                                                                                      │
+│ ❱ 415 │   │   state = self.run_app(                                                                                                                                              │
+│   416 │   │   │   app,                                                                                                                                                           │
+│   417 │   │   │   passthrough=[] if passthrough is None else passthrough,                                                                                                        │
+│   418 │   │   │   **full_options(state, options),                                                                                                                                │
+│                                                                                                                                                                                  │
+│ ╭────────────────────────────────────────────────────────────────────────────── locals ───────────────────────────────────────────────────────────────────────────────╮          │
+│ │                 app = <com.csusm.capstone.nodepipe.nodepipe v0.0.1 AppConfig>                                                                                       │          │
+│ │             appname = None                                                                                                                                          │          │
+│ │            debugger = None                                                                                                                                          │          │
+│ │       debugger_host = 'localhost'                                                                                                                                   │          │
+│ │       debugger_port = 5678                                                                                                                                          │          │
+│ │           exec_file = WindowsPath('D:/Documents/School/CSUSM/CS490/Project/bioinformatics-pipeline-capstone-installer/build/nodepipe/windows/app/src/NodePipe.exe') │          │
+│ │           no_update = False                                                                                                                                         │          │
+│ │             options = {}                                                                                                                                            │          │
+│ │         passthrough = []                                                                                                                                            │          │
+│ │                self = <briefcase.platforms.windows.app.WindowsAppRunCommand object at 0x0000024A168D98D0>                                                           │          │
+│ │               state = None                                                                                                                                          │          │
+│ │       template_file = WindowsPath('D:/Documents/School/CSUSM/CS490/Project/bioinformatics-pipeline-capstone-installer/build/nodepipe/windows/app')                  │          │
+│ │           test_mode = False                                                                                                                                         │          │
+│ │              update = False                                                                                                                                         │          │
+│ │ update_requirements = False                                                                                                                                         │          │
+│ │    update_resources = False                                                                                                                                         │          │
+│ │         update_stub = False                                                                                                                                         │          │
+│ │      update_support = False                                                                                                                                         │          │
+│ ╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯          │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\platforms\windows\__init__.py:362 in run_app                                                                                │
+│                                                                                                                                                                                  │
+│   359 │   │   │   )                                                                                                                                                              │
+│   360 │   │   │                                                                                                                                                                  │
+│   361 │   │   │   # Start streaming logs for the app.                                                                                                                            │
+│ ❱ 362 │   │   │   self._stream_app_logs(                                                                                                                                         │
+│   363 │   │   │   │   app,                                                                                                                                                       │
+│   364 │   │   │   │   popen=app_popen,                                                                                                                                           │
+│   365 │   │   │   │   clean_output=False,                                                                                                                                        │
+│                                                                                                                                                                                  │
+│ ╭───────────────────────────────────────────── locals ──────────────────────────────────────────────╮                                                                            │
+│ │         app = <com.csusm.capstone.nodepipe.nodepipe v0.0.1 AppConfig>                             │                                                                            │
+│ │   app_popen = <Popen: returncode: 3221226356 args: ['D:\\Documents\\School\\CSUSM\\CS490\\...>    │                                                                            │
+│ │      kwargs = {}                                                                                  │                                                                            │
+│ │ passthrough = []                                                                                  │                                                                            │
+│ │        self = <briefcase.platforms.windows.app.WindowsAppRunCommand object at 0x0000024A168D98D0> │                                                                            │
+│ ╰───────────────────────────────────────────────────────────────────────────────────────────────────╯                                                                            │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\commands\run.py:206 in _stream_app_logs                                                                                     │
+│                                                                                                                                                                                  │
+│   203 │   │   │   │   # If we're monitoring an actual app (not just a log stream),                                                                                               │
+│   204 │   │   │   │   # and the app didn't exit cleanly, surface the error to the user.                                                                                          │
+│   205 │   │   │   │   if popen.poll() != 0:                                                                                                                                      │
+│ ❱ 206 │   │   │   │   │   raise BriefcaseCommandError(f"Problem running app {app.app_name}.")                                                                                    │
+│   207 │   │                                                                                                                                                                      │
+│   208 │   │   except KeyboardInterrupt:                                                                                                                                          │
+│   209 │   │   │   pass  # Catch CTRL-C to exit normally                                                                                                                          │
+│                                                                                                                                                                                  │
+│ ╭────────────────────────────────────────────── locals ──────────────────────────────────────────────╮                                                                           │
+│ │          app = <com.csusm.capstone.nodepipe.nodepipe v0.0.1 AppConfig>                             │                                                                           │
+│ │ clean_filter = None                                                                                │                                                                           │
+│ │ clean_output = False                                                                               │                                                                           │
+│ │   log_filter = <briefcase.commands.run.LogFilter object at 0x0000024A1A0D8390>                     │                                                                           │
+│ │   log_stream = False                                                                               │                                                                           │
+│ │        popen = <Popen: returncode: 3221226356 args: ['D:\\Documents\\School\\CSUSM\\CS490\\...>    │                                                                           │
+│ │         self = <briefcase.platforms.windows.app.WindowsAppRunCommand object at 0x0000024A168D98D0> │                                                                           │
+│ ╰────────────────────────────────────────────────────────────────────────────────────────────────────╯                                                                           │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+BriefcaseCommandError: Problem running app nodepipe.

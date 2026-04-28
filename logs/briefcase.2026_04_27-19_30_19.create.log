@@ -1,0 +1,561 @@
+Date/Time:       2026-04-27 19:30:19 
+Command line:    C:\miniconda\envs\bioinf\Scripts\briefcase create windows
+
+OS Release:      Windows 10
+OS Version:      10.0.19045
+Architecture:    AMD64
+Platform:        Windows-10-10.0.19045-SP0
+
+Python exe:      C:\miniconda\envs\bioinf\python.exe
+Python version:  3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]
+Virtual env:     False
+Conda env:       True
+
+Briefcase:       0.4.1
+Target platform: windows
+Target format:   app
+
+Environment Variables:
+	3DVPATH=C:\AMD\Chipset_Software\Binaries\3D_V-Cache_Performance_Optimizer_Driver\
+	ALLUSERSPROFILE=C:\ProgramData
+	ANDROID_SDK_HOME=C:\Android
+	APPDATA=C:\Users\Kenneth Lopez\AppData\Roaming
+	BRIEFCASE_HOME=D:\briefcase\Cache
+	CHOCOLATEYINSTALL=C:\ProgramData\chocolatey
+	CHOCOLATEYLASTPATHUPDATE=133198649952473088
+	COMMONPROGRAMFILES=C:\Program Files\Common Files
+	COMMONPROGRAMFILES(X86)=C:\Program Files (x86)\Common Files
+	COMMONPROGRAMW6432=C:\Program Files\Common Files
+	COMPUTERNAME=DESKTOP-I4E6VFG
+	COMSPEC=C:\WINDOWS\system32\cmd.exe
+	CONDA_DEFAULT_ENV=bioinf
+	CONDA_EXE=C:\miniconda\Scripts\conda.exe
+	CONDA_PREFIX=C:\miniconda\envs\bioinf
+	CONDA_PREFIX_1=C:\miniconda
+	CONDA_PROMPT_MODIFIER=(bioinf) 
+	CONDA_PYTHON_EXE=C:\miniconda\python.exe
+	CONDA_SHLVL=2
+	CUDA_PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.1
+	CUDA_PATH_V11_1=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.1
+	DRIVERDATA=C:\Windows\System32\Drivers\DriverData
+	GIT_LFS_PATH=C:\Program Files\Git LFS
+	HOMEDRIVE=C:
+	HOMEPATH=\Users\Kenneth Lopez
+	INTELLIJ IDEA COMMUNITY EDITION=C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2025.2.1\bin
+	INTEL_DEV_REDIST=C:\Program Files (x86)\Common Files\Intel\Shared Libraries\
+	JAVA_HOME=C:\Program Files\Java\jdk-25
+	KEYSHOT10=********************
+	KEYSHOT9=********************
+	KEYSHOT_EXTERNAL_LICENSE_FOLDER=********************
+	LOCALAPPDATA=C:\Users\Kenneth Lopez\AppData\Local
+	LOGONSERVER=\\DESKTOP-I4E6VFG
+	NUMBER_OF_PROCESSORS=32
+	NVM_HOME=C:\Users\Kenneth Lopez\AppData\Roaming\nvm
+	NVM_SYMLINK=C:\Program Files\nodejs
+	OCULUSBASE=C:\Program Files\Oculus\
+	ONEDRIVE=C:\Users\Kenneth Lopez\OneDrive
+	ONEDRIVECONSUMER=C:\Users\Kenneth Lopez\OneDrive
+	OS=Windows_NT
+	PATH=C:\miniconda\envs\bioinf\Scripts;C:\miniconda\envs\bioinf;C:\miniconda\envs\bioinf\Library\mingw-w64\bin;C:\miniconda\envs\bioinf\Library\usr\bin;C:\miniconda\envs\bioinf\Library\bin;C:\miniconda\envs\bioinf\Scripts;C:\miniconda\envs\bioinf\bin;C:\miniconda\condabin;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\ImageMagick-7.1.2-Q16-HDRI;D:\OracleDB\dbhomeXE\bin;D:\OracleDatabaseXE\dbhomeXE\bin;C:\Program Files (x86)\VMware\VMware Player\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Python311\Scripts;C:\Python311;C:\Program Files\Oculus\Support\oculus-runtime;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64_win\compiler;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\Program Files\ffmpeg;D:\Program Files\CMake\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Program Files\dotnet;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\110\Tools\Binn;C:\Program Files (x86)\Microsoft SQL Server\120\Tools\Binn;C:\Program Files\Microsoft SQL Server\120\Tools\Binn;C:\Program Files\Microsoft SQL Server\120\DTS\Binn;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit;C:\platform-tools;C:\Program Files\VideoLAN\VLC;C:\mingw64\bin;C:\Android;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\Git\cmd;C:\ProgramData\chocolatey\bin;C:\Program Files\Git LFS;C:\Program Files\PuTTY;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit;C:\Users\Kenneth Lopez\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\Strings;C:\Program Files\7-Zip;C:\Program Files\NVIDIA Corporation\NVIDIA app\NvDLISR;C:\Program Files\Mullvad VPN\resources;C:\Program Files\gs\gs10.05.1\bin;C:\Program Files\Tesseract-OCR;C:\Program Files\PowerToys\DSCModules;C:\Program Files\PowerShell\7;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files (x86)\Arm GNU Toolchain arm-none-eabi\12.2 mpacbti-bet1\bin;C:\Users\Kenneth Lopez\AppData\Local\Microsoft\WindowsApps;C:\Users\Kenneth Lopez\.dotnet\tools;C:\Program Files (x86)\Nmap;C:\Users\Kenneth Lopez\AppData\Roaming\npm;C:\Users\Kenneth Lopez\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Users\Kenneth Lopez\AppData\Local\Microsoft\WinGet\Packages\DuckDB.cli_Microsoft.Winget.Source_8wekyb3d8bbwe;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2025.2.1\bin;C:\Users\Kenneth Lopez\AppData\Local\Python\bin
+	PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL
+	PICO_EXTRAS_PATH=D:\Documents\Pico Projects\SDK\pico-extras"
+	PICO_SDK_PATH=D:\Documents\Pico Projects\SDK\pico-sdk"
+	POWERSHELL_DISTRIBUTION_CHANNEL=MSI:Windows 10 Pro
+	PROCESSOR_ARCHITECTURE=AMD64
+	PROCESSOR_IDENTIFIER=AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD
+	PROCESSOR_LEVEL=25
+	PROCESSOR_REVISION=6102
+	PROGRAMDATA=C:\ProgramData
+	PROGRAMFILES=C:\Program Files
+	PROGRAMFILES(X86)=C:\Program Files (x86)
+	PROGRAMW6432=C:\Program Files
+	PROMPT=$P$G
+	PSEXECUTIONPOLICYPREFERENCE=Bypass
+	PSMODULEPATH=D:\Documents\WindowsPowerShell\Modules;C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules;C:\Program Files (x86)\Microsoft SQL Server\120\Tools\PowerShell\Modules\
+	PUBLIC=C:\Users\Public
+	PYTHONPATH=C:\Python311\Lib;C:\Python311\DLLs;
+	P_SCHEMA=C:\Program Files\Siemens\Solid Edge 2022\Schema
+	SESSIONNAME=Console
+	SE_LICENSE_SERVER=C:\Program Files\Siemens\Solid Edge 2022\Preferences\SELicense.lic
+	SSL_CERT_DIR=C:\miniconda\envs\bioinf\Library\ssl\certs
+	SSL_CERT_FILE=C:\miniconda\envs\bioinf\Library\ssl\cacert.pem
+	SYSTEMDRIVE=C:
+	SYSTEMROOT=C:\WINDOWS
+	TEMP=C:\Users\KENNET~1\AppData\Local\Temp
+	TMP=C:\Users\KENNET~1\AppData\Local\Temp
+	USERDOMAIN=DESKTOP-I4E6VFG
+	USERDOMAIN_ROAMINGPROFILE=DESKTOP-I4E6VFG
+	USERNAME=Kenneth Lopez
+	USERPROFILE=C:\Users\Kenneth Lopez
+	VBOX_MSI_INSTALL_PATH=C:\Program Files\Oracle\VirtualBox\
+	VIRTUAL_ENV=C:\miniconda\envs\bioinf
+	WINDIR=C:\WINDOWS
+	_CONDA_EXE=C:\miniconda\Scripts\conda.exe
+	_CONDA_ROOT=C:\miniconda
+	__CONDA_OPENSSL_CERT_DIR_SET=1
+	__CONDA_OPENSSL_CERT_FILE_SET=1
+	__PSLOCKDOWNPOLICY=0
+
+pyproject.toml:
+[project]
+name = "nodepipe"
+version = "0.1.0"
+description = "Visual editor and executor for bioinformatics pipelines using NextFlow"
+authors = [
+    {name = "CSUSM-CSE-47-2026-CS-S03-Team-002",email = "you@example.com"}
+]
+readme = "README.md"
+requires-python = "~=3.11.0"
+dependencies = [
+    "django (==5.2.13)",
+    "django-rest-framework (>=0.1.0,<0.2.0)",
+    "pyside6 (>=6.11.0,<7.0.0)",
+    "nodegraphqt (>=0.6.44,<0.7.0)",
+    "daphne (>=4.2.1,<5.0.0)",
+    "channels (>=4.3.2,<5.0.0)",
+    "websockets (>=16.0,<17.0)",
+]
+
+[dependency-groups]
+dev = [
+    "pytest (>=9.0.3,<10.0.0)",
+    "briefcase (>=0.4.1,<0.5.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+package-mode = false
+
+
+# This project was generated with 0.4.1 using template: https://github.com/beeware/briefcase-template @ v0.4.1
+[tool.briefcase]
+project_name = "NodePipe"
+bundle = "com.csusm.capstone.nodepipe"
+version = "0.0.1"
+url = "https://github.com/mariebethell/bioinformatics-pipeline-capstone"
+license.file = "LICENSE"
+author = "CSUSM-CSE-47-2026-CS-S03-Team-002"
+author_email = "lopez2349@csusm.edu"
+
+[tool.briefcase.app.nodepipe]
+formal_name = "NodePipe"
+description = "Visual editor and executor for bioinformatics pipelines using NextFlow"
+long_description = """More details about the app should go here.
+"""
+sources = [
+    "src/nodepipe",
+]
+test_sources = [
+    "tests",
+]
+
+requires-python = "~=3.11.0"
+
+requires = [
+	"django (==5.2.13)",
+    "django-rest-framework (>=0.1.0,<0.2.0)",
+    "pyside6 (>=6.11.0,<7.0.0)",
+    "nodegraphqt (>=0.6.44,<0.7.0)",
+    "daphne (>=4.2.1,<5.0.0)",
+    "channels (>=4.3.2,<5.0.0)",
+    "websockets (>=16.0,<17.0)",
+]
+test_requires = [
+    "pytest",
+]
+
+[tool.briefcase.app.nodepipe.macOS]
+universal_build = true
+# As of Pyside 6.8, PySide enforces a macOS 12 minimum on wheels.
+min_os_version = "12.0"
+requires = [
+    "std-nslog~=1.0.3",
+]
+
+[tool.briefcase.app.nodepipe.linux]
+requires = [
+]
+
+[tool.briefcase.app.nodepipe.linux.system.debian]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "libgl1",
+    "libqt6dbus6",
+    "libqt6gui6",
+    "libxcb-cursor0",
+    # The following packages are explicit dependencies on recent Debian-based
+    # distros, but not on Ubuntu 22.04.
+    "libxcb-icccm4",
+    "libxcb-keysyms1",
+    "libxcb-shape0",
+    "libxkbcommon-x11-0",
+]
+
+[tool.briefcase.app.nodepipe.linux.system.rhel]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "qt6-qtbase-gui",
+]
+
+[tool.briefcase.app.nodepipe.linux.system.suse]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "libgthread-2_0-0",
+    "libQt6Gui6",
+]
+
+[tool.briefcase.app.nodepipe.linux.system.arch]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "qt6-base",
+]
+
+[tool.briefcase.app.nodepipe.linux.appimage]
+manylinux = "manylinux_2_28"
+
+system_requires = [
+# ?? FIXME
+]
+
+linuxdeploy_plugins = [
+]
+
+[tool.briefcase.app.nodepipe.linux.flatpak]
+flatpak_runtime = "org.kde.Platform"
+flatpak_runtime_version = "6.9"
+flatpak_sdk = "org.kde.Sdk"
+
+[tool.briefcase.app.nodepipe.windows]
+requires = [
+]
+
+# Mobile deployments
+[tool.briefcase.app.nodepipe.iOS]
+supported = false
+
+[tool.briefcase.app.nodepipe.android]
+supported = false
+
+# Web deployments
+[tool.briefcase.app.nodepipe.web]
+supported = false
+
+Briefcase Log:
+[19:27:28]                                                                                                                                                             create.py:949
+           [nodepipe] Generating application template...                                                                                                               create.py:949
+           Assigning nodepipe an application GUID of 11763106-aed2-5f36-8be4-403c5c94e189                                                                            __init__.py:163
+           Using app template: https://github.com/beeware/briefcase-windows-app-template.git, branch v0.4.1                                                             base.py:1340
+           Cloning template 'https://github.com/beeware/briefcase-windows-app-template.git'...                                                                          base.py:1165
+[19:27:30] Using existing template (sha 12d4a8af582b24dd3d90336f5f83437efa28385f, updated Fri Mar 20 12:13:32 2026)                                                     base.py:1241
+                                                                                                                                                                       create.py:971
+           [nodepipe] Installing support package...                                                                                                                    create.py:971
+           Using support package https://www.python.org/ftp/python/3.11.9/python-3.11.9-embed-amd64.zip                                                                create.py:374
+           Downloading python-3.11.9-embed-amd64.zip...                                                                                                                  file.py:227
+[19:27:32] Unpacking support package... started                                                                                                                        create.py:289
+           Unpacking support package... done                                                                                                                           create.py:289
+                                                                                                                                                                       create.py:982
+           [nodepipe] Installing stub binary...                                                                                                                        create.py:982
+           Using stub binary https://briefcase-support.s3.amazonaws.com/python/3.11/windows/GUI-Stub-3.11-b10.zip                                                      create.py:485
+           Downloading GUI-Stub-3.11-b10.zip...                                                                                                                          file.py:227
+           Installing stub binary... started                                                                                                                           create.py:430
+           Installing stub binary... done                                                                                                                              create.py:430
+                                                                                                                                                                       create.py:989
+           [nodepipe] Installing application code...                                                                                                                   create.py:989
+           Installing src/nodepipe... started                                                                                                                          create.py:745
+[19:27:33] Installing src/nodepipe... done                                                                                                                             create.py:745
+                                                                                                                                                                       create.py:992
+           [nodepipe] Installing requirements...                                                                                                                       create.py:992
+           Installing app requirements... started                                                                                                                      create.py:668
+                                                                                                                                                                   subprocess.py:839
+           >>> Running Command:                                                                                                                                    subprocess.py:839
+           >>>     'C:\miniconda\envs\bioinf\python.exe' -u -X utf8 -m pip install --disable-pip-version-check --upgrade --no-user                                 subprocess.py:839
+           '--target=D:\Documents\School\CSUSM\CS490\Project\bioinformatics-pipeline-capstone - installer\build\nodepipe\windows\app\src\app_packages' 'django                      
+           (==5.2.13)' 'django-rest-framework (>=0.1.0,<0.2.0)' 'pyside6 (>=6.11.0,<7.0.0)' 'nodegraphqt (>=0.6.44,<0.7.0)' 'daphne (>=4.2.1,<5.0.0)' 'channels                     
+           (>=4.3.2,<5.0.0)' 'websockets (>=16.0,<17.0)' 'django (==5.2.13)' 'django-rest-framework (>=0.1.0,<0.2.0)' 'pyside6 (>=6.11.0,<7.0.0)' 'nodegraphqt                      
+           (>=0.6.44,<0.7.0)' 'daphne (>=4.2.1,<5.0.0)' 'channels (>=4.3.2,<5.0.0)' 'websockets (>=16.0,<17.0)'                                                                     
+           >>> Working Directory:                                                                                                                                  subprocess.py:839
+           >>>     D:\Documents\School\CSUSM\CS490\Project\bioinformatics-pipeline-capstone - installer                                                            subprocess.py:839
+[19:27:34] Collecting django==5.2.13                                                                                                                               subprocess.py:196
+             Downloading django-5.2.13-py3-none-any.whl.metadata (4.1 kB)                                                                                          subprocess.py:196
+           Collecting django-rest-framework<0.2.0,>=0.1.0                                                                                                          subprocess.py:196
+             Downloading django-rest-framework-0.1.0.tar.gz (969 bytes)                                                                                            subprocess.py:196
+             Installing build dependencies: started                                                                                                                subprocess.py:196
+[19:27:35]   Installing build dependencies: finished with status 'done'                                                                                            subprocess.py:196
+             Getting requirements to build wheel: started                                                                                                          subprocess.py:196
+[19:27:36]   Getting requirements to build wheel: finished with status 'done'                                                                                      subprocess.py:196
+             Preparing metadata (pyproject.toml): started                                                                                                          subprocess.py:196
+             Preparing metadata (pyproject.toml): finished with status 'done'                                                                                      subprocess.py:196
+           Collecting pyside6<7.0.0,>=6.11.0                                                                                                                       subprocess.py:196
+             Downloading pyside6-6.11.0-cp310-abi3-win_amd64.whl.metadata (5.5 kB)                                                                                 subprocess.py:196
+           Collecting nodegraphqt<0.7.0,>=0.6.44                                                                                                                   subprocess.py:196
+             Using cached nodegraphqt-0.6.44-py3-none-any.whl.metadata (3.1 kB)                                                                                    subprocess.py:196
+           Collecting daphne<5.0.0,>=4.2.1                                                                                                                         subprocess.py:196
+             Using cached daphne-4.2.1-py3-none-any.whl.metadata (1.7 kB)                                                                                          subprocess.py:196
+           Collecting channels<5.0.0,>=4.3.2                                                                                                                       subprocess.py:196
+             Using cached channels-4.3.2-py3-none-any.whl.metadata (4.7 kB)                                                                                        subprocess.py:196
+[19:27:37] Collecting websockets<17.0,>=16.0                                                                                                                       subprocess.py:196
+             Using cached websockets-16.0-cp311-cp311-win_amd64.whl.metadata (7.0 kB)                                                                              subprocess.py:196
+           Collecting asgiref>=3.8.1 (from django==5.2.13)                                                                                                         subprocess.py:196
+             Using cached asgiref-3.11.1-py3-none-any.whl.metadata (9.3 kB)                                                                                        subprocess.py:196
+           Collecting sqlparse>=0.3.1 (from django==5.2.13)                                                                                                        subprocess.py:196
+             Using cached sqlparse-0.5.5-py3-none-any.whl.metadata (4.7 kB)                                                                                        subprocess.py:196
+           Collecting tzdata (from django==5.2.13)                                                                                                                 subprocess.py:196
+             Downloading tzdata-2026.2-py2.py3-none-any.whl.metadata (1.4 kB)                                                                                      subprocess.py:196
+           Collecting djangorestframework (from django-rest-framework<0.2.0,>=0.1.0)                                                                               subprocess.py:196
+             Downloading djangorestframework-3.17.1-py3-none-any.whl.metadata (7.9 kB)                                                                             subprocess.py:196
+           Collecting shiboken6==6.11.0 (from pyside6<7.0.0,>=6.11.0)                                                                                              subprocess.py:196
+             Downloading shiboken6-6.11.0-cp310-abi3-win_amd64.whl.metadata (2.5 kB)                                                                               subprocess.py:196
+           Collecting PySide6_Essentials==6.11.0 (from pyside6<7.0.0,>=6.11.0)                                                                                     subprocess.py:196
+             Downloading pyside6_essentials-6.11.0-cp310-abi3-win_amd64.whl.metadata (3.8 kB)                                                                      subprocess.py:196
+           Collecting PySide6_Addons==6.11.0 (from pyside6<7.0.0,>=6.11.0)                                                                                         subprocess.py:196
+             Downloading pyside6_addons-6.11.0-cp310-abi3-win_amd64.whl.metadata (4.2 kB)                                                                          subprocess.py:196
+           Collecting Qt.py>=1.4.1 (from nodegraphqt<0.7.0,>=0.6.44)                                                                                               subprocess.py:196
+             Downloading qt_py-2.0.4-py3-none-any.whl.metadata (34 kB)                                                                                             subprocess.py:196
+           Collecting autobahn>=22.4.2 (from daphne<5.0.0,>=4.2.1)                                                                                                 subprocess.py:196
+             Downloading autobahn-25.12.2-cp311-cp311-win_amd64.whl.metadata (32 kB)                                                                               subprocess.py:196
+[19:27:38] Collecting twisted>=22.4 (from twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                                                                subprocess.py:196
+             Using cached twisted-25.5.0-py3-none-any.whl.metadata (22 kB)                                                                                         subprocess.py:196
+           Collecting cbor2>=5.2.0 (from autobahn>=22.4.2->daphne<5.0.0,>=4.2.1)                                                                                   subprocess.py:196
+             Downloading cbor2-5.9.0-cp311-cp311-win_amd64.whl.metadata (5.7 kB)                                                                                   subprocess.py:196
+           Collecting cffi>=2.0.0 (from autobahn>=22.4.2->daphne<5.0.0,>=4.2.1)                                                                                    subprocess.py:196
+             Using cached cffi-2.0.0-cp311-cp311-win_amd64.whl.metadata (2.6 kB)                                                                                   subprocess.py:196
+           Collecting cryptography>=3.4.6 (from autobahn>=22.4.2->daphne<5.0.0,>=4.2.1)                                                                            subprocess.py:196
+             Downloading cryptography-47.0.0-cp311-abi3-win_amd64.whl.metadata (4.5 kB)                                                                            subprocess.py:196
+           Collecting hyperlink>=21.0.0 (from autobahn>=22.4.2->daphne<5.0.0,>=4.2.1)                                                                              subprocess.py:196
+             Using cached hyperlink-21.0.0-py2.py3-none-any.whl.metadata (1.5 kB)                                                                                  subprocess.py:196
+           Collecting msgpack>=1.0.2 (from autobahn>=22.4.2->daphne<5.0.0,>=4.2.1)                                                                                 subprocess.py:196
+             Using cached msgpack-1.1.2-cp311-cp311-win_amd64.whl.metadata (8.4 kB)                                                                                subprocess.py:196
+           Collecting py-ubjson>=0.16.1 (from autobahn>=22.4.2->daphne<5.0.0,>=4.2.1)                                                                              subprocess.py:196
+             Using cached py-ubjson-0.16.1.tar.gz (50 kB)                                                                                                          subprocess.py:196
+             Installing build dependencies: started                                                                                                                subprocess.py:196
+[19:27:39]   Installing build dependencies: finished with status 'done'                                                                                            subprocess.py:196
+             Getting requirements to build wheel: started                                                                                                          subprocess.py:196
+[19:27:40]   Getting requirements to build wheel: finished with status 'done'                                                                                      subprocess.py:196
+             Preparing metadata (pyproject.toml): started                                                                                                          subprocess.py:196
+             Preparing metadata (pyproject.toml): finished with status 'done'                                                                                      subprocess.py:196
+           Collecting txaio>=25.12.2 (from autobahn>=22.4.2->daphne<5.0.0,>=4.2.1)                                                                                 subprocess.py:196
+             Using cached txaio-25.12.2-py3-none-any.whl.metadata (7.0 kB)                                                                                         subprocess.py:196
+[19:27:41] Collecting ujson>=4.0.2 (from autobahn>=22.4.2->daphne<5.0.0,>=4.2.1)                                                                                   subprocess.py:196
+             Downloading ujson-5.12.0-cp311-cp311-win_amd64.whl.metadata (9.8 kB)                                                                                  subprocess.py:196
+           Collecting pycparser (from cffi>=2.0.0->autobahn>=22.4.2->daphne<5.0.0,>=4.2.1)                                                                         subprocess.py:196
+             Using cached pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)                                                                                         subprocess.py:196
+           Collecting idna>=2.5 (from hyperlink>=21.0.0->autobahn>=22.4.2->daphne<5.0.0,>=4.2.1)                                                                   subprocess.py:196
+             Downloading idna-3.13-py3-none-any.whl.metadata (8.0 kB)                                                                                              subprocess.py:196
+           Collecting types-PySide6 (from Qt.py>=1.4.1->nodegraphqt<0.7.0,>=0.6.44)                                                                                subprocess.py:196
+             Using cached types_pyside6-6.10.1.1-py2.py3-none-any.whl.metadata (7.2 kB)                                                                            subprocess.py:196
+           Collecting attrs>=22.2.0 (from twisted>=22.4->twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                                                 subprocess.py:196
+             Using cached attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)                                                                                          subprocess.py:196
+           Collecting automat>=24.8.0 (from twisted>=22.4->twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                                               subprocess.py:196
+             Using cached automat-25.4.16-py3-none-any.whl.metadata (8.4 kB)                                                                                       subprocess.py:196
+           Collecting constantly>=15.1 (from twisted>=22.4->twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                                              subprocess.py:196
+             Using cached constantly-23.10.4-py3-none-any.whl.metadata (1.8 kB)                                                                                    subprocess.py:196
+           Collecting incremental>=24.7.0 (from twisted>=22.4->twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                                           subprocess.py:196
+             Using cached incremental-24.11.0-py3-none-any.whl.metadata (9.5 kB)                                                                                   subprocess.py:196
+           Collecting typing-extensions>=4.2.0 (from twisted>=22.4->twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                                      subprocess.py:196
+             Using cached typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)                                                                              subprocess.py:196
+           Collecting zope-interface>=5 (from twisted>=22.4->twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                                             subprocess.py:196
+             Downloading zope_interface-8.4-cp311-cp311-win_amd64.whl.metadata (47 kB)                                                                             subprocess.py:196
+[19:27:42] Collecting packaging>=17.0 (from incremental>=24.7.0->twisted>=22.4->twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                          subprocess.py:196
+             Downloading packaging-26.2-py3-none-any.whl.metadata (3.5 kB)                                                                                         subprocess.py:196
+           Collecting pyopenssl>=21.0.0 (from twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                                                            subprocess.py:196
+             Downloading pyopenssl-26.1.0-py3-none-any.whl.metadata (19 kB)                                                                                        subprocess.py:196
+           Collecting service-identity>=18.1.0 (from twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                                                     subprocess.py:196
+             Using cached service_identity-24.2.0-py3-none-any.whl.metadata (5.1 kB)                                                                               subprocess.py:196
+           Collecting pyasn1 (from service-identity>=18.1.0->twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                                             subprocess.py:196
+             Downloading pyasn1-0.6.3-py3-none-any.whl.metadata (8.4 kB)                                                                                           subprocess.py:196
+           Collecting pyasn1-modules (from service-identity>=18.1.0->twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                                     subprocess.py:196
+             Using cached pyasn1_modules-0.4.2-py3-none-any.whl.metadata (3.5 kB)                                                                                  subprocess.py:196
+           Downloading django-5.2.13-py3-none-any.whl (8.3 MB)                                                                                                     subprocess.py:196
+[19:27:45]    ---------------------------------------- 8.3/8.3 MB 3.3 MB/s  0:00:02                                                                                subprocess.py:196
+           Downloading pyside6-6.11.0-cp310-abi3-win_amd64.whl (577 kB)                                                                                            subprocess.py:196
+              ---------------------------------------- 578.0/578.0 kB 3.4 MB/s  0:00:00                                                                            subprocess.py:196
+           Downloading pyside6_addons-6.11.0-cp310-abi3-win_amd64.whl (168.7 MB)                                                                                   subprocess.py:196
+[19:28:26]    ---------------------------------------- 168.7/168.7 MB 3.9 MB/s  0:00:40                                                                            subprocess.py:196
+           Downloading pyside6_essentials-6.11.0-cp310-abi3-win_amd64.whl (75.8 MB)                                                                                subprocess.py:196
+[19:28:38]    ---------------------------------------- 75.8/75.8 MB 6.0 MB/s  0:00:12                                                                              subprocess.py:196
+           Downloading shiboken6-6.11.0-cp310-abi3-win_amd64.whl (1.2 MB)                                                                                          subprocess.py:196
+[19:28:39]    ---------------------------------------- 1.2/1.2 MB 4.1 MB/s  0:00:00                                                                                subprocess.py:196
+           Using cached nodegraphqt-0.6.44-py3-none-any.whl (141 kB)                                                                                               subprocess.py:196
+           Using cached daphne-4.2.1-py3-none-any.whl (29 kB)                                                                                                      subprocess.py:196
+           Using cached channels-4.3.2-py3-none-any.whl (31 kB)                                                                                                    subprocess.py:196
+           Using cached websockets-16.0-cp311-cp311-win_amd64.whl (178 kB)                                                                                         subprocess.py:196
+           Using cached asgiref-3.11.1-py3-none-any.whl (24 kB)                                                                                                    subprocess.py:196
+           Downloading autobahn-25.12.2-cp311-cp311-win_amd64.whl (2.2 MB)                                                                                         subprocess.py:196
+              ---------------------------------------- 2.2/2.2 MB 4.9 MB/s  0:00:00                                                                                subprocess.py:196
+           Downloading cbor2-5.9.0-cp311-cp311-win_amd64.whl (69 kB)                                                                                               subprocess.py:196
+           Using cached cffi-2.0.0-cp311-cp311-win_amd64.whl (182 kB)                                                                                              subprocess.py:196
+           Downloading cryptography-47.0.0-cp311-abi3-win_amd64.whl (3.8 MB)                                                                                       subprocess.py:196
+[19:28:40]    ---------------------------------------- 3.8/3.8 MB 6.8 MB/s  0:00:00                                                                                subprocess.py:196
+           Using cached hyperlink-21.0.0-py2.py3-none-any.whl (74 kB)                                                                                              subprocess.py:196
+           Downloading idna-3.13-py3-none-any.whl (68 kB)                                                                                                          subprocess.py:196
+           Using cached msgpack-1.1.2-cp311-cp311-win_amd64.whl (71 kB)                                                                                            subprocess.py:196
+           Downloading qt_py-2.0.4-py3-none-any.whl (46 kB)                                                                                                        subprocess.py:196
+           Using cached sqlparse-0.5.5-py3-none-any.whl (46 kB)                                                                                                    subprocess.py:196
+           Using cached twisted-25.5.0-py3-none-any.whl (3.2 MB)                                                                                                   subprocess.py:196
+           Using cached attrs-26.1.0-py3-none-any.whl (67 kB)                                                                                                      subprocess.py:196
+           Using cached automat-25.4.16-py3-none-any.whl (42 kB)                                                                                                   subprocess.py:196
+           Using cached constantly-23.10.4-py3-none-any.whl (13 kB)                                                                                                subprocess.py:196
+           Using cached incremental-24.11.0-py3-none-any.whl (21 kB)                                                                                               subprocess.py:196
+           Downloading packaging-26.2-py3-none-any.whl (100 kB)                                                                                                    subprocess.py:196
+           Downloading pyopenssl-26.1.0-py3-none-any.whl (58 kB)                                                                                                   subprocess.py:196
+           Using cached service_identity-24.2.0-py3-none-any.whl (11 kB)                                                                                           subprocess.py:196
+           Using cached txaio-25.12.2-py3-none-any.whl (31 kB)                                                                                                     subprocess.py:196
+           Using cached typing_extensions-4.15.0-py3-none-any.whl (44 kB)                                                                                          subprocess.py:196
+           Downloading ujson-5.12.0-cp311-cp311-win_amd64.whl (43 kB)                                                                                              subprocess.py:196
+           Downloading zope_interface-8.4-cp311-cp311-win_amd64.whl (214 kB)                                                                                       subprocess.py:196
+           Downloading djangorestframework-3.17.1-py3-none-any.whl (898 kB)                                                                                        subprocess.py:196
+              ---------------------------------------- 898.8/898.8 kB 4.5 MB/s  0:00:00                                                                            subprocess.py:196
+           Downloading pyasn1-0.6.3-py3-none-any.whl (83 kB)                                                                                                       subprocess.py:196
+           Using cached pyasn1_modules-0.4.2-py3-none-any.whl (181 kB)                                                                                             subprocess.py:196
+           Using cached pycparser-3.0-py3-none-any.whl (48 kB)                                                                                                     subprocess.py:196
+           Using cached types_pyside6-6.10.1.1-py2.py3-none-any.whl (590 kB)                                                                                       subprocess.py:196
+[19:28:41] Downloading tzdata-2026.2-py2.py3-none-any.whl (349 kB)                                                                                                 subprocess.py:196
+           Building wheels for collected packages: django-rest-framework, py-ubjson                                                                                subprocess.py:196
+             Building wheel for django-rest-framework (pyproject.toml): started                                                                                    subprocess.py:196
+[19:28:42]   Building wheel for django-rest-framework (pyproject.toml): finished with status 'done'                                                                subprocess.py:196
+             Created wheel for django-rest-framework: filename=django_rest_framework-0.1.0-py3-none-any.whl size=1406                                              subprocess.py:196
+           sha256=ea0bd1846bfd4bf8ce954e278a9bd1bbf56a5c950d29b9f93ab496781040b11a                                                                                                  
+             Stored in directory: c:\users\kenneth lopez\appdata\local\pip\cache\wheels\e7\bf\da\4018aefc377874628fc5fe2d10a7a37c0302adf219a57a851d                subprocess.py:196
+             Building wheel for py-ubjson (pyproject.toml): started                                                                                                subprocess.py:196
+[19:28:45]   Building wheel for py-ubjson (pyproject.toml): finished with status 'done'                                                                            subprocess.py:196
+             Created wheel for py-ubjson: filename=py_ubjson-0.16.1-cp311-cp311-win_amd64.whl size=41159                                                           subprocess.py:196
+           sha256=d138f3f01d695e04150b3b691bcee20cb5e3374257004a622ab924ce8bc2a7e8                                                                                                  
+             Stored in directory: c:\users\kenneth lopez\appdata\local\pip\cache\wheels\ea\6d\84\2e549e1b2579fafeab6aa931f7ea74c6a72793ae4ecdea38db                subprocess.py:196
+           Successfully built django-rest-framework py-ubjson                                                                                                      subprocess.py:196
+           Installing collected packages: types-PySide6, py-ubjson, zope-interface, websockets, ujson, tzdata, typing-extensions, txaio, sqlparse, shiboken6,      subprocess.py:196
+           Qt.py, pycparser, pyasn1, packaging, msgpack, idna, constantly, cbor2, automat, attrs, asgiref, PySide6_Essentials, pyasn1-modules, nodegraphqt,                         
+           incremental, hyperlink, django, cffi, twisted, PySide6_Addons, djangorestframework, cryptography, channels, service-identity, pyside6, pyopenssl,                        
+           django-rest-framework, autobahn, daphne                                                                                                                                  
+[19:29:16]                                                                                                                                                         subprocess.py:196
+           Successfully installed PySide6_Addons-6.11.0 PySide6_Essentials-6.11.0 Qt.py-2.0.4 asgiref-3.11.1 attrs-26.1.0 autobahn-25.12.2 automat-25.4.16         subprocess.py:196
+           cbor2-5.9.0 cffi-2.0.0 channels-4.3.2 constantly-23.10.4 cryptography-47.0.0 daphne-4.2.1 django-5.2.13 django-rest-framework-0.1.0                                      
+           djangorestframework-3.17.1 hyperlink-21.0.0 idna-3.13 incremental-24.11.0 msgpack-1.1.2 nodegraphqt-0.6.44 packaging-26.2 py-ubjson-0.16.1 pyasn1-0.6.3                  
+           pyasn1-modules-0.4.2 pycparser-3.0 pyopenssl-26.1.0 pyside6-6.11.0 service-identity-24.2.0 shiboken6-6.11.0 sqlparse-0.5.5 twisted-25.5.0 txaio-25.12.2                  
+           types-PySide6-6.10.1.1 typing-extensions-4.15.0 tzdata-2026.2 ujson-5.12.0 websockets-16.0 zope-interface-8.4                                                            
+[19:30:19] >>> Return code: 0                                                                                                                                      subprocess.py:839
+                                                                                                                                                                   subprocess.py:839
+           Installing app requirements... done                                                                                                                         create.py:668
+                                                                                                                                                                       create.py:995
+           [nodepipe] Installing application resources...                                                                                                              create.py:995
+           Installing license... started                                                                                                                             __init__.py:315
+           Installing license... errored                                                                                                                             __init__.py:315
+                                                                                                                                                                      __main__.py:42
+           Your `pyproject.toml` specifies a license file of 'LICENSE'.                                                                                               __main__.py:43
+           However, this file does not exist.                                                                                                                         __main__.py:43
+                                                                                                                                                                      __main__.py:43
+           Ensure you have correctly spelled the filename in your `license.file` setting.                                                                             __main__.py:43
+           Saving log... started                                                                                                                                      console.py:443
+
+Main thread traceback:
+╭─────────────────────────────────────────────────────────────────────── Traceback (most recent call last) ────────────────────────────────────────────────────────────────────────╮
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\__main__.py:27 in main                                                                                                      │
+│                                                                                                                                                                                  │
+│   24 │   │   │   Path.cwd() / "pyproject.toml",                                                                                                                                  │
+│   25 │   │   │   overrides=overrides,                                                                                                                                            │
+│   26 │   │   )                                                                                                                                                                   │
+│ ❱ 27 │   │   command(**options)                                                                                                                                                  │
+│   28 │   except HelpText as e:                                                                                                                                                   │
+│   29 │   │   console.info()                                                                                                                                                      │
+│   30 │   │   console.info(str(e))                                                                                                                                                │
+│                                                                                                                                                                                  │
+│ ╭─────────────────────────────────────────────────────────────────────────────────── locals ───────────────────────────────────────────────────────────────────────────────────╮ │
+│ │       command = <briefcase.platforms.windows.app.WindowsAppCreateCommand object at 0x0000021C6C6BB390>                                                                       │ │
+│ │       console = <briefcase.console.Console object at 0x0000021C6C5537D0>                                                                                                     │ │
+│ │             e = BriefcaseCommandError("Your `pyproject.toml` specifies a license file of 'LICENSE'.\nHowever, this file does not exist.\n\nEnsure you have correctly spelled │ │
+│ │                 the filename in your `license.file` setting.")                                                                                                               │ │
+│ │ extra_cmdline = []                                                                                                                                                           │ │
+│ │       options = {}                                                                                                                                                           │ │
+│ │     overrides = {}                                                                                                                                                           │ │
+│ │        result = 200                                                                                                                                                          │ │
+│ ╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯ │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\commands\create.py:1035 in __call__                                                                                         │
+│                                                                                                                                                                                  │
+│   1032 │   │                                                                                                                                                                     │
+│   1033 │   │   state = None                                                                                                                                                      │
+│   1034 │   │   for _, app_obj in sorted(apps_to_create.items()):                                                                                                                 │
+│ ❱ 1035 │   │   │   state = self.create_app(                                                                                                                                      │
+│   1036 │   │   │   │   app_obj,                                                                                                                                                  │
+│   1037 │   │   │   │   **full_options(state, options),                                                                                                                           │
+│   1038 │   │   │   )                                                                                                                                                             │
+│                                                                                                                                                                                  │
+│ ╭──────────────────────────────────────────────── locals ─────────────────────────────────────────────────╮                                                                      │
+│ │              _ = 'nodepipe'                                                                             │                                                                      │
+│ │            app = None                                                                                   │                                                                      │
+│ │       app_name = None                                                                                   │                                                                      │
+│ │        app_obj = <com.csusm.capstone.nodepipe.nodepipe v0.0.1 AppConfig>                                │                                                                      │
+│ │ apps_to_create = {'nodepipe': <com.csusm.capstone.nodepipe.nodepipe v0.0.1 AppConfig>}                  │                                                                      │
+│ │        options = {}                                                                                     │                                                                      │
+│ │           self = <briefcase.platforms.windows.app.WindowsAppCreateCommand object at 0x0000021C6C6BB390> │                                                                      │
+│ │          state = None                                                                                   │                                                                      │
+│ ╰─────────────────────────────────────────────────────────────────────────────────────────────────────────╯                                                                      │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\commands\create.py:998 in create_app                                                                                        │
+│                                                                                                                                                                                  │
+│    995 │   │   │   self.console.info(                                                                                                                                            │
+│    996 │   │   │   │   "Installing application resources...", prefix=app.app_name                                                                                                │
+│    997 │   │   │   )                                                                                                                                                             │
+│ ❱  998 │   │   │   self.install_app_resources(app=app)                                                                                                                           │
+│    999 │   │   │                                                                                                                                                                 │
+│   1000 │   │   │   self.console.info("Removing unneeded app content...", prefix=app.app_name)                                                                                    │
+│   1001 │   │   │   self.cleanup_app_content(app=app)                                                                                                                             │
+│                                                                                                                                                                                  │
+│ ╭─────────────────────────────────────────────────────────────────── locals ───────────────────────────────────────────────────────────────────╮                                 │
+│ │         app = <com.csusm.capstone.nodepipe.nodepipe v0.0.1 AppConfig>                                                                        │                                 │
+│ │ bundle_path = WindowsPath('D:/Documents/School/CSUSM/CS490/Project/bioinformatics-pipeline-capstone - installer/build/nodepipe/windows/app') │                                 │
+│ │     options = {}                                                                                                                             │                                 │
+│ │        self = <briefcase.platforms.windows.app.WindowsAppCreateCommand object at 0x0000021C6C6BB390>                                         │                                 │
+│ ╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯                                 │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\platforms\windows\__init__.py:316 in install_app_resources                                                                  │
+│                                                                                                                                                                                  │
+│   313 │   │                                                                                                                                                                      │
+│   314 │   │   # Install the license.                                                                                                                                             │
+│   315 │   │   with self.console.wait_bar("Installing license..."):                                                                                                               │
+│ ❱ 316 │   │   │   self.install_license(app)                                                                                                                                      │
+│   317                                                                                                                                                                            │
+│   318                                                                                                                                                                            │
+│   319 class WindowsRunCommand(RunCommand):                                                                                                                                       │
+│                                                                                                                                                                                  │
+│ ╭──────────────────────────────────────────────────────────────────────────────── locals ─────────────────────────────────────────────────────────────────────────────────╮      │
+│ │                  app = <com.csusm.capstone.nodepipe.nodepipe v0.0.1 AppConfig>                                                                                          │      │
+│ │ install_scripts_path = WindowsPath('D:/Documents/School/CSUSM/CS490/Project/bioinformatics-pipeline-capstone - installer/build/nodepipe/windows/app/extras/_installer') │      │
+│ │       installer_path = '_installer'                                                                                                                                     │      │
+│ │         post_install = None                                                                                                                                             │      │
+│ │        pre_uninstall = None                                                                                                                                             │      │
+│ │                 self = <briefcase.platforms.windows.app.WindowsAppCreateCommand object at 0x0000021C6C6BB390>                                                           │      │
+│ ╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯      │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\platforms\windows\__init__.py:232 in install_license                                                                        │
+│                                                                                                                                                                                  │
+│   229 │   │   │   │   │   │   txt_to_rtf(license_text), encoding="utf-8"                                                                                                         │
+│   230 │   │   │   │   │   )                                                                                                                                                      │
+│   231 │   │   │   else:                                                                                                                                                          │
+│ ❱ 232 │   │   │   │   raise BriefcaseCommandError(                                                                                                                               │
+│   233 │   │   │   │   │   "Your `pyproject.toml` specifies a license file of "                                                                                                   │
+│   234 │   │   │   │   │   f"{str(license_file.relative_to(self.base_path))!r}.\n"                                                                                                │
+│   235 │   │   │   │   │   "However, this file does not exist."                                                                                                                   │
+│                                                                                                                                                                                  │
+│ ╭──────────────────────────────────────────────────────────────────────────── locals ────────────────────────────────────────────────────────────────────────────╮               │
+│ │               app = <com.csusm.capstone.nodepipe.nodepipe v0.0.1 AppConfig>                                                                                    │               │
+│ │ installed_license = WindowsPath('D:/Documents/School/CSUSM/CS490/Project/bioinformatics-pipeline-capstone - installer/build/nodepipe/windows/app/LICENSE.rtf') │               │
+│ │      license_file = WindowsPath('D:/Documents/School/CSUSM/CS490/Project/bioinformatics-pipeline-capstone - installer/LICENSE')                                │               │
+│ │              self = <briefcase.platforms.windows.app.WindowsAppCreateCommand object at 0x0000021C6C6BB390>                                                     │               │
+│ ╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯               │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+BriefcaseCommandError: Your `pyproject.toml` specifies a license file of 'LICENSE'.
+However, this file does not exist.
+
+Ensure you have correctly spelled the filename in your `license.file` setting.

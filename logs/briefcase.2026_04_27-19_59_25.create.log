@@ -1,0 +1,480 @@
+Date/Time:       2026-04-27 19:59:25 
+Command line:    C:\miniconda\envs\bioinf\Scripts\briefcase create windows
+
+OS Release:      Windows 10
+OS Version:      10.0.19045
+Architecture:    AMD64
+Platform:        Windows-10-10.0.19045-SP0
+
+Python exe:      C:\miniconda\envs\bioinf\python.exe
+Python version:  3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]
+Virtual env:     False
+Conda env:       True
+
+Briefcase:       0.4.1
+Target platform: windows
+Target format:   app
+
+Environment Variables:
+	3DVPATH=C:\AMD\Chipset_Software\Binaries\3D_V-Cache_Performance_Optimizer_Driver\
+	ALLUSERSPROFILE=C:\ProgramData
+	ANDROID_SDK_HOME=C:\Android
+	APPDATA=C:\Users\Kenneth Lopez\AppData\Roaming
+	BRIEFCASE_HOME=D:\briefcase\Cache
+	CHOCOLATEYINSTALL=C:\ProgramData\chocolatey
+	CHOCOLATEYLASTPATHUPDATE=133198649952473088
+	COMMONPROGRAMFILES=C:\Program Files\Common Files
+	COMMONPROGRAMFILES(X86)=C:\Program Files (x86)\Common Files
+	COMMONPROGRAMW6432=C:\Program Files\Common Files
+	COMPUTERNAME=DESKTOP-I4E6VFG
+	COMSPEC=C:\WINDOWS\system32\cmd.exe
+	CONDA_DEFAULT_ENV=bioinf
+	CONDA_EXE=C:\miniconda\Scripts\conda.exe
+	CONDA_PREFIX=C:\miniconda\envs\bioinf
+	CONDA_PREFIX_1=C:\miniconda
+	CONDA_PROMPT_MODIFIER=(bioinf) 
+	CONDA_PYTHON_EXE=C:\miniconda\python.exe
+	CONDA_SHLVL=2
+	CUDA_PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.1
+	CUDA_PATH_V11_1=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.1
+	DRIVERDATA=C:\Windows\System32\Drivers\DriverData
+	GIT_LFS_PATH=C:\Program Files\Git LFS
+	HOMEDRIVE=C:
+	HOMEPATH=\Users\Kenneth Lopez
+	INTELLIJ IDEA COMMUNITY EDITION=C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2025.2.1\bin
+	INTEL_DEV_REDIST=C:\Program Files (x86)\Common Files\Intel\Shared Libraries\
+	JAVA_HOME=C:\Program Files\Java\jdk-25
+	KEYSHOT10=********************
+	KEYSHOT9=********************
+	KEYSHOT_EXTERNAL_LICENSE_FOLDER=********************
+	LOCALAPPDATA=C:\Users\Kenneth Lopez\AppData\Local
+	LOGONSERVER=\\DESKTOP-I4E6VFG
+	NUMBER_OF_PROCESSORS=32
+	NVM_HOME=C:\Users\Kenneth Lopez\AppData\Roaming\nvm
+	NVM_SYMLINK=C:\Program Files\nodejs
+	OCULUSBASE=C:\Program Files\Oculus\
+	ONEDRIVE=C:\Users\Kenneth Lopez\OneDrive
+	ONEDRIVECONSUMER=C:\Users\Kenneth Lopez\OneDrive
+	OS=Windows_NT
+	PATH=C:\miniconda\envs\bioinf\Scripts;C:\miniconda\envs\bioinf;C:\miniconda\envs\bioinf\Library\mingw-w64\bin;C:\miniconda\envs\bioinf\Library\usr\bin;C:\miniconda\envs\bioinf\Library\bin;C:\miniconda\envs\bioinf\Scripts;C:\miniconda\envs\bioinf\bin;C:\miniconda\condabin;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\ImageMagick-7.1.2-Q16-HDRI;D:\OracleDB\dbhomeXE\bin;D:\OracleDatabaseXE\dbhomeXE\bin;C:\Program Files (x86)\VMware\VMware Player\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Python311\Scripts;C:\Python311;C:\Program Files\Oculus\Support\oculus-runtime;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64_win\compiler;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\Program Files\ffmpeg;D:\Program Files\CMake\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Program Files\dotnet;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\110\Tools\Binn;C:\Program Files (x86)\Microsoft SQL Server\120\Tools\Binn;C:\Program Files\Microsoft SQL Server\120\Tools\Binn;C:\Program Files\Microsoft SQL Server\120\DTS\Binn;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit;C:\platform-tools;C:\Program Files\VideoLAN\VLC;C:\mingw64\bin;C:\Android;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\Git\cmd;C:\ProgramData\chocolatey\bin;C:\Program Files\Git LFS;C:\Program Files\PuTTY;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit;C:\Users\Kenneth Lopez\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\Strings;C:\Program Files\7-Zip;C:\Program Files\NVIDIA Corporation\NVIDIA app\NvDLISR;C:\Program Files\Mullvad VPN\resources;C:\Program Files\gs\gs10.05.1\bin;C:\Program Files\Tesseract-OCR;C:\Program Files\PowerToys\DSCModules;C:\Program Files\PowerShell\7;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files (x86)\Arm GNU Toolchain arm-none-eabi\12.2 mpacbti-bet1\bin;C:\Users\Kenneth Lopez\AppData\Local\Microsoft\WindowsApps;C:\Users\Kenneth Lopez\.dotnet\tools;C:\Program Files (x86)\Nmap;C:\Users\Kenneth Lopez\AppData\Roaming\npm;C:\Users\Kenneth Lopez\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Users\Kenneth Lopez\AppData\Local\Microsoft\WinGet\Packages\DuckDB.cli_Microsoft.Winget.Source_8wekyb3d8bbwe;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2025.2.1\bin;C:\Users\Kenneth Lopez\AppData\Local\Python\bin
+	PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL
+	PICO_EXTRAS_PATH=D:\Documents\Pico Projects\SDK\pico-extras"
+	PICO_SDK_PATH=D:\Documents\Pico Projects\SDK\pico-sdk"
+	POWERSHELL_DISTRIBUTION_CHANNEL=MSI:Windows 10 Pro
+	PROCESSOR_ARCHITECTURE=AMD64
+	PROCESSOR_IDENTIFIER=AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD
+	PROCESSOR_LEVEL=25
+	PROCESSOR_REVISION=6102
+	PROGRAMDATA=C:\ProgramData
+	PROGRAMFILES=C:\Program Files
+	PROGRAMFILES(X86)=C:\Program Files (x86)
+	PROGRAMW6432=C:\Program Files
+	PROMPT=$P$G
+	PSEXECUTIONPOLICYPREFERENCE=Bypass
+	PSMODULEPATH=D:\Documents\WindowsPowerShell\Modules;C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules;C:\Program Files (x86)\Microsoft SQL Server\120\Tools\PowerShell\Modules\
+	PUBLIC=C:\Users\Public
+	PYTHONPATH=C:\Python311\Lib;C:\Python311\DLLs;
+	P_SCHEMA=C:\Program Files\Siemens\Solid Edge 2022\Schema
+	SESSIONNAME=Console
+	SE_LICENSE_SERVER=C:\Program Files\Siemens\Solid Edge 2022\Preferences\SELicense.lic
+	SSL_CERT_DIR=C:\miniconda\envs\bioinf\Library\ssl\certs
+	SSL_CERT_FILE=C:\miniconda\envs\bioinf\Library\ssl\cacert.pem
+	SYSTEMDRIVE=C:
+	SYSTEMROOT=C:\WINDOWS
+	TEMP=C:\Users\KENNET~1\AppData\Local\Temp
+	TMP=C:\Users\KENNET~1\AppData\Local\Temp
+	USERDOMAIN=DESKTOP-I4E6VFG
+	USERDOMAIN_ROAMINGPROFILE=DESKTOP-I4E6VFG
+	USERNAME=Kenneth Lopez
+	USERPROFILE=C:\Users\Kenneth Lopez
+	VBOX_MSI_INSTALL_PATH=C:\Program Files\Oracle\VirtualBox\
+	VIRTUAL_ENV=C:\miniconda\envs\bioinf
+	WINDIR=C:\WINDOWS
+	_CONDA_EXE=C:\miniconda\Scripts\conda.exe
+	_CONDA_ROOT=C:\miniconda
+	__CONDA_OPENSSL_CERT_DIR_SET=1
+	__CONDA_OPENSSL_CERT_FILE_SET=1
+	__PSLOCKDOWNPOLICY=0
+
+pyproject.toml:
+[project]
+name = "nodepipe"
+version = "0.1.0"
+description = "Visual editor and executor for bioinformatics pipelines using NextFlow"
+authors = [
+    {name = "CSUSM-CSE-47-2026-CS-S03-Team-002",email = "you@example.com"}
+]
+readme = "README.md"
+requires-python = "~=3.11.0"
+dependencies = [
+    "django (==5.2.13)",
+    "django-rest-framework (>=0.1.0,<0.2.0)",
+    "pyside6 (>=6.11.0,<7.0.0)",
+    "nodegraphqt (>=0.6.44,<0.7.0)",
+    "daphne (>=4.2.1,<5.0.0)",
+    "channels (>=4.3.2,<5.0.0)",
+    "websockets (>=16.0,<17.0)",
+]
+
+[dependency-groups]
+dev = [
+    "pytest (>=9.0.3,<10.0.0)",
+    "briefcase (>=0.4.1,<0.5.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+package-mode = false
+
+
+# This project was generated with 0.4.1 using template: https://github.com/beeware/briefcase-template @ v0.4.1
+[tool.briefcase]
+project_name = "NodePipe"
+bundle = "com.csusm.capstone.nodepipe"
+version = "0.0.1"
+url = "https://github.com/mariebethell/bioinformatics-pipeline-capstone"
+license.file = "LICENSE"
+author = "CSUSM-CSE-47-2026-CS-S03-Team-002"
+author_email = "lopez2349@csusm.edu"
+
+[tool.briefcase.app.nodepipe]
+formal_name = "NodePipe"
+description = "Visual editor and executor for bioinformatics pipelines using NextFlow"
+long_description = """More details about the app should go here.
+"""
+module_name = "nodepipe"
+sources = [
+    "src",
+]
+test_sources = [
+    "tests",
+]
+
+requires-python = "~=3.11.0"
+
+requires = [
+	"django (==5.2.13)",
+    "django-rest-framework (>=0.1.0,<0.2.0)",
+    "pyside6 (>=6.11.0,<7.0.0)",
+    "nodegraphqt (>=0.6.44,<0.7.0)",
+    "daphne (>=4.2.1,<5.0.0)",
+    "channels (>=4.3.2,<5.0.0)",
+    "websockets (>=16.0,<17.0)",
+]
+test_requires = [
+    "pytest",
+]
+
+[tool.briefcase.app.nodepipe.macOS]
+universal_build = true
+# As of Pyside 6.8, PySide enforces a macOS 12 minimum on wheels.
+min_os_version = "12.0"
+requires = [
+    "std-nslog~=1.0.3",
+]
+
+[tool.briefcase.app.nodepipe.linux]
+requires = [
+]
+
+[tool.briefcase.app.nodepipe.linux.system.debian]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "libgl1",
+    "libqt6dbus6",
+    "libqt6gui6",
+    "libxcb-cursor0",
+    # The following packages are explicit dependencies on recent Debian-based
+    # distros, but not on Ubuntu 22.04.
+    "libxcb-icccm4",
+    "libxcb-keysyms1",
+    "libxcb-shape0",
+    "libxkbcommon-x11-0",
+]
+
+[tool.briefcase.app.nodepipe.linux.system.rhel]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "qt6-qtbase-gui",
+]
+
+[tool.briefcase.app.nodepipe.linux.system.suse]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "libgthread-2_0-0",
+    "libQt6Gui6",
+]
+
+[tool.briefcase.app.nodepipe.linux.system.arch]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "qt6-base",
+]
+
+[tool.briefcase.app.nodepipe.linux.appimage]
+manylinux = "manylinux_2_28"
+
+system_requires = [
+# ?? FIXME
+]
+
+linuxdeploy_plugins = [
+]
+
+[tool.briefcase.app.nodepipe.linux.flatpak]
+flatpak_runtime = "org.kde.Platform"
+flatpak_runtime_version = "6.9"
+flatpak_sdk = "org.kde.Sdk"
+
+[tool.briefcase.app.nodepipe.windows]
+requires = [
+]
+
+# Mobile deployments
+[tool.briefcase.app.nodepipe.iOS]
+supported = false
+
+[tool.briefcase.app.nodepipe.android]
+supported = false
+
+# Web deployments
+[tool.briefcase.app.nodepipe.web]
+supported = false
+
+Briefcase Log:
+[19:59:25] Saving log... started                                                                                                                                      console.py:443
+
+Main thread traceback:
+╭─────────────────────────────────────────────────────────────────────── Traceback (most recent call last) ────────────────────────────────────────────────────────────────────────╮
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\__main__.py:23 in main                                                                                                      │
+│                                                                                                                                                                                  │
+│   20 │   │   Command, extra_cmdline = parse_cmdline(sys.argv[1:], console=console)                                                                                               │
+│   21 │   │   command = Command(console=console)                                                                                                                                  │
+│   22 │   │   options, overrides = command.parse_options(extra=extra_cmdline)                                                                                                     │
+│ ❱ 23 │   │   command.parse_config(                                                                                                                                               │
+│   24 │   │   │   Path.cwd() / "pyproject.toml",                                                                                                                                  │
+│   25 │   │   │   overrides=overrides,                                                                                                                                            │
+│   26 │   │   )                                                                                                                                                                   │
+│                                                                                                                                                                                  │
+│ ╭──────────────────────────────────────────────── locals ────────────────────────────────────────────────╮                                                                       │
+│ │       command = <briefcase.platforms.windows.app.WindowsAppCreateCommand object at 0x0000019B73326E90> │                                                                       │
+│ │       console = <briefcase.console.Console object at 0x0000019B742837D0>                               │                                                                       │
+│ │ extra_cmdline = []                                                                                     │                                                                       │
+│ │       options = {}                                                                                     │                                                                       │
+│ │     overrides = {}                                                                                     │                                                                       │
+│ │        result = 0                                                                                      │                                                                       │
+│ ╰────────────────────────────────────────────────────────────────────────────────────────────────────────╯                                                                       │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\commands\base.py:1114 in parse_config                                                                                       │
+│                                                                                                                                                                                  │
+│   1111 │   │   │   │   │   # Construct an AppConfig object with the final set of                                                                                                 │
+│   1112 │   │   │   │   │   # configuration options for the app.                                                                                                                  │
+│   1113 │   │   │   │   │   app_config.update(overrides)                                                                                                                          │
+│ ❱ 1114 │   │   │   │   │   self.apps[app_name] = create_config(                                                                                                                  │
+│   1115 │   │   │   │   │   │   klass=AppConfig,                                                                                                                                  │
+│   1116 │   │   │   │   │   │   config=app_config,                                                                                                                                │
+│   1117 │   │   │   │   │   │   msg=f"Configuration for '{app_name}'",                                                                                                            │
+│                                                                                                                                                                                  │
+│ ╭──────────────────────────────────────────────────────────────────────── locals ────────────────────────────────────────────────────────────────────────╮                       │
+│ │    app_config = {                                                                                                                                      │                       │
+│ │                 │   'project_name': 'NodePipe',                                                                                                        │                       │
+│ │                 │   'bundle': 'com.csusm.capstone.nodepipe',                                                                                           │                       │
+│ │                 │   'version': '0.0.1',                                                                                                                │                       │
+│ │                 │   'url': 'https://github.com/mariebethell/bioinformatics-pipeline-capstone',                                                         │                       │
+│ │                 │   'license': {'file': 'LICENSE'},                                                                                                    │                       │
+│ │                 │   'author': 'CSUSM-CSE-47-2026-CS-S03-Team-002',                                                                                     │                       │
+│ │                 │   'author_email': 'lopez2349@csusm.edu',                                                                                             │                       │
+│ │                 │   'requires_python': '~=3.11.0',                                                                                                     │                       │
+│ │                 │   'description': 'Visual editor and executor for bioinformatics pipelines using NextFlow',                                           │                       │
+│ │                 │   'requires': [                                                                                                                      │                       │
+│ │                 │   │   'django (==5.2.13)',                                                                                                           │                       │
+│ │                 │   │   'django-rest-framework (>=0.1.0,<0.2.0)',                                                                                      │                       │
+│ │                 │   │   'pyside6 (>=6.11.0,<7.0.0)',                                                                                                   │                       │
+│ │                 │   │   'nodegraphqt (>=0.6.44,<0.7.0)',                                                                                               │                       │
+│ │                 │   │   'daphne (>=4.2.1,<5.0.0)',                                                                                                     │                       │
+│ │                 │   │   'channels (>=4.3.2,<5.0.0)',                                                                                                   │                       │
+│ │                 │   │   'websockets (>=16.0,<17.0)',                                                                                                   │                       │
+│ │                 │   │   'django (==5.2.13)',                                                                                                           │                       │
+│ │                 │   │   'django-rest-framework (>=0.1.0,<0.2.0)',                                                                                      │                       │
+│ │                 │   │   'pyside6 (>=6.11.0,<7.0.0)',                                                                                                   │                       │
+│ │                 │   │   ... +4                                                                                                                         │                       │
+│ │                 │   ],                                                                                                                                 │                       │
+│ │                 │   ... +8                                                                                                                             │                       │
+│ │                 }                                                                                                                                      │                       │
+│ │   app_configs = {                                                                                                                                      │                       │
+│ │                 │   'nodepipe': {                                                                                                                      │                       │
+│ │                 │   │   'project_name': 'NodePipe',                                                                                                    │                       │
+│ │                 │   │   'bundle': 'com.csusm.capstone.nodepipe',                                                                                       │                       │
+│ │                 │   │   'version': '0.0.1',                                                                                                            │                       │
+│ │                 │   │   'url': 'https://github.com/mariebethell/bioinformatics-pipeline-capstone',                                                     │                       │
+│ │                 │   │   'license': {'file': 'LICENSE'},                                                                                                │                       │
+│ │                 │   │   'author': 'CSUSM-CSE-47-2026-CS-S03-Team-002',                                                                                 │                       │
+│ │                 │   │   'author_email': 'lopez2349@csusm.edu',                                                                                         │                       │
+│ │                 │   │   'requires_python': '~=3.11.0',                                                                                                 │                       │
+│ │                 │   │   'description': 'Visual editor and executor for bioinformatics pipelines using NextFlow',                                       │                       │
+│ │                 │   │   'requires': [                                                                                                                  │                       │
+│ │                 │   │   │   'django (==5.2.13)',                                                                                                       │                       │
+│ │                 │   │   │   'django-rest-framework (>=0.1.0,<0.2.0)',                                                                                  │                       │
+│ │                 │   │   │   'pyside6 (>=6.11.0,<7.0.0)',                                                                                               │                       │
+│ │                 │   │   │   'nodegraphqt (>=0.6.44,<0.7.0)',                                                                                           │                       │
+│ │                 │   │   │   'daphne (>=4.2.1,<5.0.0)',                                                                                                 │                       │
+│ │                 │   │   │   'channels (>=4.3.2,<5.0.0)',                                                                                               │                       │
+│ │                 │   │   │   'websockets (>=16.0,<17.0)',                                                                                               │                       │
+│ │                 │   │   │   'django (==5.2.13)',                                                                                                       │                       │
+│ │                 │   │   │   'django-rest-framework (>=0.1.0,<0.2.0)',                                                                                  │                       │
+│ │                 │   │   │   'pyside6 (>=6.11.0,<7.0.0)',                                                                                               │                       │
+│ │                 │   │   │   ... +4                                                                                                                     │                       │
+│ │                 │   │   ],                                                                                                                             │                       │
+│ │                 │   │   ... +8                                                                                                                         │                       │
+│ │                 │   }                                                                                                                                  │                       │
+│ │                 }                                                                                                                                      │                       │
+│ │      app_name = 'nodepipe'                                                                                                                             │                       │
+│ │   config_file = <_io.BufferedReader name='D:\\Documents\\School\\CSUSM\\CS490\\Project\\bioinformatics-pipeline-capstone - installer\\pyproject.toml'> │                       │
+│ │      filename = WindowsPath('D:/Documents/School/CSUSM/CS490/Project/bioinformatics-pipeline-capstone - installer/pyproject.toml')                     │                       │
+│ │ global_config = {                                                                                                                                      │                       │
+│ │                 │   'project_name': 'NodePipe',                                                                                                        │                       │
+│ │                 │   'bundle': 'com.csusm.capstone.nodepipe',                                                                                           │                       │
+│ │                 │   'version': '0.0.1',                                                                                                                │                       │
+│ │                 │   'url': 'https://github.com/mariebethell/bioinformatics-pipeline-capstone',                                                         │                       │
+│ │                 │   'license': {'file': 'LICENSE'},                                                                                                    │                       │
+│ │                 │   'author': 'CSUSM-CSE-47-2026-CS-S03-Team-002',                                                                                     │                       │
+│ │                 │   'author_email': 'lopez2349@csusm.edu',                                                                                             │                       │
+│ │                 │   'requires_python': '~=3.11.0',                                                                                                     │                       │
+│ │                 │   'description': 'Visual editor and executor for bioinformatics pipelines using NextFlow',                                           │                       │
+│ │                 │   'requires': [                                                                                                                      │                       │
+│ │                 │   │   'django (==5.2.13)',                                                                                                           │                       │
+│ │                 │   │   'django-rest-framework (>=0.1.0,<0.2.0)',                                                                                      │                       │
+│ │                 │   │   'pyside6 (>=6.11.0,<7.0.0)',                                                                                                   │                       │
+│ │                 │   │   'nodegraphqt (>=0.6.44,<0.7.0)',                                                                                               │                       │
+│ │                 │   │   'daphne (>=4.2.1,<5.0.0)',                                                                                                     │                       │
+│ │                 │   │   'channels (>=4.3.2,<5.0.0)',                                                                                                   │                       │
+│ │                 │   │   'websockets (>=16.0,<17.0)'                                                                                                    │                       │
+│ │                 │   ]                                                                                                                                  │                       │
+│ │                 }                                                                                                                                      │                       │
+│ │     overrides = {}                                                                                                                                     │                       │
+│ │          self = <briefcase.platforms.windows.app.WindowsAppCreateCommand object at 0x0000019B73326E90>                                                 │                       │
+│ ╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯                       │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\commands\base.py:55 in create_config                                                                                        │
+│                                                                                                                                                                                  │
+│     52                                                                                                                                                                           │
+│     53 def create_config(klass, config, msg):                                                                                                                                    │
+│     54 │   try:                                                                                                                                                                  │
+│ ❱   55 │   │   return klass(**config)                                                                                                                                            │
+│     56 │   except TypeError as e:                                                                                                                                                │
+│     57 │   │   # Inspect the GlobalConfig constructor to find which                                                                                                              │
+│     58 │   │   # parameters are required and don't have a default value.                                                                                                         │
+│                                                                                                                                                                                  │
+│ ╭─────────────────────────────────────────────── locals ────────────────────────────────────────────────╮                                                                        │
+│ │ config = {                                                                                            │                                                                        │
+│ │          │   'project_name': 'NodePipe',                                                              │                                                                        │
+│ │          │   'bundle': 'com.csusm.capstone.nodepipe',                                                 │                                                                        │
+│ │          │   'version': '0.0.1',                                                                      │                                                                        │
+│ │          │   'url': 'https://github.com/mariebethell/bioinformatics-pipeline-capstone',               │                                                                        │
+│ │          │   'license': {'file': 'LICENSE'},                                                          │                                                                        │
+│ │          │   'author': 'CSUSM-CSE-47-2026-CS-S03-Team-002',                                           │                                                                        │
+│ │          │   'author_email': 'lopez2349@csusm.edu',                                                   │                                                                        │
+│ │          │   'requires_python': '~=3.11.0',                                                           │                                                                        │
+│ │          │   'description': 'Visual editor and executor for bioinformatics pipelines using NextFlow', │                                                                        │
+│ │          │   'requires': [                                                                            │                                                                        │
+│ │          │   │   'django (==5.2.13)',                                                                 │                                                                        │
+│ │          │   │   'django-rest-framework (>=0.1.0,<0.2.0)',                                            │                                                                        │
+│ │          │   │   'pyside6 (>=6.11.0,<7.0.0)',                                                         │                                                                        │
+│ │          │   │   'nodegraphqt (>=0.6.44,<0.7.0)',                                                     │                                                                        │
+│ │          │   │   'daphne (>=4.2.1,<5.0.0)',                                                           │                                                                        │
+│ │          │   │   'channels (>=4.3.2,<5.0.0)',                                                         │                                                                        │
+│ │          │   │   'websockets (>=16.0,<17.0)',                                                         │                                                                        │
+│ │          │   │   'django (==5.2.13)',                                                                 │                                                                        │
+│ │          │   │   'django-rest-framework (>=0.1.0,<0.2.0)',                                            │                                                                        │
+│ │          │   │   'pyside6 (>=6.11.0,<7.0.0)',                                                         │                                                                        │
+│ │          │   │   ... +4                                                                               │                                                                        │
+│ │          │   ],                                                                                       │                                                                        │
+│ │          │   ... +8                                                                                   │                                                                        │
+│ │          }                                                                                            │                                                                        │
+│ │    msg = "Configuration for 'nodepipe'"                                                               │                                                                        │
+│ ╰───────────────────────────────────────────────────────────────────────────────────────────────────────╯                                                                        │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\config.py:428 in __init__                                                                                                   │
+│                                                                                                                                                                                  │
+│   425 │   │   install_launcher: bool | None = None,                                                                                                                              │
+│   426 │   │   **kwargs,                                                                                                                                                          │
+│   427 │   ):                                                                                                                                                                     │
+│ ❱ 428 │   │   super().__init__(**kwargs)                                                                                                                                         │
+│   429 │   │                                                                                                                                                                      │
+│   430 │   │   # All app configs are created in unfinalized draft form.                                                                                                           │
+│   431 │   │   self.__draft__ = True                                                                                                                                              │
+│                                                                                                                                                                                  │
+│ ╭───────────────────────────────────────────────────────────────────────── locals ─────────────────────────────────────────────────────────────────────────╮                     │
+│ │                         app_name = 'nodepipe'                                                                                                            │                     │
+│ │                           author = 'CSUSM-CSE-47-2026-CS-S03-Team-002'                                                                                   │                     │
+│ │                     author_email = 'lopez2349@csusm.edu'                                                                                                 │                     │
+│ │                           bundle = 'com.csusm.capstone.nodepipe'                                                                                         │                     │
+│ │                      console_app = False                                                                                                                 │                     │
+│ │                      description = 'Visual editor and executor for bioinformatics pipelines using NextFlow'                                              │                     │
+│ │                    document_type = None                                                                                                                  │                     │
+│ │ external_package_executable_path = None                                                                                                                  │                     │
+│ │            external_package_path = None                                                                                                                  │                     │
+│ │                      formal_name = 'NodePipe'                                                                                                            │                     │
+│ │                             icon = None                                                                                                                  │                     │
+│ │                 install_launcher = None                                                                                                                  │                     │
+│ │                   install_option = None                                                                                                                  │                     │
+│ │                           kwargs = {'project_name': 'NodePipe', 'requires_python': '~=3.11.0', 'module_name': 'nodepipe', 'requires-python': '~=3.11.0'} │                     │
+│ │                          license = {'file': 'LICENSE'}                                                                                                   │                     │
+│ │                 long_description = 'More details about the app should go here.\n'                                                                        │                     │
+│ │                       permission = None                                                                                                                  │                     │
+│ │       requirement_installer_args = None                                                                                                                  │                     │
+│ │                         requires = [                                                                                                                     │                     │
+│ │                                    │   'django (==5.2.13)',                                                                                              │                     │
+│ │                                    │   'django-rest-framework (>=0.1.0,<0.2.0)',                                                                         │                     │
+│ │                                    │   'pyside6 (>=6.11.0,<7.0.0)',                                                                                      │                     │
+│ │                                    │   'nodegraphqt (>=0.6.44,<0.7.0)',                                                                                  │                     │
+│ │                                    │   'daphne (>=4.2.1,<5.0.0)',                                                                                        │                     │
+│ │                                    │   'channels (>=4.3.2,<5.0.0)',                                                                                      │                     │
+│ │                                    │   'websockets (>=16.0,<17.0)',                                                                                      │                     │
+│ │                                    │   'django (==5.2.13)',                                                                                              │                     │
+│ │                                    │   'django-rest-framework (>=0.1.0,<0.2.0)',                                                                         │                     │
+│ │                                    │   'pyside6 (>=6.11.0,<7.0.0)',                                                                                      │                     │
+│ │                                    │   ... +4                                                                                                            │                     │
+│ │                                    ]                                                                                                                     │                     │
+│ │                             self = <repr-error "'AppConfig' object has no attribute 'bundle'">                                                           │                     │
+│ │                          sources = ['src']                                                                                                               │                     │
+│ │                        supported = True                                                                                                                  │                     │
+│ │                         template = None                                                                                                                  │                     │
+│ │                  template_branch = None                                                                                                                  │                     │
+│ │                    test_requires = ['pytest']                                                                                                            │                     │
+│ │                     test_sources = ['tests']                                                                                                             │                     │
+│ │                 uninstall_option = None                                                                                                                  │                     │
+│ │                              url = 'https://github.com/mariebethell/bioinformatics-pipeline-capstone'                                                    │                     │
+│ │                          version = '0.0.1'                                                                                                               │                     │
+│ ╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯                     │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\config.py:325 in __init__                                                                                                   │
+│                                                                                                                                                                                  │
+│   322 class BaseConfig:                                                                                                                                                          │
+│   323 │   def __init__(self, **kwargs):                                                                                                                                          │
+│   324 │   │   for attr, value in kwargs.items():                                                                                                                                 │
+│ ❱ 325 │   │   │   setattr(self, attr, value)                                                                                                                                     │
+│   326 │                                                                                                                                                                          │
+│   327 │   def update(self, data):                                                                                                                                                │
+│   328 │   │   """Add fields and values from data to BaseConfig instance.                                                                                                         │
+│                                                                                                                                                                                  │
+│ ╭──────────────────────────────────────────────────────────── locals ────────────────────────────────────────────────────────────╮                                               │
+│ │   attr = 'module_name'                                                                                                         │                                               │
+│ │ kwargs = {'project_name': 'NodePipe', 'requires_python': '~=3.11.0', 'module_name': 'nodepipe', 'requires-python': '~=3.11.0'} │                                               │
+│ │   self = <repr-error "'AppConfig' object has no attribute 'bundle'">                                                           │                                               │
+│ │  value = 'nodepipe'                                                                                                            │                                               │
+│ ╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯                                               │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+AttributeError: property 'module_name' of 'AppConfig' object has no setter
