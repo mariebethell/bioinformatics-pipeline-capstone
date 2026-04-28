@@ -70,22 +70,23 @@ class NextflowPipeline(Pipeline):
         nextflow_config_path: str | None = None,
     ):
         super().__init__(graph, tool_registry)
-        self.pipeline_script_path = os.path.abspath(pipeline_script_path or os.path.join(os.path.dirname(__file__), "main.nf"))
+
+        backend_dir = os.path.dirname(os.path.abspath(__file__))
+        repo_root = os.path.abspath(os.path.join(backend_dir, ".."))
+
+        self.pipeline_script_path = os.path.abspath(
+            pipeline_script_path or os.path.join(repo_root, "main.nf"))
 
         self.uuid: UUID = uuid if uuid is not None else uuid4()
 
         self.modules_config_path = os.path.abspath(
             modules_config_path
-            or os.path.join(
-                os.path.dirname(self.pipeline_script_path),
-                "conf",
-                "modules.config",
+            or os.path.join(repo_root, "conf", "modules.config",
             )
         )
 
         self.nextflow_config_path = os.path.abspath(
-            nextflow_config_path
-            or os.path.join(os.path.dirname(__file__), "nextflow.config")
+            nextflow_config_path or os.path.join(backend_dir, "nextflow.config")
         )
 
     def run_pipeline(self):
