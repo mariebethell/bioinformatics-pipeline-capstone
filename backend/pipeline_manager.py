@@ -16,7 +16,7 @@ Commands sent by this class to client:
 - OnPipelineError: Contains error information that indicates what stage a pipeline failed and the type of error.
 """
 
-from shared import Command, APIStatus,
+from shared import Command, APIStatus
 from shared.CommandFactory import CommandFactory
 from shared.graph import Graph, Node
 from backend.pipeline_builder import NextflowPipeline
