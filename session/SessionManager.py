@@ -25,7 +25,7 @@ class SessionManager:
         self.user_uuid_map: dict[UUID, Session] = {} # Maps user UUID to their session
         self.pipeline_uuid_map: dict[UUID, Session] = {} # Maps pipeline UUID to it's parent session
 
-        self.pipeline_manager = PipelineManager() # TODO spawn pipeline manager here when ready
+        self.pipeline_manager = PipelineManager() # Spawn pipeline manager
 
     def route_pipeline_command(self, cmd: Command) -> Response:
         """
@@ -61,7 +61,24 @@ class SessionManager:
                 return CommandFactory.new_command(Response, params)
          
         #TODO call PipelineManager
-        response = self.pipeline_manager.handlePipelineCommand(cmd)
+        if type(cmd) is ClientConnect:
+            # Find pipeline by user_session and return if it exists, otherwise don't include it in the response
+            
+            pipeline_uuid = None
+            # Iterate over pipelines till we find the one corresponding to the session
+            for pipeline_id, session in self.pipeline_uuid_map.items():
+                if session.session_id == user_session.session_id:
+                    pipeline_uuid = pipeline_id
+                    break
+
+            if pipeline_uuid:
+                params = {"PIPELINE_ID": pipeline_uuid, "STATUS": APIStatus.SUCCESS}
+            else:
+                params = {"STATUS": APIStatus.SUCCESS}
+
+            response = CommandFactory.new_command(ClientConnectResponse, params)
+        else:
+            response = self.pipeline_manager.handlePipelineCommand(cmd)
 
         #TODO if cmd was NewPipeline make a new session, add to user_uuid_map and pipeline_uuid_map
         if type(cmd) is NewPipeline:

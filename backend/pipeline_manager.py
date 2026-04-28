@@ -34,11 +34,7 @@ class PipelineManager:
         """
         print("Entered handlePipelineCommand")
 
-        if isinstance(cmd, Command.ClientConnect):
-            # How are we handling when the user opens a new session (with no active pipeline) vs when the user has an existing pipeline already?
-            return self.command_factory.new_command(Command.ClientConnectResponse)
-
-        elif isinstance(cmd, Command.GetPipeline):
+        if isinstance(cmd, Command.GetPipeline):
             pipeline = self.pipelines.get(cmd.pipeline_id)
 
             if pipeline is None:
