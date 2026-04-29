@@ -1633,18 +1633,87 @@ class DataNode(BaseNode):
 class InputNodeWrapper(NodeBaseWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.uri = None
 
         container = QtWidgets.QWidget()
         layout = QtWidgets.QVBoxLayout()
 
-        btn = QtWidgets.QPushButton('Input FASTQ File')
-        btn.clicked.connect(self.open_file)
+        #btn = QtWidgets.QPushButton('Input FASTQ File')
+        #btn.clicked.connect(self.open_file)
 
-        layout.addWidget(btn)
+        self.directory = None
+        self.uri = None
+        self.files = []
+
+        self.path_label = QtWidgets.QLineEdit()
+        self.path_label.setPlaceholderText('No input directory selected')
+        self.path_label.setReadOnly(True)
+
+        self.dir_btn = QtWidgets.QPushButton('Select Folder with FASTQ Files')
+        self.dir_btn.clicked.connect(self.open_directory)
+
+        self.file_selector = QtWidgets.QComboBox()
+        self.file_selector.setCurrentText('FastQC Files Will Be Here')
+        self.file_selector.setEnabled(False)
+        self.file_selector.currentTextChanged.connect(self.selection_changed)
+
+        layout.addWidget(self.path_label)
+        layout.addWidget(self.dir_btn)
+        layout.addWidget(self.file_selector)
+        
 
         container.setLayout(layout)
         self.set_custom_widget(container)
+
+    def open_directory(self):
+        directory = QtWidgets.QFileDialog.getExistingDirectory(None, 'Select Directory with FASTQ Files')
+        if not directory:
+            return
+
+        self.directory = directory
+        self.path_label.setText(directory)
+
+        if self.node:
+            self.node.set_property('input_directory', directory)
+
+        self.populate_files()
+
+
+    def populate_files(self):
+        self.file_selector.clear()
+        self.files.clear() # clearing previous data
+
+        if not self.directory:
+            return
+        
+        directory = Path(self.directory)
+        fastq_files = []
+
+        fastq_files.extend(directory.glob('*.fastq'))
+        fastq_files.extend(directory.glob('*.fq'))
+
+        fastq_files = sorted(fastq_files)
+
+        if not fastq_files: # there were no fastq files in the folder
+            self.file_selector.addItem('No FASTQ files found!')
+            self.file_selector.setEnabled(False)
+            if self.node:
+                self.node.set_property('file_uri', '')
+
+            return
+        
+        self.files = fastq_files # assigning the fastqc files to the internal wrapper files
+
+        self.file_selector.addItem('Run All Files')
+
+        for file in fastq_files:
+            self.file_selector.addItem(file.name)
+
+        self.file_selector.setEnabled(True)
+
+        # setting defaults
+        self.file_selector.setCurrentIndex(0)
+        self.uri = None
+
 
     def open_file(self):
         file_dialog = QtWidgets.QFileDialog()
@@ -1658,13 +1727,62 @@ class InputNodeWrapper(NodeBaseWidget):
                 if self.node: # updating node property so the uri gets saved
                     self.node.set_property('file_uri', self.uri)
 
+    def selection_changed(self, selected):
+        if selected == 'Run All Files':
+            self.uri = None
+
+            if self.node:
+                self.node.set_property('file_uri', '')
+
+            return # all nodes, will be handled differently
+        
+        if selected == 'No FASTQ files found':
+            self.uri = None
+            return
+        
+        self.uri = str(Path(self.directory) / selected)
+
+        if self.node:
+            self.node.set_property('file_uri', self.uri)
+        
+
     def get_value(self):
+        if not self.directory:
+            return {}
+        
+        selected = self.file_selector.currentText()
+
+        if selected == 'Run All Files':
+            return {
+                'reads': [
+                    str(file)
+                    for file in self.files
+                ]
+            }
+
         if not self.uri:
             return {}
         return {"reads": [self.uri]}
 
     def set_value(self, val):
-        pass
+        if not val:
+            return # nothing to restore
+        
+        directory = val.get('directory')
+        selected = val.get('selected')
+
+        if not directory:
+            return
+        
+        self.directory = directory
+        self.path_label.setText(directory)
+
+        self.populate_files()
+
+        if selected:
+            idx = self.file_selector.findText(selected)
+            if idx >= 0:
+                self.file_selector.setCurrentIndex(idx)
 
 # Node responsible for the accepting of data
 class InputNode(DataNode):
@@ -1675,6 +1793,7 @@ class InputNode(DataNode):
         super().__init__()
         self.add_output('output', color=(0,255, 0))
 
+        self.create_property('input_directory', '')
         self.create_property('file_uri', '')
 
         self.wrapper = InputNodeWrapper(self.view)
@@ -1683,16 +1802,32 @@ class InputNode(DataNode):
         self.add_custom_widget(self.wrapper)
 
     def get_value(self):
-        uri = self.get_property('file_uri')
-        return {"reads" : [uri]} if uri else {}
-        #return self.wrapper.get_value()
+        # uri = self.get_property('file_uri')
+        # return {"reads" : [uri]} if uri else {}
+        directory = self.get_property('input_directory')
+        file_uri = self.get_property('file_uri')
+
+        if not directory:
+            return {}
+        
+        directory = Path(directory)
+        if not file_uri: # an empty file_uri is Run All Files
+            files = list(directory.glob('*.fastq'))
+            files.extend(directory.glob('*.fq'))
+
+            files = sorted(files)
+
+            if not files:
+                return {}
+            
+            return {'reads': [str(file) for file in files]} # returns every file to be run
+
+        return {'reads' : [file_uri]}
 
     def set_property(self, name, val, push_undo=True):
         super(InputNode, self).set_property(name, val, push_undo)
         if name == 'file_uri' and self.wrapper:
             self.wrapper.uri = val
-
-    
 
 class OutputNodeWrapper(NodeBaseWidget):
     def __init__(self, parent=None):
