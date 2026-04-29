@@ -1,4 +1,4 @@
-FROM nextflow/nextflow:26.03.2-edge
+FROM docker:dind
 WORKDIR /usr/src/compute
 ENV PYTHONUNBUFFERED=1
 COPY __init__.py .

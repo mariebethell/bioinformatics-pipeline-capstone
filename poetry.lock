@@ -566,7 +566,7 @@ version = "0.6.44"
 description = "Node graph framework written in PySide2 that can be re-implemented."
 optional = false
 python-versions = ">=3.6"
-groups = ["main"]
+groups = ["ui"]
 files = [
     {file = "nodegraphqt-0.6.44-py3-none-any.whl", hash = "sha256:2ea4bcef7ac73827bd52d7c1bd9120e886cfb8395b187f3dd471244790dd8cb3"},
     {file = "nodegraphqt-0.6.44.tar.gz", hash = "sha256:d905a8c100da5f45dc403d2701c09ed2e4c13bcdc3a21b0da5e8f0f5ceedaeaa"},
@@ -698,7 +698,7 @@ version = "6.11.0"
 description = "Python bindings for the Qt cross-platform application and UI framework"
 optional = false
 python-versions = "<3.15,>=3.10"
-groups = ["main"]
+groups = ["ui"]
 files = [
     {file = "pyside6-6.11.0-cp310-abi3-macosx_13_0_universal2.whl", hash = "sha256:1f2735dc4f2bd4ec452ae50502c8a22128bba0aced35358a2bbc58384b820c6f"},
     {file = "pyside6-6.11.0-cp310-abi3-manylinux_2_34_x86_64.whl", hash = "sha256:c642e2d25704ca746fd37f56feacf25c5aecc4cd40bef23d18eec81f87d9dc00"},
@@ -718,7 +718,7 @@ version = "6.11.0"
 description = "Python bindings for the Qt cross-platform application and UI framework (Addons)"
 optional = false
 python-versions = "<3.15,>=3.10"
-groups = ["main"]
+groups = ["ui"]
 files = [
     {file = "pyside6_addons-6.11.0-cp310-abi3-macosx_13_0_universal2.whl", hash = "sha256:d5eaa4643302e3a0fa94c5766234bee4073d7d5ab9c2b7fd222692a176faf182"},
     {file = "pyside6_addons-6.11.0-cp310-abi3-manylinux_2_34_x86_64.whl", hash = "sha256:ac6fe3d4ef4497dde3efc5e896b0acd53ff6c93be4bf485f045690f919419f35"},
@@ -737,7 +737,7 @@ version = "6.11.0"
 description = "Python bindings for the Qt cross-platform application and UI framework (Essentials)"
 optional = false
 python-versions = "<3.15,>=3.10"
-groups = ["main"]
+groups = ["ui"]
 files = [
     {file = "pyside6_essentials-6.11.0-cp310-abi3-macosx_13_0_universal2.whl", hash = "sha256:85d6ca87ef35fa6565d385ede72ae48420dd3f63113929d10fc800f6b0360e01"},
     {file = "pyside6_essentials-6.11.0-cp310-abi3-manylinux_2_34_x86_64.whl", hash = "sha256:dc20e7afd5fc6fe51297db91cef997ce60844be578f7a49fc61b7ab9657a8849"},
@@ -777,7 +777,7 @@ version = "2.0.4"
 description = "Python compatibility wrapper around Qt5 and Qt6 bindings - PySide2, PySide6, PyQt5 and PyQt6."
 optional = false
 python-versions = ">=3.7"
-groups = ["main"]
+groups = ["ui"]
 files = [
     {file = "qt_py-2.0.4-py3-none-any.whl", hash = "sha256:4a619a808636a90a4ccc77e6749f294f7ababba5cb45942d6d072420d2ed4cac"},
     {file = "qt_py-2.0.4.tar.gz", hash = "sha256:8a55a8b588a67d1396f003f044907267ef20fb42840d148c7eb01d71c580ccf3"},
@@ -820,7 +820,7 @@ version = "6.11.0"
 description = "Python/C++ bindings helper module"
 optional = false
 python-versions = "<3.15,>=3.10"
-groups = ["main"]
+groups = ["ui"]
 files = [
     {file = "shiboken6-6.11.0-cp310-abi3-macosx_13_0_universal2.whl", hash = "sha256:d88e8a1eb705f2b9ad21db08a61ae1dc0c773e5cd86a069de0754c4cf1f9b43b"},
     {file = "shiboken6-6.11.0-cp310-abi3-manylinux_2_34_x86_64.whl", hash = "sha256:ad54e64f8192ddbdff0c54ac82b89edcd62ed623f502ea21c960541d19514053"},
@@ -909,7 +909,7 @@ version = "6.10.1.1"
 description = "The most accurate stubs for PySide6"
 optional = false
 python-versions = "*"
-groups = ["main"]
+groups = ["ui"]
 files = [
     {file = "types_pyside6-6.10.1.1-py2.py3-none-any.whl", hash = "sha256:30ff49550c8f40e0606d70f9fbcf1f0c4b688d896df38f4f6a6912c231cbfa16"},
 ]
@@ -1160,4 +1160,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.1"
 python-versions = "~=3.11.0"
-content-hash = "42e73617593e0e50465cfefcc65fcee79627401a37f5af299bfb3ea7706d9769"
+content-hash = "e2596e80671bb6acd556b7a3c3150ccd2608871adb8a5dff87280d9f2f721a49"
