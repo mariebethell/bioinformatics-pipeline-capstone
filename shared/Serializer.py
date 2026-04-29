@@ -61,7 +61,7 @@ class Serializer:
                 if (sub_obj_type is Command.Nullable):
                     raise ValueError(f"Command type {type(cmd)} has malformed annotations for field {field}. First annotation should be object type, not Nullable")
                 
-                if (type(sub_obj) is not sub_obj_type and sub_obj is not None):
+                if (type(sub_obj) is not sub_obj_type and type(sub_obj_type) is not UnionType and sub_obj is not None):
                     # This block deals with key/val type annotations for dicts. Patch to fix failed test for serialization/deserialization of GraphUIUpdate Commands
                     # Basically, the serializer can't deal with custom types which are nested in other objects. This patches that specifically for StageStates in dictionaries
                     if isinstance(sub_obj_type, GenericAlias) and isinstance(sub_obj, dict): # Type may refer to dictionary key/val type and we have a dict
@@ -84,49 +84,65 @@ class Serializer:
                         raise TypeError(f"Actual field type does not match specified type by annotation for command {type(cmd)}, field {field}. Expected type {sub_obj_type} but got {type(sub_obj)}")
 
                 if sub_obj is not None:
-                    if sub_obj_type is graph.Graph:
-                        ser_graph = Serializer._serializify_graph(sub_obj)
-                        proto_obj[field] = ser_graph
-
-                    elif sub_obj_type is graph.Node:
-                        ser_node = SerializableNode.copy_construct(sub_obj)
-                        proto_obj[field] = vars(ser_node)
-
-                    elif sub_obj_type is uuid.UUID:
-                        proto_obj[field] = str(sub_obj)
-
-                    elif sub_obj_type is APIStatus.APIStatus:
-                        proto_obj[field] = sub_obj.value # is int
-                        
-                    elif sub_obj_type is graph.StageState:
-                        proto_obj[field] = sub_obj.value # is int
-
-                    elif sub_obj_type is datetime.datetime:
-                        proto_obj[field] = sub_obj.isoformat()
-
-                    elif sub_obj_type is ipaddress.IPv4Address or sub_obj_type is ipaddress.IPv6Address:
-                        proto_obj[field] = str(sub_obj)
-                        
-                    elif isinstance(sub_obj_type, GenericAlias): # Patch to fix failed test for serialization/deserialization of GraphUIUpdate Commands
-                        try:
-                            kvTypes = get_args(sub_obj_type)
-                            if kvTypes is not None:
-                                try:
-                                    valType = Serializer._unforward_ref(kvTypes[1])
-                                    if valType is graph.StageState:
-                                        for k, v in sub_obj.items():
-                                            sub_obj[k] = v.value
-                                    
-                                except IndexError:
-                                    pass # No val annotation, nothing to do
-                            
-                        except AttributeError:
-                            pass # No annotations, nothing to do
-                            
-                        proto_obj[field] = sub_obj
+                    unpacked_sub_obj_type = None
+                    if type(sub_obj_type) is UnionType:
+                        unpacked_sub_obj_type = get_args(sub_obj_type)
 
                     else:
-                        proto_obj[field] = sub_obj # Deep copy from earlier makes this safe
+                        unpacked_sub_obj_type = [sub_obj_type]
+
+                    for expected_type in unpacked_sub_obj_type:
+                        if expected_type is graph.Graph:
+                            ser_graph = Serializer._serializify_graph(sub_obj)
+                            proto_obj[field] = ser_graph
+                            break
+
+                        elif expected_type is graph.Node:
+                            ser_node = SerializableNode.copy_construct(sub_obj)
+                            proto_obj[field] = vars(ser_node)
+                            break
+
+                        elif expected_type is uuid.UUID:
+                            proto_obj[field] = str(sub_obj)
+                            break
+
+                        elif expected_type is APIStatus.APIStatus:
+                            proto_obj[field] = sub_obj.value # is int
+                            break
+                            
+                        elif expected_type is graph.StageState:
+                            proto_obj[field] = sub_obj.value # is int
+                            break
+
+                        elif expected_type is datetime.datetime:
+                            proto_obj[field] = sub_obj.isoformat()
+                            break
+
+                        elif expected_type is ipaddress.IPv4Address or expected_type is ipaddress.IPv6Address:
+                            proto_obj[field] = str(sub_obj)
+                            break
+                            
+                        elif isinstance(expected_type, GenericAlias): # Patch to fix failed test for serialization/deserialization of GraphUIUpdate Commands
+                            try:
+                                kvTypes = get_args(expected_type)
+                                if kvTypes is not None:
+                                    try:
+                                        valType = Serializer._unforward_ref(kvTypes[1])
+                                        if valType is graph.StageState:
+                                            for k, v in sub_obj.items():
+                                                sub_obj[k] = v.value
+                                        
+                                    except IndexError:
+                                        pass # No val annotation, nothing to do
+                                
+                            except AttributeError:
+                                pass # No annotations, nothing to do
+                                
+                            proto_obj[field] = sub_obj
+                            break
+
+                        else:
+                            proto_obj[field] = sub_obj # Deep copy from earlier makes this safe
 
         return json.dumps(proto_obj)
     

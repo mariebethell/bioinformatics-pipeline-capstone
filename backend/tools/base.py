@@ -16,7 +16,6 @@ def build_tool_def(
         rules: list | None = None,
         ui_schema: dict | None = None,
         validate_fn = None,
-        render_command_fn = None,
         resolve_outputs_fn = None,
 ) -> dict:
     """
@@ -30,7 +29,6 @@ def build_tool_def(
         "rules" : rules or [],
         "ui_schema" : ui_schema or {},
         "validate": validate_fn,
-        "render_command": render_command_fn,
         "resolve_outputs": resolve_outputs_fn,
     }
 
@@ -112,22 +110,3 @@ def validate_args_against_schema(args: dict, schema: dict) -> list[str]:
         errors.extend(validate_scalar_arg(arg_name, value, schema[arg_name]))
 
     return errors
-
-def apply_defaults(args: dict, schema: dict) -> dict:
-    """
-    Return a new dictionary where missing keys are filled with schema defaults.
-    """
-    resolved = {}
-
-    for arg_name, spec in schema.items():
-        if arg_name in args:
-            resolved[arg_name] = args[arg_name]
-        else:
-            resolved[arg_name] = spec.get("default")
-        
-    # Add any extra keys that were in args but not in schema without modification
-    for arg_name in args:
-        if arg_name not in resolved:
-            resolved[arg_name] = args[arg_name]
-            
-    return resolved

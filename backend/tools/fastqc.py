@@ -202,45 +202,6 @@ def validate_fastqc_args(args: dict, context: dict | None = None) -> list[str]:
     return errors
 
 
-def render_fastqc_command(
-    node_args: dict,
-    resolved_inputs: dict,
-    resolved_outputs: dict,
-) -> list[str]:
-    """
-    Build the FastQC command as a list of CLI parts.
-
-    resolved_inputs example:
-        {"reads": ["/path/sample_1.fastq.gz", "/path/sample_2.fastq.gz"]}
-
-    resolved_outputs example:
-        {"outdir": "/work/pipeline_123/stage_0"}
-    """
-    parts = ["fastqc"]
-
-    effective_args = {**node_args}
-    effective_args["outdir"] = resolved_outputs["outdir"]
-
-    for arg_name, spec in arg_schema.items():
-        value = effective_args.get(arg_name)
-
-        if value is None:
-            continue
-
-        kind = spec["kind"]
-        cli_flag = spec["cli_flag"]
-
-        if kind == "flag":
-            if value:
-                parts.append(cli_flag)
-        elif kind == "option":
-            parts.extend([cli_flag, str(value)])
-
-    for read_file in resolved_inputs["reads"]:
-        parts.append(read_file)
-
-    return parts
-
 
 def resolve_fastqc_outputs(node_args: dict, context: dict) -> dict:
     """
@@ -264,6 +225,5 @@ fastqc_tool = build_tool_def(
     rules=rules,
     ui_schema=ui_schema,
     validate_fn=validate_fastqc_args,
-    render_command_fn=render_fastqc_command,
     resolve_outputs_fn=resolve_fastqc_outputs,
 )
