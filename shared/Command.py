@@ -142,7 +142,7 @@ class RerunStageResponse(Response):
 class GetArtifactDownload(Command):
     user_uuid: Annotated[uuid.UUID, Nullable(False)] = None
     pipeline_id: Annotated[uuid.UUID, Nullable(False)] = None
-    node_num: Annotated[int, Nullable(False)] = None
+    node_num: Annotated[int, Nullable(True)] = None
 
 @dataclass
 class GetArtifactDownloadResponse(Response):
@@ -154,9 +154,14 @@ class GetArtifactDownloadResponse(Response):
 ###########################################################
 
 @dataclass
+class WebsocketConnectResponse(Response):
+    pass
+    # Difference is in semantics, not syntax
+
+@dataclass
 class GraphUIUpdate(Command):
     PIPELINE_ID: Annotated[uuid.UUID, Nullable(False)] = None
-    UPDATES: Annotated[dict[int, "graph.StageState"], Nullable(False)] = None
+    UPDATES: Annotated[dict[str, "graph.StageState"], Nullable(False)] = None
 
 
 ###########################################################
@@ -174,3 +179,11 @@ class OnPipelineError(Command):
     stage_num: Annotated[int, Nullable(False)] = None
     error: Annotated["APIStatus.APIStatus", Nullable(False)] = None
     
+###########################################################
+# DEBUG COMMANDS
+###########################################################
+
+@dataclass
+class SendDummyWebsocketUpdate(Command):
+    user_id: Annotated[uuid.UUID, Nullable(False)] = None
+    pipeline_id: Annotated[uuid.UUID, Nullable(False)] = None

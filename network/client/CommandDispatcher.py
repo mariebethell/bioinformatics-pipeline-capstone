@@ -15,12 +15,23 @@ class CommandDispatcher:
 
     """
 
-    def __init__(self, user_uuid: uuid.UUID):
+    def __init__(self, model, user_uuid: uuid.UUID):
+        """
+        Constructor for CommandDispatcher
+            - Inject dependency for the model into here so it can call it back for graph UI updates
+            
+        Args:
+            model: The model class which should receive the graph UI update data
+            user_uuid: The user's UUID. This should never change after installation/should persist between restarts
+        
+        """
+
         if user_uuid is None:
             raise TypeError("user_uuid must be given")
 
         self.user_uuid = user_uuid
-        self.net_client = NetClient()
+        self.net_client = NetClient(self)
+        self.model = model
 
     def connect(self, server_ip: ipaddress.IPv4Address | ipaddress.IPv6Address, server_port: int) -> Command.Response:
         """
@@ -32,6 +43,8 @@ class CommandDispatcher:
 
         Returns:
             ClientConnectResponse with server's response. Upon server error, may be of base Response type
+                - Use this to get the active pipeline ID in the case of a client reconnecting to the server,
+                    such as after a crash
 
         Raises:
             ValueError if given server address/port could not be connected to
@@ -56,11 +69,11 @@ class CommandDispatcher:
     def disconnect(self):
         """
         Disconnects from the compute server's web socket
-
-        Not yet implemented
+            - This can take up to one second to finish, but this method will return immediately!
 
         """
-        raise NotImplementedError #Should just disconnect the websocket
+
+        self.net_client.disconnect()
 
     def new_pipeline(self, graph: Graph, input_data_uri: str) -> Command.Response:
         """
@@ -143,6 +156,7 @@ class CommandDispatcher:
             aiohttp.ClientError if server couldn't be reached
 
         """
+
         params = {
             'user_uuid': self.user_uuid,
             'pipeline_id': pipeline_uuid
@@ -307,13 +321,13 @@ class CommandDispatcher:
 
         return self.rerun_from_stage(pipeline_uuid, 0)
 
-    def get_result_data_uri(self, pipeline_uuid: uuid.UUID, stage_num: int) -> Command.Response:
+    def get_result_data_uri(self, pipeline_uuid: uuid.UUID, stage_num: int | None = None) -> Command.Response:
         """
         Requests the server to move result files to the bind mount and return their URI so the client may retrieve them
 
         Args:
             pipeline_uuid (UUID): The UUID for the pipeline which holds the results
-            stage_num (int): The ID for the pipeline stage which holds the results you want
+            stage_num (int): The ID for the pipeline stage which holds the results you want, or None to get the root folder for all available data
 
         Returns:
             GetArtifactDownloadResponse containing the server's response. Upon server error, may be of base Response type
@@ -344,11 +358,58 @@ class CommandDispatcher:
         """
         Event handler for incoming socket data. Triggers UI update on server side pipeline stage changes
 
-        Not yet implemented
+        Args:
+            payload: JSON string received from the server, expected to be a serialized GraphUIUpdate or WebsocketConnectResponse
+            
+        Raises:
+            Nothing, prints errors to console and continues
 
         """
 
-        raise NotImplementedError
+        cmd = None
+        try:
+            # 99% of the time it's going to be a GraphUIUpdate
+            cmd = CommandFactory.deserialize_command(Command.GraphUIUpdate, payload)
+            
+        except TypeError | ValueError:
+            # It's not a GraphUIUpdate. Only other possibility is that it's a WebsocketConnectResponse
+            try:
+                cmd = CommandFactory.deserialize_command(Command.WebsocketConnectResponse, payload)
+            
+            except Exception as e:
+                print(f"ERROR: Failed to deserialize incoming websocket message due to: {e}")
+                
+        if type(cmd) is Command.GraphUIUpdate:
+            self.model.update_presented_graph(cmd.UPDATES)
+            return
+            
+        elif type(cmd) is Command.WebsocketConnectResponse:
+            return # Don't really need this data right now
+            
+        print(f"ERROR: CommandDispatcher handle_async_update misconfigured, missing handler for Command type {type(cmd)}")
+        return
+    
+    def trigger_websocket_test(self, pipeline_id: uuid.UUID):
+        """
+        Sends a special command which asks the server to send a hardcoded GraphUIUpdate command over websocket
+            - Only used for testing. Do not call this in real code.
+            - Used in pytest tests
+
+        Args:
+            pipeline_id (UUID): A pipeline ID to send for the test. Doesn't matter what it is as long as it's consistent within
+                the test
+                
+        """
+
+        params = {
+            'user_id': self.user_uuid,
+            'pipeline_id': pipeline_id
+        }
+
+        cmd = CommandFactory.new_command(Command.SendDummyWebsocketUpdate, params)
+        cmd_str = CommandFactory.serialize_command(cmd)
+
+        asyncio.run(self.net_client.send("/api/client/debug/websockettest/", RequestTypes.GET, cmd_str))
     
     @staticmethod
     def _inject_source(cmd: Command.Response, source: ipaddress.IPv4Address | ipaddress.IPv6Address):

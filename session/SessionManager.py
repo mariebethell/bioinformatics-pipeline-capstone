@@ -3,12 +3,13 @@ from datetime import datetime
 
 from session.Session import Session
 
-from shared.Command import Command, NewPipeline, Response
+from shared.Command import Command, NewPipeline, Response, SendDummyWebsocketUpdate, GraphUIUpdate
 from shared.CommandFactory import CommandFactory
 from shared.APIStatus import APIStatus
+from shared.graph import StageState, Graph
 
 #For stub, remove when done with stub
-from shared.Command import ClientConnect, ClientConnectResponse, NewPipelineResponse
+from shared.Command import ClientConnect, ClientConnectResponse, GetPipeline, GetPipelineResponse, NewPipelineResponse, ModifyPipelineParams, ModifyPipelineParamsResponse, RunPipeline, RunPipelineResponse, StopPipeline, StopPipelineResponse, RerunStage, RerunStageResponse, GetArtifactDownload, GetArtifactDownloadResponse
 from uuid import uuid4
 
 
@@ -18,8 +19,12 @@ class SessionManager:
     
     """
 
-    def __init__(self):
-        self.uuid_map: dict[UUID, Session] = {} # Maps user UUID to their session
+    def __init__(self, compute_server):
+        self.compute_server = compute_server
+        self.user_uuid_map: dict[UUID, Session] = {} # Maps user UUID to their session
+        self.pipeline_uuid_map: dict[UUID, Session] = {} # Maps pipeline UUID to it's parent session
+
+        #self.pipeline_manager = TODO spawn pipeline manager here when ready
 
     def route_pipeline_command(self, cmd: Command) -> Response:
         """
@@ -47,33 +52,102 @@ class SessionManager:
         except AttributeError:
             raise ValueError("Command lacks user UUID? Dev, command is malformed OR command should have been handled in networking layer")
         
-        user_session = self.uuid_map.get(user_uuid, None)
+        user_session = self.user_uuid_map.get(user_uuid, None)
 
         if user_session is None:
-            if cmd is not NewPipeline:
+            if type(cmd) is not NewPipeline:
                 params = {'STATUS': APIStatus.ERR_BAD_PIPELINE_ID} # User has no session and therefore no pipeline. User needs to send a NewPipeline command
                 return CommandFactory.new_command(Response, params)
-            
+        
+        # self.pipeline_manager.handle_pipeline_command(cmd) TODO call PipelineManager when it is ready
+        #TODO if cmd was NewPipeline make a new session, add to user_uuid_map and pipeline_uuid_map
+        raise NotImplementedError
+    
         user_session.last_update_time = datetime.now()
         
-        #TODO call PipelineManager
-        raise NotImplementedError
+    def send_client_update_async(self, pipeline_uuid: UUID, cmd: Command):
+        """
+        Sends the given command to the owner of the given pipeline over websocket connection.
+            - Mostly intended for sending GraphUIUpdate commands
+
+        Args:
+            pipeline_uuid (UUID): The UUID for the pipeline which is issuing the Command
+            cmd (Command): The command to send over the websocket
+
+        Raises:
+            Nothing, it will just print a warning and drop the command. This should not be used for
+                state critical updates
+        
+        """
+
+        user_uuid = self.pipeline_uuid_map.get(pipeline_uuid, None)
+        
+        if user_uuid is None:
+            print("WARNING: Pipeline attempted to send update to nonexistant user session")
+            return # Just drop it
+            
+        self.compute_server.send_to_target_async(user_uuid, cmd)
 
 
 class SessionManagerStub(SessionManager):
     """
-    Temporary stub until pipeline layer is ready
+    Temporary stub for testing until pipeline layer is ready
 
     """
+
     def route_pipeline_command(self, cmd: Command) -> Response:
         test_resp = None
         if (type(cmd) is ClientConnect):
-            params = {"PIPELINE_ID": uuid4(), "STATUS": APIStatus.SUCCESS}
+            params = {"PIPELINE_ID": UUID('7d44c86f-2a0d-4ea8-84d4-542c341ec7f4'), "STATUS": APIStatus.SUCCESS}
             test_resp = CommandFactory.new_command(ClientConnectResponse, params)
 
         elif (type(cmd) is NewPipeline):
-            test_params = {"PIPELINE_ID": uuid4(), "STATUS": APIStatus.SUCCESS}
+            test_params = {"PIPELINE_ID": UUID('7d44c86f-2a0d-4ea8-84d4-542c341ec7f4'), "STATUS": APIStatus.SUCCESS}
             test_resp = CommandFactory.new_command(NewPipelineResponse, test_params)
+
+        elif (type(cmd) is GetPipeline):
+            test_graph = Graph()
+            n1 = test_graph.create_node("tool 1")
+            n2 = test_graph.create_node("tool 2")
+            n3 = test_graph.create_node("tool 3")
+            test_graph.connect(n1, n2)
+            test_graph.connect(n2, n3)
+
+            test_params = {"GRAPH": test_graph, "STATUS": APIStatus.SUCCESS}
+            test_resp = CommandFactory.new_command(GetPipelineResponse, test_params)
+
+        elif (type(cmd) is SendDummyWebsocketUpdate):
+            dummy_update = {"1": StageState.COMPLETED, "2": StageState.RUNNING}
+            async_params = {
+                'PIPELINE_ID': cmd.pipeline_id,
+                'UPDATES': dummy_update
+            }
+            async_cmd = CommandFactory.new_command(GraphUIUpdate, async_params)
+
+            self.compute_server.send_to_target_async(cmd.user_id, async_cmd)
+
+            params = {'STATUS': APIStatus.SUCCESS}
+            test_resp = CommandFactory.new_command(Response, params)
+
+        elif (type(cmd) is ModifyPipelineParams):
+            test_params = {'STATUS': APIStatus.SUCCESS}
+            test_resp = CommandFactory.new_command(ModifyPipelineParamsResponse, test_params)
+
+        elif (type(cmd) is RunPipeline):
+            test_params = {'STATUS': APIStatus.SUCCESS}
+            test_resp = CommandFactory.new_command(RunPipelineResponse, test_params)
+
+        elif (type(cmd) is StopPipeline):
+            test_params = {'STATUS': APIStatus.SUCCESS}
+            test_resp = CommandFactory.new_command(StopPipelineResponse, test_params)
+
+        elif (type(cmd) is RerunStage):
+            test_params = {'STATUS': APIStatus.SUCCESS}
+            test_resp = CommandFactory.new_command(RerunStageResponse, test_params)
+
+        elif (type(cmd) is GetArtifactDownload):
+            test_params = {"URI": 'some/dir/relative/to/bindmount', "STATUS": APIStatus.SUCCESS}
+            test_resp = CommandFactory.new_command(GetArtifactDownloadResponse, test_params)
 
 
         if test_resp is None:
@@ -81,3 +155,4 @@ class SessionManagerStub(SessionManager):
             test_resp = CommandFactory.new_command(Response, params)
 
         return test_resp
+        
