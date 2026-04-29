@@ -5,6 +5,8 @@ from datetime import date, datetime
 import json
 import re
 import queue
+import shutil
+import os
 from pathlib import Path
 from platform import node
 from PySide6 import QtWidgets, QtCore, QtWebEngineWidgets
@@ -20,6 +22,8 @@ import uuid
 import ipaddress
 from network.client.CommandDispatcher import CommandDispatcher
 from shared.APIStatus import APIStatus
+
+BIND_MOUNT_COPY_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'shared-data/input-files/')
 
 app = QtWidgets.QApplication([])
 class AppFrame(QtWidgets.QMainWindow):
@@ -158,6 +162,22 @@ class GraphGenerator():
 
         if not file_uri:
             print("ERROR: Input File must have a FASTQ file input to run the pipeline!") # create some warning window that pops up if there is no URI/no input file
+            return
+
+    def move_to_bindmount(self, directory) -> str:
+        os.makedirs(BIND_MOUNT_COPY_DIR, exist_ok=True) # Make input file directory within shared-data if it does not already exist
+
+        input_file_dict = {"reads": []}
+        for file in directory["reads"]:
+            uri = shutil.copy2(file, BIND_MOUNT_COPY_DIR)
+
+            rel_path = os.path.join(
+                "./shared-data/input-files",
+                os.path.basename(uri)
+            )
+            input_file_dict["reads"].append(rel_path)
+
+        return input_file_dict
 
     def from_workbench(self):
         # create backend nodes
@@ -173,8 +193,10 @@ class GraphGenerator():
             node.id = qt_node.id
 
             if isinstance(qt_node, InputNode):
+                print(f"qt_node get value: {qt_node.get_value()}")
+                print(f"move_to_bindmount: {self.move_to_bindmount(qt_node.get_value())}")
                 node.outputs = {
-                    "reads": qt_node.get_value()
+                    "reads": self.move_to_bindmount(qt_node.get_value())
                 }
                 node.args = {}  # input nodes don’t have args
             else:
@@ -523,10 +545,6 @@ class PipelineWorkbenchVC(PanelController):
 
         for node_num, node in graph.nodes.items(): # shows the tools being ran sequentially and their args
             print(f"Node ID: {node.id} Node Num {node_num}: tool={node.tool}, args={node.args}")
-
-        pipeline_factory = PipelineFactory()
-        pipeline = pipeline_factory.build_pipeline("nextflow", graph, input_folder, ToolRegistry(), pipeline_script_path="backend/pipeline.nf")
-        # pipeline.run_pipeline()
 
         # local creation
         local_uuid = self.app.new_pipeline(graph)
@@ -1633,13 +1651,13 @@ class DataNode(BaseNode):
 class InputNodeWrapper(NodeBaseWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.uri = None
 
         container = QtWidgets.QWidget()
         layout = QtWidgets.QVBoxLayout()
 
         #btn = QtWidgets.QPushButton('Input FASTQ File')
         #btn.clicked.connect(self.open_file)
-
         self.directory = None
         self.uri = None
         self.files = []
@@ -1660,7 +1678,6 @@ class InputNodeWrapper(NodeBaseWidget):
         layout.addWidget(self.dir_btn)
         layout.addWidget(self.file_selector)
         
-
         container.setLayout(layout)
         self.set_custom_widget(container)
 
@@ -1768,6 +1785,7 @@ class InputNodeWrapper(NodeBaseWidget):
         if not val:
             return # nothing to restore
         
+        pass
         directory = val.get('directory')
         selected = val.get('selected')
 
@@ -1803,7 +1821,10 @@ class InputNode(DataNode):
 
     def get_value(self):
         # uri = self.get_property('file_uri')
+        uri = self.get_property('file_uri')
         # return {"reads" : [uri]} if uri else {}
+        return {"reads" : [uri]} if uri else {}
+        #return self.wrapper.get_value()
         directory = self.get_property('input_directory')
         file_uri = self.get_property('file_uri')
 
@@ -1828,6 +1849,8 @@ class InputNode(DataNode):
         super(InputNode, self).set_property(name, val, push_undo)
         if name == 'file_uri' and self.wrapper:
             self.wrapper.uri = val
+
+    
 
 class OutputNodeWrapper(NodeBaseWidget):
     def __init__(self, parent=None):
