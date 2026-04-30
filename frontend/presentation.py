@@ -976,22 +976,22 @@ NODE_WIDGETS = {
         checkbox_widget('keep_both_reads', 'Keep Both Reads?', section='ILLUMINACLIP'),
 
         # leading
-        num_input_widget('leading', 'Trim Leading Below: ', section='LEADING'),
+        num_input_widget('quality', 'Trim Leading Below: ', section='LEADING'),
 
         # trailing
-        num_input_widget('trailing', 'Trim Trailing Below: ', section='TRAILING'),
+        num_input_widget('quality', 'Trim Trailing Below: ', section='TRAILING'),
 
         # head_crop
-        num_input_widget('head_crop', 'Crop # from start of read:', section='HEADCROP'),
+        num_input_widget('length', 'Crop # from start of read:', section='HEADCROP'),
 
         # tail_crop
-        num_input_widget('trail_crop', 'Trim tail', section='TAILCROP'),
+        num_input_widget('length', 'Trim tail', section='TAILCROP'),
 
         # crop
-        num_input_widget('crop', 'Crop reads to this length: ', section='CROP'),
+        num_input_widget('length', 'Crop reads to this length: ', section='CROP'),
 
         # sliding window
-        num_input_widget('sliding_window_size', 'Sliding Window Size: ', section='SLIDINGWINDOW'),
+        num_input_widget('window_size', 'Sliding Window Size: ', section='SLIDINGWINDOW'),
         num_input_widget('required_quality', 'Minimum average quality required in the window: ', section='SLIDINGWINDOW'),
 
         # max info
@@ -999,9 +999,9 @@ NODE_WIDGETS = {
         slider_widget('strictness', 'Strictness value', default=0, min=0, max=1, section='MAXINFO'),
 
         # min_len, max_len, avg_qual
-        num_input_widget('min_len', 'Discard reads shorter than this length: ', section='MINLEN'),
-        num_input_widget('max_len', 'Discard reads longer than this length: ', section='MAXLEN'),
-        num_input_widget('avg_qual', 'Discard reads with average quality below: ', section='AVGQUAL'),
+        num_input_widget('length', 'Discard reads shorter than this length: ', section='MINLEN'),
+        num_input_widget('length', 'Discard reads longer than this length: ', section='MAXLEN'),
+        num_input_widget('quality', 'Discard reads with average quality below: ', section='AVGQUAL'),
 
         # base_count widgets
         text_entry_widget('bases', 'Bases to count: ', section='BASECOUNT'),
@@ -1356,7 +1356,7 @@ class ToolNodeWrapper(NodeBaseWidget):
             
             if not widget_def:
                 continue
-
+                
             section = widget_def.get('section')
 
             if section and not self.section_states.get(section, False):
@@ -1374,8 +1374,7 @@ class ToolNodeWrapper(NodeBaseWidget):
                 'parameters': params
             })
 
-        if steps:
-            values['steps'] = steps
+        values['steps'] = steps
 
             # if widget_def:
             #     section = widget_def.get('section')
