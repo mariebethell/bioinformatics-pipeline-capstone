@@ -16,6 +16,7 @@ Commands sent by this class to client:
 - OnPipelineError: Contains error information that indicates what stage a pipeline failed and the type of error.
 """
 
+import os
 from shared import Command, APIStatus
 from shared.CommandFactory import CommandFactory
 from shared.graph import Graph, Node
@@ -108,12 +109,27 @@ class PipelineManager:
             return CommandFactory.new_command(Command.RerunStageResponse)
 
         elif isinstance(cmd, Command.GetArtifactDownload):
-            # return path to bindmount (not implemented)
-
             # Only return relative path to file in bindmount
             # Client will combine this with the environment variable set by installer
             # Nextflow needs to output files to bindmount
-            params = {"URI": "path/to/bindmount", "STATUS": APIStatus.APIStatus.SUCCESS} 
+            if cmd.node_num is not None:
+                pipeline = self.pipelines.get(cmd.pipeline_id) # Get pipeline
+                if not pipeline:
+                    params = {"STATUS": APIStatus.APIStatus.ERR_BAD_PIPELINE_ID}
+                    return CommandFactory.new_command(Command.GetArtifactDownloadResponse, params)
+                    
+                node = pipeline.graph.get_node(cmd.node_num)
+
+                if node is not None:
+                    file_path = os.path.join("./shared-data/results", node.tool)
+                else:
+                    params = {"STATUS": APIStatus.APIStatus.ERR_INVALID_TOOL}
+                    return CommandFactory.new_command(Command.GetArtifactDownloadResponse, params)
+
+            else:
+                file_path = "./shared-data/results"
+
+            params = {"URI": file_path, "STATUS": APIStatus.APIStatus.SUCCESS} 
             return CommandFactory.new_command(Command.GetArtifactDownloadResponse, params)
 
     def newPipeline(self, graph: Graph) -> str:

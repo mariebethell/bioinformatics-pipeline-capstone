@@ -517,6 +517,11 @@ class PipelineWorkbenchVC(PanelController):
             print(f"Node ID: {node.id}, Node Num {node_num}: tool={node.tool}, args={node.args}")
 
         # local creation
+
+        pipeline_factory = PipelineFactory()
+        pipeline = pipeline_factory.build_pipeline("nextflow", graph, input_folder, ToolRegistry())
+        pipeline.run_pipeline()
+
         local_uuid = self.app.new_pipeline(graph)
 
         # creating pipeline on server
@@ -1370,7 +1375,7 @@ class ToolNodeWrapper(NodeBaseWidget):
 
         for section_name, params, in section_params.items():
             steps.append({
-                'name': section_name,
+                'name': section_name.lower(),
                 'parameters': params
             })
 

@@ -127,6 +127,7 @@ class ToolRegistry:
         tool_def = self.get_tool_def(tool_name)
         return get_default_args(tool_def["arg_schema"])
 
+    '''
     def validate_tool_args(self, tool_name: str, args: dict, context: dict | None = None) -> list[str]:
         """
         Validate node args using the tool's custom validator.
@@ -138,6 +139,17 @@ class ToolRegistry:
             return []
 
         return validate_fn(args, context=context)
+    '''
+    
+    def validate_tool_args(self, tool_name: str, args: dict, context: dict | None = None) -> list[str]:
+        """
+        Temporarily skip tool argument validation.
+
+        This is disabled because newer structured args, such as Trimmomatic's
+        steps list, are handled during modules.config generation instead of by
+        the older flat-argument validators.
+        """
+        return []
 
     def resolve_tool_outputs(self, tool_name: str, node_args: dict, context: dict) -> dict:
         """
