@@ -281,13 +281,13 @@ class NodeBrowser(QtWidgets.QDialog):
                 )
             layout.addWidget(btn)
 
-        input_btn = QtWidgets.QPushButton('Create input Node')
+        self.input_btn = QtWidgets.QPushButton('Create input Node')
         output_btn = QtWidgets.QPushButton('Create output Node')
 
-        input_btn.clicked.connect(self.create_input_node)
+        self.input_btn.clicked.connect(self.create_input_node)
         output_btn.clicked.connect(self.create_output_node)
 
-        layout.addWidget(input_btn)
+        layout.addWidget(self.input_btn)
         layout.addWidget(output_btn)
 
         self.setLayout(layout)
@@ -340,6 +340,7 @@ class NodeBrowser(QtWidgets.QDialog):
         """
         self.graph.create_node('bioinformatics_capstone.InputNode', name='Input', pos=(40,40))
         self.graph.clear_selection()
+        self.input_btn.setEnabled(False) # this is so that there is only ever ONE input node on the graph.
         self.close()
 
     
@@ -512,10 +513,16 @@ class PipelineWorkbenchVC(PanelController):
         graph = GraphGenerator(self.node_graph)
         graph = graph.from_workbench()
 
-        # getting the first node, which should always be an input node
-        input_node = graph.get_first_node()
+        # getting the input node
+        # this is a bandaid fix... this would only work for ONE input node!! I might just enforce that
+        for _, node in graph.nodes.items():
+            if node.tool == 'input':
+                input_node = node
+                break
+
+
         if not input_node: 
-            print("ERROR: First node must be an input node with a FASTQ file input to run the pipeline!")
+            print("ERROR: No Input Node found in the pipeline!")
             return
         else:
             print(input_node.outputs)
@@ -938,7 +945,7 @@ def file_picker_widget(name, label, filter='*.*', nullable=False, section=None):
     return {'type' : 'file_picker', 'name': name, 'label': label, 'filter': filter, 'need_label': False, 'nullable': nullable, 'section': section}
 
 # common widgets
-threads_slider = slider_widget('threads', 'Number of Threads', min=1, max=128)
+# threads_slider here formerly = slider_widget('threads', 'Number of Threads', min=1, max=128)
 quiet_check = checkbox_widget('quiet', 'Quiet')
 
 SECTION_CONFIGS = {
@@ -963,8 +970,8 @@ A dictionary of sub section configs for tools that require them
 
 NODE_WIDGETS = {
     'fastqc' : [
-        threads_slider,
-        quiet_check,
+        # threads_slider here formerly,
+        # quiet_check,
         checkbox_widget('nogroup', 'NoGroup'),
         slider_widget('kmers', 'Kmers Length', 7, max=20),
         text_entry_widget('adapters', 'Adapters', True), 
@@ -972,13 +979,13 @@ NODE_WIDGETS = {
         combo_box_widget('format', 'File Format', items=['fastq', 'sam', 'bam'])
     ],
     'trimmomatic' : [
-        threads_slider,
+        # threads_slider here formerly,
         combo_box_widget('mode', 'Mode', items=['SE', 'PE']),
         combo_box_widget('phred', 'Phred', items=['33', '64'], nullable=True),
         checkbox_widget('validate_pairs', 'Validate Pairs'),
         slider_widget('compress_level', 'Compression Level', max=9),
         combo_box_widget('compression_mode', 'Compression Mode', items=['stream', 'block'], nullable=True),
-        quiet_check,
+        # quiet_check,
 
         # illumina clip
         file_picker_widget('fasta_with_adapters', 'Select FASTA file', filter='*.fasta *.fa',section='ILLUMINACLIP'),
@@ -1025,7 +1032,7 @@ NODE_WIDGETS = {
 
     'trinity' : [
         combo_box_widget('seq_type', 'Sequence Type', items=['fq', 'fa']),
-        threads_slider,
+        # threads_slider here formerly,
         slider_widget('max_memory', 'Memory to Use (GB)', max=32)
     ],
 
@@ -1036,7 +1043,7 @@ NODE_WIDGETS = {
         text_entry_widget('output_prefix', 'Output Prefix')
     ],
     'bwa_mem' : [
-        threads_slider,
+        # threads_slider here formerly,
         checkbox_widget('mark_split', 'Mark shorter split hits as secondary')
     ]
 }
