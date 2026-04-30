@@ -164,14 +164,7 @@ class GraphGenerator():
                 node.args = {}  # input nodes don’t have args
             else:
                 node.args = qt_node.get_value()
-                if (tool == "trimmomatic"):
-                    node.args["steps"] = [
-                        {"name": "leading", "parameters": {"quality": 3}},
-                        {"name": "trailing", "parameters": {"quality": 3}},
-                        {"name": "sliding_window", "parameters": {"window_size": 4, "required_quality": 20}},
-                        {"name": "min_len", "parameters": {"length": 36}},
-                    ]
-
+                
             self.node_map[qt_node] = node
 
         # connect nodes
@@ -966,7 +959,7 @@ NODE_WIDGETS = {
         combo_box_widget('format', 'File Format', items=['fastq', 'sam', 'bam'])
     ],
     'trimmomatic' : [
-        threads_slider,
+        # threads_slider here formerly,
         combo_box_widget('mode', 'Mode', items=['SE', 'PE']),
         combo_box_widget('phred', 'Phred', items=['33', '64'], nullable=True),
         checkbox_widget('validate_pairs', 'Validate Pairs'),
