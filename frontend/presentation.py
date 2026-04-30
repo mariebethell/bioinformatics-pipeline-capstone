@@ -1409,7 +1409,14 @@ class ToolNodeWrapper(NodeBaseWidget):
         return values
 
     def set_value(self, val_dict):
+        if not val_dict:
+            return
+
+        
         for name, val, in val_dict.items():
+            if name == 'steps':
+                continue
+
             widget = self.widgets.get(name)
 
             if widget is None:
@@ -1428,6 +1435,21 @@ class ToolNodeWrapper(NodeBaseWidget):
                 inner = widget._value_widget
                 if isinstance(inner, QtWidgets.QLineEdit):
                     inner.setText(str(val))
+
+        self.substep_vals.clear()
+        self.section_states.clear()
+
+        steps = val_dict.get('steps', [])
+
+        for step in steps:
+            section_name = step.get('name')
+            params = step.get('parameters', {})
+
+            if section_name:
+                self.section_states[section_name] = True
+
+            for param_name, param_val in params.items():
+                self.substep_vals[param_name] = param_val
             
     def delete_node(self): 
         if self.node is not None:
