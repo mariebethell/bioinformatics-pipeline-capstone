@@ -35,10 +35,11 @@ process TRIMMOMATIC {
         -threads $task.cpus \\
         -trimlog ${prefix}_trim.log \\
         -summary ${prefix}.summary \\
+        $args \\
         $reads \\
         $output \\
         $qual_trim \\
-        $args 2>| >(tee ${prefix}_out.log >&2)
+        2>| >(tee ${prefix}_out.log >&2)
     """
 
     stub:

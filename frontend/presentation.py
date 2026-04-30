@@ -109,43 +109,6 @@ class AppFrame(QtWidgets.QMainWindow):
         if self.workbench:
             self.workbench.update_presented_graph(updates)
 
-#what this does right now is generate a dictionary based on the outputs 
-""""
-class GraphGenerator():
-    def __init__(self, graph=None):
-        input = graph.get_node_by_name('Input')
-        self.graph_outline = None
-        file_uri = input.get_value()
-
-        if file_uri:
-            self.graph_outline = { 'input' : {'file_uri': file_uri} }
-            self.from_workbench(input)
-        else:
-            print("ERROR: Input File must have a FASTQ file input to run the pipeline!") # create some warning window that pops up if there is no URI/no input file
-
-    def from_workbench(self, input_node):
-
-        curr = input_node
-
-        while True:
-            connections = curr.connected_output_nodes() # gets all the connected output nodes in the form of a dictionary: {port object : list of nodes}
-            if not connections: # handles if there are no connections
-                break
-            
-            (_, nodes), = connections.items()
-
-            if not nodes: # if the node list is empty
-                break
-            
-            node = nodes[0]
-            
-            self.graph_outline.update({node.tool : node.get_value()})
-
-            curr = node
-
-        return self.graph_outline
-"""
-
 # New GraphGenerator class that converts node graph to backend graph data structure
 class GraphGenerator():
     def __init__(self, qt_graph):
@@ -201,6 +164,13 @@ class GraphGenerator():
                 node.args = {}  # input nodes don’t have args
             else:
                 node.args = qt_node.get_value()
+                if (tool == "trimmomatic"):
+                    node.args["steps"] = [
+                        {"name": "leading", "parameters": {"quality": 3}},
+                        {"name": "trailing", "parameters": {"quality": 3}},
+                        {"name": "sliding_window", "parameters": {"window_size": 4, "required_quality": 20}},
+                        {"name": "min_len", "parameters": {"length": 36}},
+                    ]
 
             self.node_map[qt_node] = node
 
@@ -544,7 +514,7 @@ class PipelineWorkbenchVC(PanelController):
             input_folder = input_node.outputs["reads"]["reads"][0] # gets the file URI of the input node's reads, which is the input folder for the pipeline
 
         for node_num, node in graph.nodes.items(): # shows the tools being ran sequentially and their args
-            print(f"Node ID: {node.id} Node Num {node_num}: tool={node.tool}, args={node.args}")
+            print(f"Node ID: {node.id}, Node Num {node_num}: tool={node.tool}, args={node.args}")
 
         # local creation
         local_uuid = self.app.new_pipeline(graph)
@@ -555,7 +525,6 @@ class PipelineWorkbenchVC(PanelController):
         if create_response.STATUS != APIStatus.SUCCESS:
             print(f'Failed to create pipeline on server, status:{create_response.STATUS}')
             return
-
 
 
         server_uuid = create_response.PIPELINE_ID
@@ -981,7 +950,6 @@ A dictionary of sub section configs for tools that require them
 
 NODE_WIDGETS = {
     'fastqc' : [
-        threads_slider,
         quiet_check,
         checkbox_widget('nogroup', 'NoGroup'),
         slider_widget('kmers', 'Kmers Length', 7, max=20),
@@ -990,11 +958,10 @@ NODE_WIDGETS = {
         combo_box_widget('format', 'File Format', items=['fastq', 'sam', 'bam'])
     ],
     'trimmomatic' : [
-        threads_slider,
         combo_box_widget('mode', 'Mode', items=['SE', 'PE']),
         combo_box_widget('phred', 'Phred', items=['33', '64'], nullable=True),
         checkbox_widget('validate_pairs', 'Validate Pairs'),
-        slider_widget('compress_level', 'Compression Level', max=9),
+        # slider_widget('compress_level', 'Compression Level', max=9),
         combo_box_widget('compression_mode', 'Compression Mode', items=['stream', 'block'], nullable=True),
         quiet_check,
 
@@ -1043,8 +1010,6 @@ NODE_WIDGETS = {
 
     'trinity' : [
         combo_box_widget('seq_type', 'Sequence Type', items=['fq', 'fa']),
-        threads_slider,
-        slider_widget('max_memory', 'Memory to Use (GB)', max=32)
     ],
 
     'bwa' : [], # empty as we need widgets for its two sub nodes
@@ -1054,7 +1019,6 @@ NODE_WIDGETS = {
         text_entry_widget('output_prefix', 'Output Prefix')
     ],
     'bwa_mem' : [
-        threads_slider,
         checkbox_widget('mark_split', 'Mark shorter split hits as secondary')
     ]
 }
@@ -1785,7 +1749,6 @@ class InputNodeWrapper(NodeBaseWidget):
         if not val:
             return # nothing to restore
         
-        pass
         directory = val.get('directory')
         selected = val.get('selected')
 

@@ -317,23 +317,23 @@ class NextflowGenerator:
             '    reads_ch = Channel.fromPath(params.input, checkIfExists: true)\n'
             '        .map { f ->\n'
             '            def name = f.getName()\n\n'
-            "            def sample_id = name\n"
-            "                .replaceAll(/_R?1(_\\d+)?\\.(fastq|fq)(\\.gz)?$/, '')\n"
-            "                .replaceAll(/_R?2(_\\d+)?\\.(fastq|fq)(\\.gz)?$/, '')\n\n"
+            '            def sample_id = name\n'
+            '                .replaceAll(/_R?1(_\\d+)?\\.(fastq|fq)(\\.gz)?$/, \'\')\n'
+            '                .replaceAll(/_R?2(_\\d+)?\\.(fastq|fq)(\\.gz)?$/, \'\')\n\n'
             '            tuple(sample_id, f)\n'
             '        }\n'
             '        .groupTuple()\n'
-            '        .map { sample_id, files ->\n'
-            '            def files_list = files.toList()\n'
-            '            def r1 = files_list.find { it.getName() ==~ /.*_R?1(_\\d+)?\\.(fastq|fq)(\\.gz)?$/ }\n'
-            '            def r2 = files_list.find { it.getName() ==~ /.*_R?2(_\\d+)?\\.(fastq|fq)(\\.gz)?$/ }\n'
-            '            def meta = [ id: sample_id ]\n\n'
-            '            if (r1 && r2) {\n'
-            '                tuple(meta, [ r1, r2 ])\n'
+            '        .map { sample_id, files ->\n\n'
+            '            def r1s = files.findAll { it.name ==~ /.*_R?1(_\\d+)?\\.(fastq|fq)(\\.gz)?$/ }.sort()\n'
+            '            def r2s = files.findAll { it.name ==~ /.*_R?2(_\\d+)?\\.(fastq|fq)(\\.gz)?$/ }.sort()\n\n'
+            '            if (r1s && r2s) {\n'
+            '                def meta = [ id: sample_id, single_end: false ]\n'
+            '                tuple(meta, [ r1s, r2s ])\n'
             '            } else {\n'
-            '                tuple(meta, files_list[0])\n'
+            '                def meta = [ id: sample_id, single_end: true ]\n'
+            '                tuple(meta, files[0])\n'
             '            }\n'
-            '        }'
+            '        }\n'
         )
 
     def generate_nfcore_include_statement(self, node: CompiledNode) -> str:
