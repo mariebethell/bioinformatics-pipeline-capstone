@@ -1368,17 +1368,43 @@ class ToolNodeWrapper(NodeBaseWidget):
 
         #values.update(self.substep_vals)
 
+        steps = []
+        section_params = {}
+
         for name, val in self.substep_vals.items():
             widget_def = next((w for w in self.substep_defs if w['name'] == name), None)
-
-            if widget_def:
-                section = widget_def.get('section')
-
-                if section:
-                    if not self.section_states.get(section, False):
-                        continue
             
-            values[name] = val
+            if not widget_def:
+                continue
+
+            section = widget_def.get('section')
+
+            if section and not self.section_states.get(section, False):
+                continue
+
+            if section:
+                if section not in section_params:
+                    section_params[section] = {}
+
+                section_params[section][name] = val
+
+        for section_name, params, in section_params.items():
+            steps.append({
+                'name': section_name,
+                'parameters': params
+            })
+
+        if steps:
+            values['steps'] = steps
+
+            # if widget_def:
+            #     section = widget_def.get('section')
+
+            #     if section:
+            #         if not self.section_states.get(section, False):
+            #             continue
+            
+            # values[name] = val
 
         return values
 
