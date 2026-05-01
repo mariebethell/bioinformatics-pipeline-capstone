@@ -134,10 +134,7 @@ class GraphGenerator():
         for file in directory["reads"]:
             uri = shutil.copy2(file, BIND_MOUNT_COPY_DIR)
 
-            rel_path = os.path.join(
-                "./shared-data/input-files",
-                os.path.basename(uri)
-            )
+            rel_path = "./shared-data/input-files/" + os.path.basename(uri)
             input_file_dict["reads"].append(rel_path)
 
         return input_file_dict
