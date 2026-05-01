@@ -220,6 +220,9 @@ class NextflowGenerator:
             tool = self._canonical_tool_key(node.tool)
             raw_args = dict(node.args or {})
 
+            print(tool)
+            print(raw_args)
+
             self._apply_registry_validation(tool, raw_args)
             normalized_args = self._apply_registry_defaults(tool, raw_args)
 
@@ -232,7 +235,7 @@ class NextflowGenerator:
                 else:
                     node.inputs = prev_outputs
 
-            resolved_outputs = self._resolve_stage_outputs(node, tool, normalized_args)
+            resolved_outputs = self._resolve_stage_outputs(node, tool, node.args)
             if resolved_outputs is not None:
                 node.outputs = resolved_outputs
 
