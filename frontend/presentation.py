@@ -270,13 +270,13 @@ class NodeBrowser(QtWidgets.QDialog):
                 )
             layout.addWidget(btn)
 
-        input_btn = QtWidgets.QPushButton('Create input Node')
+        self.input_btn = QtWidgets.QPushButton('Create input Node')
         output_btn = QtWidgets.QPushButton('Create output Node')
 
-        input_btn.clicked.connect(self.create_input_node)
+        self.input_btn.clicked.connect(self.create_input_node)
         output_btn.clicked.connect(self.create_output_node)
 
-        layout.addWidget(input_btn)
+        layout.addWidget(self.input_btn)
         layout.addWidget(output_btn)
 
         self.setLayout(layout)
@@ -329,6 +329,7 @@ class NodeBrowser(QtWidgets.QDialog):
         """
         self.graph.create_node('bioinformatics_capstone.InputNode', name='Input', pos=(40,40))
         self.graph.clear_selection()
+        self.input_btn.setEnabled(False) # this is so that there is only ever ONE input node on the graph.
         self.close()
 
     
@@ -501,10 +502,16 @@ class PipelineWorkbenchVC(PanelController):
         graph = GraphGenerator(self.node_graph)
         graph = graph.from_workbench()
 
-        # getting the first node, which should always be an input node
-        input_node = graph.get_first_node()
+        # getting the input node
+        # this is a bandaid fix... this would only work for ONE input node!! I might just enforce that
+        for _, node in graph.nodes.items():
+            if node.tool == 'input':
+                input_node = node
+                break
+
+
         if not input_node: 
-            print("ERROR: First node must be an input node with a FASTQ file input to run the pipeline!")
+            print("ERROR: No Input Node found in the pipeline!")
             return
         else:
             print(input_node.outputs)
@@ -922,7 +929,7 @@ def file_picker_widget(name, label, filter='*.*', nullable=False, section=None):
     return {'type' : 'file_picker', 'name': name, 'label': label, 'filter': filter, 'need_label': False, 'nullable': nullable, 'section': section}
 
 # common widgets
-threads_slider = slider_widget('threads', 'Number of Threads', min=1, max=128)
+# threads_slider here formerly = slider_widget('threads', 'Number of Threads', min=1, max=128)
 quiet_check = checkbox_widget('quiet', 'Quiet')
 
 SECTION_CONFIGS = {
@@ -947,7 +954,8 @@ A dictionary of sub section configs for tools that require them
 
 NODE_WIDGETS = {
     'fastqc' : [
-        quiet_check,
+        # threads_slider here formerly,
+        # quiet_check,
         checkbox_widget('nogroup', 'NoGroup'),
         slider_widget('kmers', 'Kmers Length', 7, max=20),
         text_entry_widget('adapters', 'Adapters', True), 
@@ -955,12 +963,13 @@ NODE_WIDGETS = {
         combo_box_widget('format', 'File Format', items=['fastq', 'sam', 'bam'])
     ],
     'trimmomatic' : [
+        # threads_slider here formerly,
         combo_box_widget('mode', 'Mode', items=['SE', 'PE']),
         combo_box_widget('phred', 'Phred', items=['33', '64'], nullable=True),
         checkbox_widget('validate_pairs', 'Validate Pairs'),
         # slider_widget('compress_level', 'Compression Level', max=9),
         combo_box_widget('compression_mode', 'Compression Mode', items=['stream', 'block'], nullable=True),
-        quiet_check,
+        # quiet_check,
 
         # illumina clip
         file_picker_widget('fasta_with_adapters', 'Select FASTA file', filter='*.fasta *.fa',section='ILLUMINACLIP'),
@@ -971,22 +980,22 @@ NODE_WIDGETS = {
         checkbox_widget('keep_both_reads', 'Keep Both Reads?', section='ILLUMINACLIP'),
 
         # leading
-        num_input_widget('leading', 'Trim Leading Below: ', section='LEADING'),
+        num_input_widget('quality', 'Trim Leading Below: ', section='LEADING'),
 
         # trailing
-        num_input_widget('trailing', 'Trim Trailing Below: ', section='TRAILING'),
+        num_input_widget('quality', 'Trim Trailing Below: ', section='TRAILING'),
 
         # head_crop
-        num_input_widget('head_crop', 'Crop # from start of read:', section='HEADCROP'),
+        num_input_widget('length', 'Crop # from start of read:', section='HEADCROP'),
 
         # tail_crop
-        num_input_widget('trail_crop', 'Trim tail', section='TAILCROP'),
+        num_input_widget('length', 'Trim tail', section='TAILCROP'),
 
         # crop
-        num_input_widget('crop', 'Crop reads to this length: ', section='CROP'),
+        num_input_widget('length', 'Crop reads to this length: ', section='CROP'),
 
         # sliding window
-        num_input_widget('sliding_window_size', 'Sliding Window Size: ', section='SLIDINGWINDOW'),
+        num_input_widget('window_size', 'Sliding Window Size: ', section='SLIDINGWINDOW'),
         num_input_widget('required_quality', 'Minimum average quality required in the window: ', section='SLIDINGWINDOW'),
 
         # max info
@@ -994,9 +1003,9 @@ NODE_WIDGETS = {
         slider_widget('strictness', 'Strictness value', default=0, min=0, max=1, section='MAXINFO'),
 
         # min_len, max_len, avg_qual
-        num_input_widget('min_len', 'Discard reads shorter than this length: ', section='MINLEN'),
-        num_input_widget('max_len', 'Discard reads longer than this length: ', section='MAXLEN'),
-        num_input_widget('avg_qual', 'Discard reads with average quality below: ', section='AVGQUAL'),
+        num_input_widget('length', 'Discard reads shorter than this length: ', section='MINLEN'),
+        num_input_widget('length', 'Discard reads longer than this length: ', section='MAXLEN'),
+        num_input_widget('quality', 'Discard reads with average quality below: ', section='AVGQUAL'),
 
         # base_count widgets
         text_entry_widget('bases', 'Bases to count: ', section='BASECOUNT'),
@@ -1007,6 +1016,8 @@ NODE_WIDGETS = {
 
     'trinity' : [
         combo_box_widget('seq_type', 'Sequence Type', items=['fq', 'fa']),
+        # threads_slider here formerly,
+        slider_widget('max_memory', 'Memory to Use (GB)', max=32)
     ],
 
     'bwa' : [], # empty as we need widgets for its two sub nodes
@@ -1016,6 +1027,7 @@ NODE_WIDGETS = {
         text_entry_widget('output_prefix', 'Output Prefix')
     ],
     'bwa_mem' : [
+        # threads_slider here formerly,
         checkbox_widget('mark_split', 'Mark shorter split hits as secondary')
     ]
 }
@@ -1340,22 +1352,54 @@ class ToolNodeWrapper(NodeBaseWidget):
 
         #values.update(self.substep_vals)
 
+        steps = []
+        section_params = {}
+
         for name, val in self.substep_vals.items():
             widget_def = next((w for w in self.substep_defs if w['name'] == name), None)
-
-            if widget_def:
-                section = widget_def.get('section')
-
-                if section:
-                    if not self.section_states.get(section, False):
-                        continue
             
-            values[name] = val
+            if not widget_def:
+                continue
+                
+            section = widget_def.get('section')
+
+            if section and not self.section_states.get(section, False):
+                continue
+
+            if section:
+                if section not in section_params:
+                    section_params[section] = {}
+
+                section_params[section][name] = val
+
+        for section_name, params, in section_params.items():
+            steps.append({
+                'name': section_name,
+                'parameters': params
+            })
+
+        values['steps'] = steps
+
+            # if widget_def:
+            #     section = widget_def.get('section')
+
+            #     if section:
+            #         if not self.section_states.get(section, False):
+            #             continue
+            
+            # values[name] = val
 
         return values
 
     def set_value(self, val_dict):
+        if not val_dict:
+            return
+
+        
         for name, val, in val_dict.items():
+            if name == 'steps':
+                continue
+
             widget = self.widgets.get(name)
 
             if widget is None:
@@ -1374,6 +1418,21 @@ class ToolNodeWrapper(NodeBaseWidget):
                 inner = widget._value_widget
                 if isinstance(inner, QtWidgets.QLineEdit):
                     inner.setText(str(val))
+
+        self.substep_vals.clear()
+        self.section_states.clear()
+
+        steps = val_dict.get('steps', [])
+
+        for step in steps:
+            section_name = step.get('name')
+            params = step.get('parameters', {})
+
+            if section_name:
+                self.section_states[section_name] = True
+
+            for param_name, param_val in params.items():
+                self.substep_vals[param_name] = param_val
             
     def delete_node(self): 
         if self.node is not None:
