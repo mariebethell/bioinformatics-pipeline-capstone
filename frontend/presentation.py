@@ -5,6 +5,8 @@ from datetime import date, datetime
 import json
 import re
 import queue
+import shutil
+import os
 from pathlib import Path
 from platform import node
 from PySide6 import QtWidgets, QtCore, QtWebEngineWidgets
@@ -20,6 +22,8 @@ import uuid
 import ipaddress
 from network.client.CommandDispatcher import CommandDispatcher
 from shared.APIStatus import APIStatus
+
+BIND_MOUNT_COPY_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'shared-data/input-files/')
 
 app = QtWidgets.QApplication([])
 class AppFrame(QtWidgets.QMainWindow):
@@ -105,43 +109,6 @@ class AppFrame(QtWidgets.QMainWindow):
         if self.workbench:
             self.workbench.update_presented_graph(updates)
 
-#what this does right now is generate a dictionary based on the outputs 
-""""
-class GraphGenerator():
-    def __init__(self, graph=None):
-        input = graph.get_node_by_name('Input')
-        self.graph_outline = None
-        file_uri = input.get_value()
-
-        if file_uri:
-            self.graph_outline = { 'input' : {'file_uri': file_uri} }
-            self.from_workbench(input)
-        else:
-            print("ERROR: Input File must have a FASTQ file input to run the pipeline!") # create some warning window that pops up if there is no URI/no input file
-
-    def from_workbench(self, input_node):
-
-        curr = input_node
-
-        while True:
-            connections = curr.connected_output_nodes() # gets all the connected output nodes in the form of a dictionary: {port object : list of nodes}
-            if not connections: # handles if there are no connections
-                break
-            
-            (_, nodes), = connections.items()
-
-            if not nodes: # if the node list is empty
-                break
-            
-            node = nodes[0]
-            
-            self.graph_outline.update({node.tool : node.get_value()})
-
-            curr = node
-
-        return self.graph_outline
-"""
-
 # New GraphGenerator class that converts node graph to backend graph data structure
 class GraphGenerator():
     def __init__(self, qt_graph):
@@ -158,6 +125,19 @@ class GraphGenerator():
 
         if not file_uri:
             print("ERROR: Input File must have a FASTQ file input to run the pipeline!") # create some warning window that pops up if there is no URI/no input file
+            return
+
+    def move_to_bindmount(self, directory) -> str:
+        os.makedirs(BIND_MOUNT_COPY_DIR, exist_ok=True) # Make input file directory within shared-data if it does not already exist
+
+        input_file_dict = {"reads": []}
+        for file in directory["reads"]:
+            uri = shutil.copy2(file, BIND_MOUNT_COPY_DIR)
+
+            rel_path = "./shared-data/input-files/" + os.path.basename(uri)
+            input_file_dict["reads"].append(rel_path)
+
+        return input_file_dict
 
     def from_workbench(self):
         # create backend nodes
@@ -173,12 +153,21 @@ class GraphGenerator():
             node.id = qt_node.id
 
             if isinstance(qt_node, InputNode):
+                print(f"qt_node get value: {qt_node.get_value()}")
+                print(f"move_to_bindmount: {self.move_to_bindmount(qt_node.get_value())}")
                 node.outputs = {
-                    "reads": qt_node.get_value()
+                    "reads": self.move_to_bindmount(qt_node.get_value())
                 }
                 node.args = {}  # input nodes don’t have args
             else:
                 node.args = qt_node.get_value()
+                if (tool == "trimmomatic"):
+                    node.args["steps"] = [
+                        {"name": "leading", "parameters": {"quality": 3}},
+                        {"name": "trailing", "parameters": {"quality": 3}},
+                        {"name": "sliding_window", "parameters": {"window_size": 4, "required_quality": 20}},
+                        {"name": "min_len", "parameters": {"length": 36}},
+                    ]
 
             self.node_map[qt_node] = node
 
@@ -529,11 +518,7 @@ class PipelineWorkbenchVC(PanelController):
             input_folder = input_node.outputs["reads"]["reads"][0] # gets the file URI of the input node's reads, which is the input folder for the pipeline
 
         for node_num, node in graph.nodes.items(): # shows the tools being ran sequentially and their args
-            print(f"Node ID: {node.id} Node Num {node_num}: tool={node.tool}, args={node.args}")
-
-        pipeline_factory = PipelineFactory()
-        pipeline = pipeline_factory.build_pipeline("nextflow", graph, input_folder, ToolRegistry(), pipeline_script_path="backend/pipeline.nf")
-        # pipeline.run_pipeline()
+            print(f"Node ID: {node.id}, Node Num {node_num}: tool={node.tool}, args={node.args}")
 
         # local creation
         local_uuid = self.app.new_pipeline(graph)
@@ -544,7 +529,6 @@ class PipelineWorkbenchVC(PanelController):
         if create_response.STATUS != APIStatus.SUCCESS:
             print(f'Failed to create pipeline on server, status:{create_response.STATUS}')
             return
-
 
 
         server_uuid = create_response.PIPELINE_ID
@@ -983,7 +967,7 @@ NODE_WIDGETS = {
         combo_box_widget('mode', 'Mode', items=['SE', 'PE']),
         combo_box_widget('phred', 'Phred', items=['33', '64'], nullable=True),
         checkbox_widget('validate_pairs', 'Validate Pairs'),
-        slider_widget('compress_level', 'Compression Level', max=9),
+        # slider_widget('compress_level', 'Compression Level', max=9),
         combo_box_widget('compression_mode', 'Compression Mode', items=['stream', 'block'], nullable=True),
         # quiet_check,
 
@@ -1687,13 +1671,13 @@ class DataNode(BaseNode):
 class InputNodeWrapper(NodeBaseWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.uri = None
 
         container = QtWidgets.QWidget()
         layout = QtWidgets.QVBoxLayout()
 
         #btn = QtWidgets.QPushButton('Input FASTQ File')
         #btn.clicked.connect(self.open_file)
-
         self.directory = None
         self.uri = None
         self.files = []
@@ -1714,7 +1698,6 @@ class InputNodeWrapper(NodeBaseWidget):
         layout.addWidget(self.dir_btn)
         layout.addWidget(self.file_selector)
         
-
         container.setLayout(layout)
         self.set_custom_widget(container)
 
@@ -1857,7 +1840,10 @@ class InputNode(DataNode):
 
     def get_value(self):
         # uri = self.get_property('file_uri')
+        uri = self.get_property('file_uri')
         # return {"reads" : [uri]} if uri else {}
+        return {"reads" : [uri]} if uri else {}
+        #return self.wrapper.get_value()
         directory = self.get_property('input_directory')
         file_uri = self.get_property('file_uri')
 
@@ -1882,6 +1868,8 @@ class InputNode(DataNode):
         super(InputNode, self).set_property(name, val, push_undo)
         if name == 'file_uri' and self.wrapper:
             self.wrapper.uri = val
+
+    
 
 class OutputNodeWrapper(NodeBaseWidget):
     def __init__(self, parent=None):

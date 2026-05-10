@@ -122,96 +122,6 @@ def validate_trinity_args(args: dict, context: dict | None = None) -> list[str]:
 
     return errors
 
-def render_trinity_command(
-    node_args: dict,
-    resolved_inputs: dict,
-    resolved_outputs: dict,
-) -> list[str]:
-    """
-    Build the Trinity command as a list of CLI parts.
-
-    resolved_inputs examples:
-
-        Paired-end:
-            {
-                "left_reads": [
-                    "/path/sampleA_R1.fastq.gz",
-                    "/path/sampleB_R1.fastq.gz",
-                ],
-                "right_reads": [
-                    "/path/sampleA_R2.fastq.gz",
-                    "/path/sampleB_R2.fastq.gz",
-                ],
-            }
-
-        Single-end:
-            {
-                "single_reads": [
-                    "/path/sampleA.fastq.gz",
-                    "/path/sampleB.fastq.gz",
-                ]
-            }
-
-    resolved_outputs example:
-        {
-            "outdir": "/work/pipeline_123/stage_2/sampleA_trinity_out_dir",
-            "assembly_fasta": "/work/pipeline_123/stage_2/sampleA_trinity_out_dir/Trinity.fasta",
-        }
-    """
-    parts = ["Trinity"]
-
-    effective_args = {**node_args}
-    effective_args["output"] = resolved_outputs["outdir"]
-
-    for arg_name, spec in arg_schema.items():
-        value = effective_args.get(arg_name)
-
-        if value is None:
-            continue
-
-        kind = spec["kind"]
-        cli_flag = spec["cli_flag"]
-
-        if kind == "option":
-            parts.extend([cli_flag, str(value)])
-
-    left_reads = resolved_inputs.get("left_reads", [])
-    right_reads = resolved_inputs.get("right_reads", [])
-    single_reads = resolved_inputs.get("single_reads", [])
-
-    has_paired = bool(left_reads) or bool(right_reads)
-    has_single = bool(single_reads)
-
-    if has_paired and has_single:
-        raise ValueError(
-            "Trinity input resolution cannot mix paired-end and single-end reads "
-            "in the basic node configuration."
-        )
-
-    if has_paired:
-        if not left_reads or not right_reads:
-            raise ValueError(
-                "Trinity paired-end mode requires both 'left_reads' and 'right_reads'."
-            )
-
-        if len(left_reads) != len(right_reads):
-            raise ValueError(
-                "Trinity paired-end mode requires the same number of left and right read files."
-            )
-
-        parts.extend(["--left", ",".join(left_reads)])
-        parts.extend(["--right", ",".join(right_reads)])
-
-    elif has_single:
-        parts.extend(["--single", ",".join(single_reads)])
-
-    else:
-        raise ValueError(
-            "Trinity requires either paired-end reads or single-end reads."
-        )
-
-    return parts
-
 def resolve_trinity_outputs(node_args: dict, context: dict) -> dict:
     """
     Resolve backend-managed Trinity outputs.
@@ -241,6 +151,5 @@ trinity_tool = build_tool_def(
     rules=rules,
     ui_schema=ui_schema,
     validate_fn=validate_trinity_args,
-    render_command_fn=render_trinity_command,
     resolve_outputs_fn=resolve_trinity_outputs,
 )

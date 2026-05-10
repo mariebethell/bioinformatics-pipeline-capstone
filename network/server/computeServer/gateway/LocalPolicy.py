@@ -1,4 +1,6 @@
 from rest_framework.request import Request
+import socket
+import ipaddress
 
 from network.server.computeServer.gateway import FilterPolicy
 from network.server.computeServer.gateway.DatagramTools import DatagramTools
@@ -50,5 +52,8 @@ class LocalPolicy(FilterPolicy.FilterPolicy):
             
         if ipaddr.is_loopback: 
             return True
+        
+        # Consider Docker host as the local machine as well
+        return any(ipaddr in network for network in self.docker_bridge_ranges)
         
         return False

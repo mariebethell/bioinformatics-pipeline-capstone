@@ -11,7 +11,7 @@ class FilterPolicy:
     """
 
     def __init__(self):
-        self.docker_bridge_range = ipaddress.ip_network('172.17.0.0/16')
+        self.docker_bridge_ranges = [ipaddress.ip_network('172.17.0.0/16'), ipaddress.ip_network('172.18.0.0/16'), ipaddress.ip_network('172.19.0.0/16'), ipaddress.ip_network('172.20.0.0/16'), ipaddress.ip_network('172.21.0.0/16'), ipaddress.ip_network('172.22.0.0/16')]
     
     def allow_inbound_datagram(self, dg: Request) -> bool:
         """
@@ -57,7 +57,7 @@ class FilterPolicy:
 
         try:
             ipaddr = DatagramTools.extract_ip(dg)
-            return ipaddr in self.docker_bridge_range
+            return any(ipaddr in network for network in self.docker_bridge_ranges)
             
         except ValueError:
             # Bad IP

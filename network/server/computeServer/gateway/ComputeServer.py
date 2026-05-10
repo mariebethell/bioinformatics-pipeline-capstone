@@ -13,7 +13,7 @@ from shared.CommandFactory import CommandFactory
 from shared.APIStatus import APIStatus
 
 from session.SessionManager import SessionManager
-from session.SessionManager import SessionManagerStub #TODO remove after testing
+from session.SessionManager import SessionManager #TODO remove after testing
 
 
 class ComputeServer:
@@ -24,7 +24,7 @@ class ComputeServer:
 
     def __init__(self):
         self.filter = LocalPolicy()
-        self.session_manager = SessionManagerStub(self) #TODO change to SessionManager when ready
+        self.session_manager = SessionManager(self) #TODO change to SessionManager when ready
     
     def ingest_datagram(self, cmd_type: Type[Command], request: Request):
         """

@@ -55,7 +55,7 @@ class Graph:
         return node
 
     def get_node(self, node_num) -> Node:
-        return self.nodes[node_num]
+        return self.nodes.get(node_num)
     
     def get_first_node(self) -> Node:
         return next(iter((self.nodes).values()), None) # Returns first node or None if graph is empty.

@@ -24,13 +24,15 @@ class ToolRegistry:
         }
 
         self.tool_aliases = {
+            "input": "input",
             "fastqc": "fastqc",
             "FastQC": "fastqc",
             "trimmomatic": "trimmomatic",
             "Trimmomatic": "trimmomatic",
+            "trinity": "trinity",
             "Trinity": "trinity",
             "De Novo Transcriptome Assembly": "trinity",
-        }
+}
 
     def normalize_tool_key(self, tool_name: str) -> str:
         """
@@ -43,10 +45,12 @@ class ToolRegistry:
         if not isinstance(tool_name, str) or not tool_name.strip():
             raise ValueError("Tool name must be a non-empty string.")
 
+        cleaned = tool_name.strip()
+
         if tool_name in self.tool_aliases:
             return self.tool_aliases[tool_name]
 
-        lowered = tool_name.strip().lower()
+        lowered = cleaned.lower()
         if lowered in self.tool_aliases:
             return self.tool_aliases[lowered]
 
@@ -146,29 +150,3 @@ class ToolRegistry:
             return {}
 
         return resolve_fn(node_args, context)
-
-    def render_tool_command(
-        self,
-        tool_name: str,
-        node_args: dict,
-        resolved_inputs: dict,
-        resolved_outputs: dict,
-    ) -> list[str]:
-        """
-        Render a command for a tool as a list of CLI parts.
-        """
-        tool_def = self.get_tool_def(tool_name)
-        render_fn = tool_def.get("render_command")
-
-        if render_fn is None:
-            raise ValueError(f"Tool '{tool_name}' does not define render_command().")
-
-        return render_fn(node_args, resolved_inputs, resolved_outputs)
-
-    def can_tool_accept_input(self, tool_name: str, input_format: str) -> bool:
-        """
-        Check whether a tool declares support for a given input format.
-        """
-        input_contract = self.get_tool_input_contract(tool_name)
-        accepted_formats = input_contract.get("accepted_formats", [])
-        return input_format in accepted_formats

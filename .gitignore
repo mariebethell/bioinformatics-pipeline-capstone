@@ -1,2 +1,5 @@
 __pycache__
+.nextflow*
+
 .vscode/
+db.sqlite3
