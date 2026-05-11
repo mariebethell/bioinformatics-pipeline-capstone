@@ -24,16 +24,22 @@ class DockerEngineStatus(Enum):
     stopping = -2
 
 class App:
+    mac_paths = ["usr/local/bin", "/opt/homebrew/bin", "/usr/bin"]
+    mac_pathvar = os.pathsep.join(mac_paths + os.environ.get("PATH", "").split(os.pathsep))
+
     @staticmethod
     def start_mac():
         # Need to call colima to start the docker engine
-        subprocess.run(["colima", "start"])
+
+        cur_env = os.environ.copy()
+        cur_env['PATH'] = App.mac_pathvar + os.pathsep + cur_env['PATH']
+        subprocess.run(["colima", "start"], env=cur_env)
 
         App.stall_until_docker_engine_ready()
 
         if App.query_docker_engine_status() is not DockerEngineStatus.running:
             error_dialog_script = r'display alert "Could not start" message "Could not start the Docker engine. Please start Docker Desktop manually and try again" as critical buttons {{"OK"}} default button "OK"'
-            subprocess.run(["osascript", "-e", error_dialog_script])
+            subprocess.run(["osascript", "-e", error_dialog_script], env=cur_env)
             sys.exit(-1)
 
         App.start_shared()
@@ -95,7 +101,9 @@ class App:
     def start_shared():
         # Start the container
         cd = Path(__file__).resolve().parent
-        subprocess.run(["docker", "compose", "up", "-d"], cwd=str(cd))
+        cur_env = os.environ.copy()
+        cur_env['PATH'] = App.mac_pathvar + os.pathsep + cur_env['PATH']
+        subprocess.run(["docker", "compose", "up", "-d"], cwd=str(cd), env=cur_env)
         
         # Stall until the compute server is listening
         App.stall_until_compute_server_ready()
@@ -137,7 +145,9 @@ class App:
 
     @staticmethod
     def query_docker_engine_status_mac():
-        colima_status_json = subprocess.run(['colima', 'status', '--json'], capture_output=True).stdout
+        cur_env = os.environ.copy()
+        cur_env['PATH'] = App.mac_pathvar + os.pathsep + cur_env['PATH']
+        colima_status_json = subprocess.run(['colima', 'status', '--json'], capture_output=True, env=cur_env).stdout
 
         try:
             json.loads(colima_status_json)
@@ -192,31 +202,41 @@ class App:
         App.ensure_brew_mac()
         App.ensure_colima_mac()
         
-        if shutil.which("docker") is None:
+        if shutil.which("docker", path=App.mac_pathvar) is None:
             # Need to install docker
-            subprocess.run(['brew', 'install', '--quiet', 'docker'])
+
+            cur_env = os.environ.copy()
+            cur_env['PATH'] = App.mac_pathvar + os.pathsep + cur_env['PATH']
+
+            subprocess.run(['brew', 'install', '--quiet', 'docker'], env=cur_env)
         
     @staticmethod
     def ensure_brew_mac():
-        if shutil.which("brew") is None:
+        if shutil.which("brew", path=App.mac_pathvar) is None:
             # Need to install brew
             pass_helper_path = Path(__file__).resolve().parent / 'mac_askpass.sh'
             os.chmod(pass_helper_path, 0o744)
+
+            cur_env = os.environ.copy()
+            cur_env['PATH'] = App.mac_pathvar + os.pathsep + cur_env['PATH']
             
-            subprocess.run(['xcode-select', '--install'])
+            subprocess.run(['xcode-select', '--install'], env=cur_env)
 
             auto_env = os.environ.copy()
             auto_env['NONINTERACTIVE'] = '1'
             auto_env['SUDO_ASKPASS'] = str(pass_helper_path)
+            auto_env['PATH'] = App.mac_pathvar + os.pathsep + auto_env['PATH']
             subprocess.run('sudo -A echo "Elevated"; /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"', shell=True, env=auto_env)
             
         return
         
     @staticmethod
     def ensure_colima_mac():
-        if shutil.which("colima") is None:
+        if shutil.which("colima", path=App.mac_pathvar) is None:
             # Need to install colima
-            subprocess.run(['brew', 'install', '--quiet', 'colima'])
+            cur_env = os.environ.copy()
+            cur_env['PATH'] = App.mac_pathvar + os.pathsep + cur_env['PATH']
+            subprocess.run(['brew', 'install', '--quiet', 'colima'], env=cur_env)
         
         return
     
