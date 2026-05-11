@@ -3,8 +3,10 @@ __pycache__
 
 .vscode/
 db.sqlite3
-./logs/
-./src/nodepipe/shared-data/*
+logs/
+src/nodepipe/shared-data/
 
 build/
 dist/
+
+.DS_Store

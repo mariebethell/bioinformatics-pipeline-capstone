@@ -1,5 +1,3 @@
-#!/bin/bash
-
 run_mac() {
 	poetry run briefcase run macOS
 }

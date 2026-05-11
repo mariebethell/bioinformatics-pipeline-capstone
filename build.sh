@@ -1,5 +1,3 @@
-#!/bin/bash
-
 build_mac() {
 	rm -rf ./build
 	rm -rf ./dist
