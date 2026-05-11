@@ -7,6 +7,7 @@ import shutil
 import asyncio
 import ipaddress
 import aiohttp
+import os
 
 from pathlib import Path
 from enum import Enum
@@ -167,21 +168,26 @@ class App:
     def ensure_docker_mac():
         App.ensure_brew_mac()
         App.ensure_colima_mac()
-        raise NotImplementedError()
+        
+        if True: #shutil.which("docker") is None:
+            # Need to install docker
+            subprocess.run(['brew', 'install', '--quiet', 'docker'])
         
     @staticmethod
     def ensure_brew_mac():
-        if shutil.which("brew") is None:
+        if True: #shutil.which("brew") is None:
             # Need to install brew
-            raise NotImplementedError()
+            auto_env = os.environ.copy()
+            auto_env['NONINTERACTIVE'] = '1'
+            subprocess.run('osascript -e "do shell script \\"/bin/bash -c \\\\\\"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\\\\\\"\\" with administrator privileges"', env=auto_env)
             
         return
         
     @staticmethod
     def ensure_colima_mac():
-        if shutil.which("colima") is None:
+        if True: #shutil.which("colima") is None:
             # Need to install colima
-            raise NotImplementedError()
+            subprocess.run(['brew', 'install', '--quiet', 'colima'])
         
         return
     
