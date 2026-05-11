@@ -177,9 +177,14 @@ class App:
     def ensure_brew_mac():
         if True: #shutil.which("brew") is None:
             # Need to install brew
+            pass_helper_path = Path(__file__).resolve().parent / 'mac_askpass.sh'
+            print(pass_helper_path)
+            os.chmod(pass_helper_path, 0o644)
+            
             auto_env = os.environ.copy()
             auto_env['NONINTERACTIVE'] = '1'
-            subprocess.run('osascript -e "do shell script \\"/bin/bash -c \\\\\\"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\\\\\\"\\" with administrator privileges"', env=auto_env)
+            auto_env['SUDO_ASKPASS'] = str(pass_helper_path)
+            subprocess.run(['sudo', '-A', '/bin/bash', '-c', '"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'], env=auto_env)
             
         return
         
