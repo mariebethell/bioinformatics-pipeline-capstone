@@ -106,6 +106,15 @@ class App:
     @staticmethod
     def query_docker_engine_status() -> DockerEngineStatus:
         # Check if docker is running already
+        if platform.system() == "Darwin": # Mac
+            return App.query_docker_engine_status_mac()
+
+        else:
+            return App.query_docker_engine_status_windows()
+
+
+    @staticmethod
+    def query_docker_engine_status_windows() -> DockerEngineStatus:
         docker_status_json = subprocess.run(["docker", "desktop", "status", "--format", "json"], capture_output=True).stdout
         docker_status = 'stopped' # Assume stopped by default
 
@@ -125,6 +134,20 @@ class App:
             pass # Assume stopped
 
         return status_enum
+
+    @staticmethod
+    def query_docker_engine_status_mac():
+        colima_status_json = subprocess.run(['colima', 'status', '--json'], capture_output=True).stdout
+
+        try:
+            json.loads(colima_status_json)
+            return DockerEngineStatus.running # Colima has no status field. It either returns valid JSON if running or it doesnt
+
+        except (json.JSONDecodeError, TypeError) as e:
+            print(f"caught {e}")
+            pass # Colima must not be running or is still starting
+
+        return DockerEngineStatus.stopped
 
     @staticmethod
     def stall_until_docker_engine_ready():
@@ -169,35 +192,36 @@ class App:
         App.ensure_brew_mac()
         App.ensure_colima_mac()
         
-        if True: #shutil.which("docker") is None:
+        if shutil.which("docker") is None:
             # Need to install docker
             subprocess.run(['brew', 'install', '--quiet', 'docker'])
         
     @staticmethod
     def ensure_brew_mac():
-        if True: #shutil.which("brew") is None:
+        if shutil.which("brew") is None:
             # Need to install brew
             pass_helper_path = Path(__file__).resolve().parent / 'mac_askpass.sh'
-            print(pass_helper_path)
-            os.chmod(pass_helper_path, 0o644)
+            os.chmod(pass_helper_path, 0o744)
             
+            subprocess.run(['xcode-select', '--install'])
+
             auto_env = os.environ.copy()
             auto_env['NONINTERACTIVE'] = '1'
             auto_env['SUDO_ASKPASS'] = str(pass_helper_path)
-            subprocess.run(['sudo', '-A', '/bin/bash', '-c', '"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'], env=auto_env)
+            subprocess.run('sudo -A echo "Elevated"; /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"', shell=True, env=auto_env)
             
         return
         
     @staticmethod
     def ensure_colima_mac():
-        if True: #shutil.which("colima") is None:
+        if shutil.which("colima") is None:
             # Need to install colima
             subprocess.run(['brew', 'install', '--quiet', 'colima'])
         
         return
     
     @staticmethod
-    def createVenv():
+    def create_venv():
         shared_path = Path(__file__).resolve().parent / "shared-data"
         shared_path.mkdir(parents=False, exist_ok=True)
 
@@ -211,9 +235,10 @@ class App:
     def bootup():
         # TODO show splash screen. It could take awhile to spin up the container
 
-        App.createVenv()
+        App.create_venv()
 
         if platform.system() == "Darwin": # Mac
+            print("Mac OS Detected")
             App.ensure_docker_mac()
             App.start_mac()
 

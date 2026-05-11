@@ -5,6 +5,7 @@ __pycache__
 db.sqlite3
 logs/
 src/nodepipe/shared-data/
+src/nodepipe/.env
 
 build/
 dist/
