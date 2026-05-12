@@ -2044,8 +2044,7 @@ class OutputNode(DataNode):
 
         
 
-def start_app():
-    app = QtWidgets.QApplication([])
+def start_app(app: QtWidgets.QApplication):
 
     #gets user's screen size for resizing the window
     screen = app.primaryScreen()
@@ -2071,4 +2070,4 @@ def start_app():
     app.exec()
     
 if __name__ == '__main__':
-    start_app()
+    start_app(QtWidgets.QApplication([]))

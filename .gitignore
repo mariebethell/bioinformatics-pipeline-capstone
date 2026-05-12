@@ -6,6 +6,7 @@ db.sqlite3
 logs/
 src/nodepipe/shared-data/
 src/nodepipe/.env
+src/nodepipe/resources/Docker\ Desktop\ Installer.exe
 
 build/
 dist/

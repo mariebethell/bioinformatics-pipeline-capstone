@@ -12,6 +12,7 @@ import os
 from pathlib import Path
 from enum import Enum
 from importlib import resources
+from PySide6 import QtWidgets, QtGui, QtCore
 
 from frontend import presentation
 
@@ -28,12 +29,14 @@ class App:
     mac_pathvar = os.pathsep.join(mac_paths + os.environ.get("PATH", "").split(os.pathsep))
 
     @staticmethod
-    def start_mac():
+    def start_mac(qt_app: QtWidgets.QApplication, splash_screen: QtWidgets.QSplashScreen):
         # Need to call colima to start the docker engine
+        App._upd_splash_msg(splash_screen, "Starting Docker engine...")
 
         cur_env = os.environ.copy()
         cur_env['PATH'] = App.mac_pathvar + os.pathsep + cur_env['PATH']
         subprocess.run(["colima", "start"], env=cur_env)
+        App._upd_splash_msg(splash_screen, "Waiting for Docker engine to initialize...")
 
         App.stall_until_docker_engine_ready()
 
@@ -42,21 +45,25 @@ class App:
             subprocess.run(["osascript", "-e", error_dialog_script], env=cur_env)
             sys.exit(-1)
 
-        App.start_shared()
+        App._upd_splash_msg(splash_screen, "Docker engine started")
+
+        App.start_shared(qt_app, splash_screen)
 
 
     @staticmethod
-    def start_windows():
+    def start_windows(qt_app: QtWidgets.QApplication, splash_screen: QtWidgets.QSplashScreen):
 
-        App.start_docker_engine_windows()
-        App.start_shared()
+        App.start_docker_engine_windows(splash_screen)
+        App.start_shared(qt_app, splash_screen)
 
 
     @staticmethod
-    def start_docker_engine_windows():
-        print("Starting Docker...")
+    def start_docker_engine_windows(splash_screen: QtWidgets.QSplashScreen):
         import winreg # Import is here to prevent loading on other OS
         import ctypes # For windows error box
+
+        print("Starting Docker...")
+        App._upd_splash_msg(splash_screen, "Starting Docker engine...")
 
         # Pull docker service path from registry
         docker_backend_path = None
@@ -81,6 +88,7 @@ class App:
 
         if App.query_docker_engine_status().value >= DockerEngineStatus.running.value:
             #Docker engine is already running
+            App._upd_splash_msg(splash_screen, "Docker engine running")
             return
 
         # Start the docker engine directly to avoid docker desktop GUI from popping up
@@ -91,9 +99,12 @@ class App:
             subprocess.Popen(['powershell', '-Command', f"Start-Process -FilePath '{str(docker_backend_path)}' -ArgumentList '-unattended' -WindowStyle Hidden"])
 
         except (ValueError, OSError):
+            App._upd_splash_msg(splash_screen, "Failed to silently start Docker. Launching full Docker Desktop...")
             subprocess.Popen(['docker', 'desktop', 'start']) # Fallback to using Docker GUI app to start the Docker engine
 
         print("Waiting for Docker to finish initializing...")
+        App._upd_splash_msg(splash_screen, "Waiting for Docker engine to initialize...")
+
         App.stall_until_docker_engine_ready()
 
         if App.query_docker_engine_status() != DockerEngineStatus.running:
@@ -102,12 +113,15 @@ class App:
             sys.exit(-1)
             
         print("Docker started!")
+        App._upd_splash_msg(splash_screen, "Docker engine started")
 
 
     @staticmethod
-    def start_shared():
+    def start_shared(qt_app: QtWidgets.QApplication, splash_screen: QtWidgets.QSplashScreen):
         # Start the container
         print("Launching compute container...")
+        App._upd_splash_msg(splash_screen, "Building compute container (this may take a few minutes)...")
+
         cd = Path(__file__).resolve().parent
         cur_env = os.environ.copy()
         cur_env['PATH'] = App.mac_pathvar + os.pathsep + cur_env['PATH']
@@ -115,11 +129,18 @@ class App:
         
         # Stall until the compute server is listening
         print("Waiting for container to finish initializing...")
+        App._upd_splash_msg(splash_screen, "Waiting for compute container to initialize...")
+
         App.stall_until_compute_server_ready()
+
         print("Container ready!")
+        App._upd_splash_msg(splash_screen, "Compute container ready. Starting NodePipe...")
+
+        # Drop loading splash, we're done loading
+        splash_screen.close()
 
         # Start the frontend
-        presentation.start_app()
+        presentation.start_app(qt_app)
 
     @staticmethod
     def query_docker_engine_status() -> DockerEngineStatus:
@@ -196,48 +217,77 @@ class App:
         return
 
     @staticmethod
-    def ensure_docker_windows():
+    def ensure_docker_windows(splash_screen: QtWidgets.QSplashScreen):
+        App._upd_splash_msg(splash_screen, "Checking if Docker is installed...")
+
         if shutil.which("docker"):
+            App._upd_splash_msg(splash_screen, "Docker is installed")
             return # Docker is already installed
             
         # Need to install docker
-        import ctypes # For windows message box
+
+        App._upd_splash_msg(splash_screen, "Docker not found. Launching installer")
+
+        import ctypes # For windows message box TODO switch to using Qt dialog
         with resources.path("nodepipe.resources", "Docker Desktop Installer.exe") as installer_path:
             subprocess.run([str(installer_path), "install", "--quiet", "--accept-license"], check=True)
             ctypes.windll.user32.MessageBoxW(0, "Docker installation complete. Please reboot your computer before running NodePipe again.", "Please reboot your device", 0x30) #0x30 is warning icon enum val
             sys.exit(0)
 
+        # If we get here, install failed somehow? Maybe installer wasn't packaged
+        ctypes.windll.user32.MessageBoxW(0, "Failed to install Docker. Please try again or install Docker Desktop manually", "Installation Error", 0x30) #0x30 is warning icon enum val
+        sys.exit(-1)
+
     @staticmethod
-    def ensure_docker_mac():
-        App.ensure_brew_mac()
-        App.ensure_colima_mac()
+    def ensure_docker_mac(splash_screen: QtWidgets.QSplashScreen):
+        App.ensure_brew_mac(splash_screen)
+        App.ensure_colima_mac(splash_screen)
         
+        App._upd_splash_msg(splash_screen, "Checking if Docker is installed...")
+
         if shutil.which("docker", path=App.mac_pathvar) is None:
             # Need to install docker
+
+            App._upd_splash_msg(splash_screen, "Docker not found. Installing...")
 
             cur_env = os.environ.copy()
             cur_env['PATH'] = App.mac_pathvar + os.pathsep + cur_env['PATH']
 
             subprocess.run(['brew', 'install', '--quiet', 'docker'], env=cur_env)
+
+        App._upd_splash_msg(splash_screen, "Docker installed")
+
+        return
         
     @staticmethod
-    def ensure_brew_mac():
+    def ensure_brew_mac(splash_screen: QtWidgets.QSplashScreen):
+        App._upd_splash_msg(splash_screen, "Checking if Homebrew is installed...")
+
         if shutil.which("brew", path=App.mac_pathvar) is None:
             # Need to install brew
+
+            App._upd_splash_msg(splash_screen, "Homebrew not found. Installing...")
+
             pass_helper_path = Path(__file__).resolve().parent / 'mac_askpass.sh'
             os.chmod(pass_helper_path, 0o744)
 
             cur_env = os.environ.copy()
             cur_env['PATH'] = App.mac_pathvar + os.pathsep + cur_env['PATH']
             
+            App._upd_splash_msg(splash_screen, "Installing XCode-Select...")
+
             subprocess.run(['xcode-select', '--install'], env=cur_env)
             App.stall_until_xcode_ready()
+
+            App._upd_splash_msg(splash_screen, "Resuming Homebrew installation...")
 
             auto_env = os.environ.copy()
             auto_env['NONINTERACTIVE'] = '1'
             auto_env['SUDO_ASKPASS'] = str(pass_helper_path)
             auto_env['PATH'] = App.mac_pathvar + os.pathsep + auto_env['PATH']
             subprocess.run('sudo -A echo "Elevated"; /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"', shell=True, env=auto_env)
+
+        App._upd_splash_msg(splash_screen, "Homebrew installed")
             
         return
 
@@ -257,24 +307,24 @@ class App:
         cur_env = os.environ.copy()
         cur_env['PATH'] = App.mac_pathvar + os.pathsep + cur_env['PATH']
         xcode_status = subprocess.run(['xcode-select', '-p'], capture_output=True, text=True, env=cur_env).stdout
-        print(f"type: {type(xcode_status)} {xcode_status}")
+        #print(f"type: {type(xcode_status)} {xcode_status}")
 
         if xcode_status is None:
-            print("xcode not ready, returned none")
+            #print("xcode not ready, returned none")
             return False
         
         elif len(xcode_status) == 0:
-            print("xcode is not ready, returned empty str")
+            #print("xcode is not ready, returned empty str")
             return False
         
         elif xcode_status.startswith("xcode-select: error: Unable to get active developer directory"):
             # xcode is not installed yet
-            print("xcode not ready")
+            #print("xcode not ready")
             return False
         
         elif xcode_status.startswith(r"/Library/"):
             # xcode is installed
-            print("xcode already installed")
+            #print("xcode already installed")
             return True
 
         raise ValueError(f"Unexpected result from xcode: {xcode_status}")
@@ -282,17 +332,26 @@ class App:
 
         
     @staticmethod
-    def ensure_colima_mac():
+    def ensure_colima_mac(splash_screen: QtWidgets.QSplashScreen):
+        App._upd_splash_msg(splash_screen, "Checking if Colima is installed...")
+
         if shutil.which("colima", path=App.mac_pathvar) is None:
             # Need to install colima
+
+            App._upd_splash_msg(splash_screen, "Colima not found. Installing...")
+
             cur_env = os.environ.copy()
             cur_env['PATH'] = App.mac_pathvar + os.pathsep + cur_env['PATH']
             subprocess.run(['brew', 'install', '--quiet', 'colima'], env=cur_env)
+
+        App._upd_splash_msg(splash_screen, "Colima installed")
         
         return
     
     @staticmethod
-    def create_venv():
+    def create_venv(splash_screen: QtWidgets.QSplashScreen):
+        App._upd_splash_msg(splash_screen, "Setting up environment...")
+
         shared_path = Path(__file__).resolve().parent / "shared-data"
         shared_path.mkdir(parents=False, exist_ok=True)
 
@@ -302,21 +361,36 @@ class App:
                 env_data = f"SHARED_DATA_PATH='{shared_path}'"
                 env_file.write(env_data)
 
+        App._upd_splash_msg(splash_screen, "Environment setup completed")
+
+    @staticmethod
+    def _upd_splash_msg(splash_screen: QtWidgets.QSplashScreen, msg: str):
+        splash_screen.showMessage(f"{msg}\n", 
+                                  QtCore.Qt.AlignmentFlag.AlignBottom \
+                                  | QtCore.Qt.AlignmentFlag.AlignCenter, 
+                                  QtCore.Qt.GlobalColor.white)
+
     @staticmethod
     def bootup():
-        # TODO show splash screen. It could take awhile to spin up the container
+        # Show splash screen. It could take awhile to spin up the container
+        qt_app = QtWidgets.QApplication([])
 
-        App.create_venv()
+        splash_bitmap = QtGui.QPixmap("./resources/img/splash.png")
+        splash_screen = QtWidgets.QSplashScreen(splash_bitmap, QtCore.Qt.WindowType.WindowStaysOnTopHint)
+        splash_screen.show()
+        qt_app.processEvents()
+
+        App.create_venv(splash_screen)
 
         if platform.system() == "Darwin": # Mac
             print("Mac OS Detected")
-            App.ensure_docker_mac()
-            App.start_mac()
+            App.ensure_docker_mac(splash_screen)
+            App.start_mac(qt_app, splash_screen)
 
         else:
-            App.ensure_docker_windows()
-            App.start_windows()
+            App.ensure_docker_windows(splash_screen)
+            App.start_windows(qt_app, splash_screen)
+
 
 if __name__ == "__main__":
     App.bootup()
-
