@@ -1020,8 +1020,6 @@ NODE_WIDGETS = {
 
     'trinity' : [
         combo_box_widget('seq_type', 'Sequence Type', items=['fq', 'fa']),
-        # threads_slider here formerly,
-        slider_widget('max_memory', 'Memory to Use (GB)', max=32)
     ],
 
     'bwa' : [], # empty as we need widgets for its two sub nodes

@@ -213,17 +213,8 @@ def build_trimmomatic_ext_args2(args: dict) -> str:
 
 
 def build_trinity_ext_args(args: dict) -> str:
-    max_memory = args.get("max_memory")
-    max_memory_part = ""
-    if max_memory not in (None, ""):
-        max_memory_str = str(max_memory)
-        max_memory_part = f"--max_memory {max_memory_str if max_memory_str.upper().endswith('G') else max_memory_str + 'G'}"
-
     return _join_flags(
         [
-            _maybe_option("--seqType", args.get("seq_type")),
-            _maybe_option("--CPU", args.get("cpu")),
-            max_memory_part,
             args.get("extra_args", ""),
         ]
     )
