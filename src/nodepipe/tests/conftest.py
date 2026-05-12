@@ -7,16 +7,27 @@ from shared.graph import Node, Graph
 
 @pytest.fixture
 def build_graph() -> Graph:
-    g = Graph()
+    graph = Graph()
 
-    n1 = g.create_node("tool 1")
-    n2 = g.create_node("tool 2")
-    n3 = g.create_node("tool 3")
+    # Use create_node for auto numbering
+    input = graph.create_node("input")
+    fastqc1 = graph.create_node("FastQC")
+    trimmomatic = graph.create_node("Trimmomatic")
+    fastqc2 = graph.create_node("FastQC")
+    trinity = graph.create_node("De Novo Transcriptome Assembly")
 
-    g.connect(n1, n2)
-    g.connect(n2, n3)
+    graph.add_node(input)
+    graph.add_node(fastqc1)
+    graph.add_node(trimmomatic)
+    graph.add_node(fastqc2)
+    graph.add_node(trinity)
+
+    graph.connect(input, fastqc1)
+    graph.connect(input, trimmomatic)
+    graph.connect(trimmomatic, fastqc2)
+    graph.connect(trimmomatic, trinity)
     
-    return g
+    return graph
 
 
 class BaseCmdTest:
@@ -57,10 +68,6 @@ class BaseCmdTest:
                 print("Deep comparison failed because node prev_nodes were not equal")
                 return False
                 
-            elif (obj1.next_node.node_num if obj1.next_node else None) != (obj2.next_node.node_num if obj2.next_node else None):
-                print("Deep comparison failed because nodes next_nodes were not equal")
-                return False
-                
             elif not BaseCmdTest.deep_compare_objs(obj1.state, obj2.state):
                 print("Deep comparison failed because nodes state were not equal")
                 return False
@@ -68,9 +75,17 @@ class BaseCmdTest:
             elif not BaseCmdTest.deep_compare_objs(obj1.outputs, obj2.outputs):
                 print("Deep comparison failed because nodes outputs were not equal")
                 return False
+
+            elif (len(obj1.next_nodes) != len(obj2.next_nodes)):
+                print("Deep comparison failed because next node arrays were of different lengths")
+                return False
+            
+            for idx in range(len(obj1.next_nodes)):
+                if not BaseCmdTest.deep_compare_objs(obj1.next_nodes[idx], obj2.next_nodes[idx]):
+                    print("Deep comparison failed because next node arrays did not match")
+                    return False
                 
-            else:
-                return True
+            return True
             
         if isinstance(obj1, UUID):
             return obj1 == obj2

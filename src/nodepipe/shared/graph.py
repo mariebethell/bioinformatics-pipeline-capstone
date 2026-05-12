@@ -66,7 +66,9 @@ class Graph:
 
     def add_node(self, node, prev=None, next=None):
         node.prev_node = prev
-        node.next_nodes.append(next)
+
+        if next is not None: # Fix bug where first element of next_nodes is always None
+            node.next_nodes.append(next)
 
         self.nodes[node.node_num] = node
 
