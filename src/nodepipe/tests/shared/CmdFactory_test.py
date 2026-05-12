@@ -223,6 +223,7 @@ class TestSerializer(BaseCmdTest): # Also tests CommandFactory and Command
                 
         except Exception as e:
             print(f"Test for Command type failed due to exception: {e}")
+            raise e
             return False
             
         return True
@@ -359,11 +360,11 @@ class TestSerializer(BaseCmdTest): # Also tests CommandFactory and Command
     def test_bad_json(build_graph):
         try:
             with pytest.raises(ValueError):
-                cmd = CommandFactory.deserialize_command(Command.NewPipeline, '{"input_uri": "/some/path", "graph": {"nodes": {"0": {"node_num": 0, "tool": "tool 1", "args": null, "inputs": null, "outputs": {}, "prev_node": null, "next_node": null, "state": 0, "prev_id": null, "next_id": 1}, "1": {"node_num": 1, "tool": "tool 2", "args": null, "inputs": null, "outputs": {}, "prev_node": null, "next_node": null, "state": 0, "prev_id": 0, "next_id": 2}, "2": {"node_num": 2, "tool": "tool 3", "args": null, "inputs": null, "outputs": {}, "prev_node": null, "next_node": null, "state": 0, "prev_id": 1, "next_id": null}}, "next_id": 3}, "timestamp": "2026-04-13T19:36:03.806247"}')
+                cmd = CommandFactory.deserialize_command(Command.NewPipeline, '{"input_uri": "/some/path", "graph": {"nodes": {"0": {"node_num": 0, "tool": "input", "args": null, "inputs": null, "outputs": {}, "prev_node": null, "next_nodes": [], "state": 0, "prev_id": null, "next_ids": [1, 2]}, "1": {"node_num": 1, "tool": "FastQC", "args": null, "inputs": null, "outputs": {}, "prev_node": null, "next_nodes": [], "state": 0, "prev_id": 0, "next_ids": []}, "2": {"node_num": 2, "tool": "Trimmomatic", "args": null, "inputs": null, "outputs": {}, "prev_node": null, "next_nodes": [], "state": 0, "prev_id": 0, "next_ids": [3, 4]}, "3": {"node_num": 3, "tool": "FastQC", "args": null, "inputs": null, "outputs": {}, "prev_node": null, "next_nodes": [], "state": 0, "prev_id": 2, "next_ids": []}, "4": {"node_num": 4, "tool": "De Novo Transcriptome Assembly", "args": null, "inputs": null, "outputs": {}, "prev_node": null, "next_nodes": [], "state": 0, "prev_id": 2, "next_ids": []}}, "next_id": 5}, "timestamp": "2026-05-12T14:36:27.333102"}')
                 raise RuntimeError("CommandFactory did not raise an exception when it should have")
             
         except ValueError:
-            pass; # Passed, move on to next test
+            pass # Passed, move on to next test
             
         except Exception as e:
             print(f"Test test_bad_json failed on missing param field test due to exception: {e}")
@@ -375,7 +376,7 @@ class TestSerializer(BaseCmdTest): # Also tests CommandFactory and Command
                 raise RuntimeError("CommandFactory did not raise an exception when it should have")
             
         except ValueError:
-            pass; # Passed, move on to next test
+            pass # Passed, move on to next test
             
         except Exception as e:
             print(f"Test test_bad_json failed on incorrect param field type test due to exception: {e}")
@@ -387,7 +388,7 @@ class TestSerializer(BaseCmdTest): # Also tests CommandFactory and Command
                 raise RuntimeError("CommandFactory did not raise an exception when it should have")
             
         except ValueError:
-            pass; # Passed, move on to next test
+            pass # Passed, move on to next test
             
         except Exception as e:
             print(f"Test test_bad_json failed on empty string test due to exception: {e}")
@@ -399,7 +400,7 @@ class TestSerializer(BaseCmdTest): # Also tests CommandFactory and Command
                 raise RuntimeError("CommandFactory did not raise an exception when it should have")
             
         except ValueError:
-            pass; # Passed, move on to next test
+            pass # Passed, move on to next test
             
         except Exception as e:
             print(f"Test test_bad_json failed on empty json test due to exception: {e}")
@@ -411,7 +412,7 @@ class TestSerializer(BaseCmdTest): # Also tests CommandFactory and Command
                 raise RuntimeError("CommandFactory did not raise an exception when it should have")
             
         except ValueError:
-            pass; # Passed, move on to next test
+            pass # Passed, move on to next test
             
         except Exception as e:
             print(f"Test test_bad_json failed on None json parameter test due to exception: {e}")

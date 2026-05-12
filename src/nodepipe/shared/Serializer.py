@@ -318,8 +318,14 @@ class Serializer:
         Returns:
             Dictionary containing all the data stored within the graph, with some mutations to support serialization (Nodes converted to SerializableNodes, etc.)
 
+        Raises:
+            TypeError if graph is None
+
         """
 
+        if graph is None:
+            raise TypeError("Given None instead of a Graph")
+        
         # Walk the graph, serializify all nodes
         proto_graph = {'nodes': {}, 'next_id': 0}
         if len(graph.nodes) == 0: 
@@ -327,12 +333,9 @@ class Serializer:
 
         proto_graph['next_id'] = graph.next_id
 
-        cur_node = graph.nodes[0]
-        while cur_node is not None:
+        for cur_node in graph.nodes.values():
             ser_node = SerializableNode.copy_construct(cur_node)
             proto_graph['nodes'][ser_node.node_num] = vars(ser_node)
-
-            cur_node = cur_node.next_node
 
         return proto_graph
     
@@ -374,8 +377,12 @@ class Serializer:
 
         proto_nodes = {}
         for ser_node_num, ser_node in graph_data['nodes'].items():
-            if int(ser_node_num) != ser_node['node_num']:
-                raise ValueError(f"Serializified Graph has mismatch between actual node num and node num specified in node dict key. Key: {ser_node_num}, actual: {ser_node['node_num']}. Dev debug _serializify_graph in Serializer.py")
+            try:
+                if int(ser_node_num) != ser_node['node_num']:
+                    raise ValueError(f"Serializified Graph has mismatch between actual node num and node num specified in node dict key. Key: {ser_node_num}, actual: {ser_node['node_num']}. Dev debug _serializify_graph in Serializer.py")
+
+            except ValueError:
+                raise ValueError(f"Serializified Graph's node key was not parsable into an int. Key: {ser_node_num}")
 
             if (not SerializableNode.validate_data_dict_shape(ser_node)):
                 raise ValueError("Node data in graph to deserializify is malformed")
@@ -399,7 +406,13 @@ class Serializer:
         for node in proto_nodes.values():
             try:
                 node.prev_node = proto_nodes.get(node.prev_id)
-                node.next_node = proto_nodes.get(node.next_id)
+
+                for n_node_id in node.next_ids:
+                    staged_node_ref = proto_nodes.get(n_node_id)
+                    if staged_node_ref is None:
+                        raise ValueError("Graph has node which references a non-existant next node id")
+                    
+                    node.next_nodes.append(staged_node_ref)
 
             except KeyError:
                 raise ValueError("Serialized graph has nodes which refer to invalid neighbor nodes")
@@ -461,7 +474,7 @@ class SerializableNode(graph.Node):
         super().__init__(None, None)     
         self.state = None
         self.prev_id = None
-        self.next_id = None
+        self.next_ids = []
 
     @staticmethod
     def copy_construct(original_node: graph.Node):
@@ -481,13 +494,16 @@ class SerializableNode(graph.Node):
         """
 
         if type(original_node) is not graph.Node:
-            raise TypeError("Input must be a Node")
+            raise TypeError(f"Input must be a Node, but was given {type(original_node)}")
 
         ser_node = SerializableNode()
 
-        # Need to remove dependency on memory references to send over net
+        # Need to remove dependencies on memory references to send over net
         l_idx = original_node.prev_node.node_num if original_node.prev_node is not None else None
-        r_idx = original_node.next_node.node_num if original_node.next_node is not None else None
+        
+        if original_node.next_nodes is not None:
+            for next_node in original_node.next_nodes:
+                ser_node.next_ids.append(next_node.node_num)
 
         # Make copies to avoid runtime dependencies on original
         ser_node.node_num = original_node.node_num
@@ -497,7 +513,6 @@ class SerializableNode(graph.Node):
         ser_node.outputs = copy.deepcopy(original_node.outputs)
 
         ser_node.prev_id = l_idx # is int
-        ser_node.next_id = r_idx # is int
         ser_node.state = original_node.state.value # is int
 
         return ser_node
