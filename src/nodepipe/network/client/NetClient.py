@@ -60,7 +60,7 @@ class NetClient:
         try:
            asyncio.run(NetClient._ping_server(server_ip, server_port))
 
-        except asyncio.TimeoutError | aiohttp.ClientConnectorError | TypeError:
+        except (asyncio.TimeoutError, aiohttp.ClientConnectorError, TypeError):
             raise ValueError("Bad server address or port given")
 
         except aiohttp.ClientError as e:

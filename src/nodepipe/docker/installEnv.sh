@@ -17,6 +17,7 @@ mkdir venv
 python3 -m venv ./venv
 . ./venv/bin/activate
 python3 -m ensurepip --upgrade
+pip install --upgrade pip setuptools wheel
 pip install pipx
 
 curl -s https://get.nextflow.io | bash
