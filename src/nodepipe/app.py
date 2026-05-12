@@ -54,6 +54,7 @@ class App:
 
     @staticmethod
     def start_docker_engine_windows():
+        print("Starting Docker...")
         import winreg # Import is here to prevent loading on other OS
         import ctypes # For windows error box
 
@@ -83,30 +84,39 @@ class App:
             return
 
         # Start the docker engine directly to avoid docker desktop GUI from popping up
-        if docker_backend_path is not None:
-            subprocess.Popen([str(docker_backend_path), "--with-frontend=false"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, creationflags=subprocess.CREATE_NO_WINDOW | subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP)
+        try:
+            if docker_backend_path is None:
+                raise ValueError()
+            
+            subprocess.Popen(['powershell', '-Command', f"Start-Process -FilePath '{str(docker_backend_path)}' -ArgumentList '-unattended' -WindowStyle Hidden"])
 
-        else:
+        except (ValueError, OSError):
             subprocess.Popen(['docker', 'desktop', 'start']) # Fallback to using Docker GUI app to start the Docker engine
 
+        print("Waiting for Docker to finish initializing...")
         App.stall_until_docker_engine_ready()
 
         if App.query_docker_engine_status() != DockerEngineStatus.running:
             # Timed out while waiting for Docker to start
             ctypes.windll.user32.MessageBoxW(0, "Could not start the Docker engine. Please start Docker Desktop manually and open NodePipe again", "Could not start", 0x10) #0x10 is error icon enum val
             sys.exit(-1)
+            
+        print("Docker started!")
 
 
     @staticmethod
     def start_shared():
         # Start the container
+        print("Launching compute container...")
         cd = Path(__file__).resolve().parent
         cur_env = os.environ.copy()
         cur_env['PATH'] = App.mac_pathvar + os.pathsep + cur_env['PATH']
         subprocess.run(["docker", "compose", "up", "-d"], cwd=str(cd), env=cur_env)
         
         # Stall until the compute server is listening
+        print("Waiting for container to finish initializing...")
         App.stall_until_compute_server_ready()
+        print("Container ready!")
 
         # Start the frontend
         presentation.start_app()
