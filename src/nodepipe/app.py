@@ -253,7 +253,7 @@ class App:
             print("xcode not ready, returned none")
             return False
         
-        elif len(xcode_status) is 0:
+        elif len(xcode_status) == 0:
             print("xcode is not ready, returned empty str")
             return False
         
