@@ -23,7 +23,11 @@ import ipaddress
 from network.client.CommandDispatcher import CommandDispatcher
 from shared.APIStatus import APIStatus
 
-BIND_MOUNT_COPY_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'shared-data/input-files/')
+from pathlib import Path
+
+BIND_MOUNT_COPY_DIR = str((
+    Path(__file__).resolve().parents[3] / "shared-data" / "input-files"
+))
 
 app = QtWidgets.QApplication([])
 class AppFrame(QtWidgets.QMainWindow):
@@ -1378,7 +1382,8 @@ class ToolNodeWrapper(NodeBaseWidget):
                 'parameters': params
             })
 
-        values['steps'] = steps
+        if self.tool == 'trimmomatic':
+            values['steps'] = steps
 
             # if widget_def:
             #     section = widget_def.get('section')
