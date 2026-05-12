@@ -41,8 +41,7 @@ class App:
         App.stall_until_docker_engine_ready()
 
         if App.query_docker_engine_status() is not DockerEngineStatus.running:
-            error_dialog_script = r'display alert "Could not start" message "Could not start the Docker engine. Please start Docker Desktop manually and try again" as critical buttons {{"OK"}} default button "OK"'
-            subprocess.run(["osascript", "-e", error_dialog_script], env=cur_env)
+            QtWidgets.QMessageBox.critical(None, "Could not start", "Could not start the Docker engine. Please start Docker Desktop manually and try again")
             sys.exit(-1)
 
         App._upd_splash_msg(splash_screen, "Docker engine started")
@@ -60,7 +59,6 @@ class App:
     @staticmethod
     def start_docker_engine_windows(splash_screen: QtWidgets.QSplashScreen):
         import winreg # Import is here to prevent loading on other OS
-        import ctypes # For windows error box
 
         print("Starting Docker...")
         App._upd_splash_msg(splash_screen, "Starting Docker engine...")
@@ -78,13 +76,8 @@ class App:
                     docker_backend_path = None
 
 
-            except Exception as e:
+            except Exception:
                 pass # We will fall back to atttempting to open Docker Desktop, might be annoying for the user but oh well
-                #ctypes.windll.user32.MessageBoxW(0, "Could not find Docker. Please reinstall NodePipe", "Could not start", 0x10) #0x10 is error icon enum val
-                
-
-           #except PermissionError:
-           #     ctypes.windll.user32.MessageBoxW(0, "Permission error while attempting to access Docker", "Could not start", 0x10) #0x10 is error icon enum val
 
         if App.query_docker_engine_status().value >= DockerEngineStatus.running.value:
             #Docker engine is already running
@@ -109,7 +102,7 @@ class App:
 
         if App.query_docker_engine_status() != DockerEngineStatus.running:
             # Timed out while waiting for Docker to start
-            ctypes.windll.user32.MessageBoxW(0, "Could not start the Docker engine. Please start Docker Desktop manually and open NodePipe again", "Could not start", 0x10) #0x10 is error icon enum val
+            QtWidgets.QMessageBox.critical(None, "Could not start", "Could not start the Docker engine. Please start Docker Desktop manually and try again")
             sys.exit(-1)
             
         print("Docker started!")
@@ -197,6 +190,12 @@ class App:
         while App.query_docker_engine_status() != DockerEngineStatus.running and stall_time < 300:
             time.sleep(1)
             stall_time += 1
+
+        if App.query_docker_engine_status() != DockerEngineStatus.running:
+            QtWidgets.QMessageBox.critical(None, "Could not start", "Docker engine failed to start. Please try again")
+            sys.exit(-1)
+
+        return
             
     @staticmethod
     def stall_until_compute_server_ready():
@@ -213,6 +212,11 @@ class App:
                 
             time.sleep(1)
             stall_time += 1
+
+        if not saw_ping:
+            # Server didn't come up. Timeout or crash?
+            QtWidgets.QMessageBox.critical(None, "Could not start", "Compute server failed to launch. Please try again")
+            sys.exit(-1)
             
         return
 
@@ -225,17 +229,16 @@ class App:
             return # Docker is already installed
             
         # Need to install docker
-
         App._upd_splash_msg(splash_screen, "Docker not found. Launching installer")
 
-        import ctypes # For windows message box TODO switch to using Qt dialog
         with resources.path("nodepipe.resources", "Docker Desktop Installer.exe") as installer_path:
             subprocess.run([str(installer_path), "install", "--quiet", "--accept-license"], check=True)
-            ctypes.windll.user32.MessageBoxW(0, "Docker installation complete. Please reboot your computer before running NodePipe again.", "Please reboot your device", 0x30) #0x30 is warning icon enum val
+
+            QtWidgets.QMessageBox.information(None, "Please reboot your device", "Docker installation complete. Please reboot your computer before running NodePipe again")
             sys.exit(0)
 
         # If we get here, install failed somehow? Maybe installer wasn't packaged
-        ctypes.windll.user32.MessageBoxW(0, "Failed to install Docker. Please try again or install Docker Desktop manually", "Installation Error", 0x30) #0x30 is warning icon enum val
+        QtWidgets.QMessageBox.critical(None, "Installation Error", "Failed to install Docker. Please try again or install Docker Desktop manually")
         sys.exit(-1)
 
     @staticmethod
@@ -254,6 +257,11 @@ class App:
             cur_env['PATH'] = App.mac_pathvar + os.pathsep + cur_env['PATH']
 
             subprocess.run(['brew', 'install', '--quiet', 'docker'], env=cur_env)
+
+            if shutil.which("docker", path=App.mac_pathvar) is None:
+                # Docker failed to install
+                QtWidgets.QMessageBox.critical(None, "Installation Error", "Failed to install Docker. Please try again or install Docker Desktop manually")
+                sys.exit(-1)
 
         App._upd_splash_msg(splash_screen, "Docker installed")
 
@@ -287,6 +295,11 @@ class App:
             auto_env['PATH'] = App.mac_pathvar + os.pathsep + auto_env['PATH']
             subprocess.run('sudo -A echo "Elevated"; /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"', shell=True, env=auto_env)
 
+            if shutil.which("brew", path=App.mac_pathvar) is None:
+                # Brew failed to install
+                QtWidgets.QMessageBox.critical(None, "Installation Error", "Failed to install Homebrew. Please try again or install Homebrew manually")
+                sys.exit(-1)
+
         App._upd_splash_msg(splash_screen, "Homebrew installed")
             
         return
@@ -301,6 +314,11 @@ class App:
 
         if stall_time > 5 and App.query_xcode_ready():
             time.sleep(10) # Give xcode time to finalize install
+
+        if not App.query_xcode_ready():
+            #Install failed or timed out
+            QtWidgets.QMessageBox.critical(None, "Installation Error", "Failed to install XCode-Select. Please try again or install XCode-Select manually")
+            sys.exit(-1)
 
     @staticmethod
     def query_xcode_ready():
@@ -343,6 +361,11 @@ class App:
             cur_env = os.environ.copy()
             cur_env['PATH'] = App.mac_pathvar + os.pathsep + cur_env['PATH']
             subprocess.run(['brew', 'install', '--quiet', 'colima'], env=cur_env)
+
+            if shutil.which("colima", path=App.mac_pathvar) is None:
+                # Colima failed to install
+                QtWidgets.QMessageBox.critical(None, "Installation Error", "Failed to install Colima. Please try again or install Colima manually")
+                sys.exit(-1)
 
         App._upd_splash_msg(splash_screen, "Colima installed")
         
