@@ -1,7 +1,5 @@
 run_mac() {
-    rm -rf ./build
-
-	poetry run briefcase run macOS
+    bash -c 'cd ./src/nodepipe; python3 app.py'
 }
 
 OS="$(uname)"

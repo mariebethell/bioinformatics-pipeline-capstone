@@ -221,6 +221,7 @@ class App:
             cur_env['PATH'] = App.mac_pathvar + os.pathsep + cur_env['PATH']
             
             subprocess.run(['xcode-select', '--install'], env=cur_env)
+            App.stall_until_xcode_ready()
 
             auto_env = os.environ.copy()
             auto_env['NONINTERACTIVE'] = '1'
@@ -229,6 +230,46 @@ class App:
             subprocess.run('sudo -A echo "Elevated"; /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"', shell=True, env=auto_env)
             
         return
+
+    @staticmethod
+    def stall_until_xcode_ready():
+        # Stall until xcode CLI tools is installed
+        stall_time = 0
+        while not App.query_xcode_ready() and stall_time < 300:
+            time.sleep(1)
+            stall_time += 1
+
+        if stall_time > 5 and App.query_xcode_ready():
+            time.sleep(10) # Give xcode time to finalize install
+
+    @staticmethod
+    def query_xcode_ready():
+        cur_env = os.environ.copy()
+        cur_env['PATH'] = App.mac_pathvar + os.pathsep + cur_env['PATH']
+        xcode_status = subprocess.run(['xcode-select', '-p'], capture_output=True, text=True, env=cur_env).stdout
+        print(f"type: {type(xcode_status)} {xcode_status}")
+
+        if xcode_status is None:
+            print("xcode not ready, returned none")
+            return False
+        
+        elif len(xcode_status) is 0:
+            print("xcode is not ready, returned empty str")
+            return False
+        
+        elif xcode_status.startswith("xcode-select: error: Unable to get active developer directory"):
+            # xcode is not installed yet
+            print("xcode not ready")
+            return False
+        
+        elif xcode_status.startswith(r"/Library/"):
+            # xcode is installed
+            print("xcode already installed")
+            return True
+
+        raise ValueError(f"Unexpected result from xcode: {xcode_status}")
+        return False
+
         
     @staticmethod
     def ensure_colima_mac():
