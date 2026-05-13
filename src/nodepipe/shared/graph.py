@@ -1,4 +1,5 @@
 from enum import Enum
+from __future__ import annotations
 
 class StageState(Enum):
     NEW = 0
@@ -15,8 +16,8 @@ class Node:
         self.args = args
         self.inputs = inputs
         self.outputs = {}
-        self.prev_node: Node | None = None  # There should only ever be one previous Node, unless multiple inputs are allowed
-        self.next_nodes = []                # Node -> [Nodes]. A tool can be connected to multiple other tools.
+        self.prev_node: Node | None = None  # There should only ever be one previous Node, multiple inputs are not currently supported
+        self.next_nodes: list[Node] = []    # A tool can be connected to multiple other tools.
         self.state = StageState.NEW
         
     def can_accept_input(self, in_type):

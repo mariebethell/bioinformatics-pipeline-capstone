@@ -23,11 +23,6 @@ import ipaddress
 from network.client.CommandDispatcher import CommandDispatcher
 from shared.APIStatus import APIStatus
 
-from pathlib import Path
-
-#BIND_MOUNT_COPY_DIR = str((
-#    Path(__file__).resolve().parents[3] / "shared-data" / "input-files"
-#))
 BIND_MOUNT_COPY_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'shared-data/input-files/')
 
 app = QtWidgets.QApplication([])
@@ -135,7 +130,6 @@ class GraphGenerator():
     def move_to_bindmount(self, directory) -> str:
         os.makedirs(BIND_MOUNT_COPY_DIR, exist_ok=True) # Make input file directory within shared-data if it does not already exist
 
-        print(BIND_MOUNT_COPY_DIR)
         input_file_dict = {"reads": []}
         for file in directory["reads"]:
             uri = shutil.copy2(file, BIND_MOUNT_COPY_DIR)
@@ -198,10 +192,10 @@ class GraphGenerator():
                         self.node_map[qt_node],
                         self.node_map[target]
                     )
-                    if isinstance(qt_node, ToolNode): 
-                        print(f'{qt_node.tool} -> {target}')
-                    else:
-                        print(f'{type(qt_node)} -> {target}')
+                    # if isinstance(qt_node, ToolNode): 
+                    #     print(f'{qt_node.tool} -> {target}')
+                    # else:
+                    #     print(f'{type(qt_node)} -> {target}')
 
         return self.graph
 

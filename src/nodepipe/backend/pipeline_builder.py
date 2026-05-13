@@ -420,4 +420,3 @@ class NextflowGenerator:
         lines.append('}')
         lines.append('')
         return '\n'.join(lines)
-    
