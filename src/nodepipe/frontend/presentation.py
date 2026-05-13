@@ -16,6 +16,7 @@ from abc import ABC, abstractmethod
 from shared.graph import Graph
 from backend.pipeline_builder import PipelineFactory
 from backend.tool_registry import ToolRegistry
+import webview
 
 # later remove when refactoring
 import uuid
@@ -770,16 +771,11 @@ class HomeView(QtWidgets.QWidget):
         self.onedrive_container.setMaximumWidth(450)
         self.onedrive_container.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.web_view = QtWebEngineWidgets.QWebEngineView()
-        web_settings = self.web_view.settings()
-        web_settings.setAttribute(web_settings.WebAttribute.JavascriptCanOpenWindows, True)
-
+        self.web_view = webview.WebView()
+  
         od_cont_layout = QtWidgets.QVBoxLayout()
         od_cont_layout.addWidget(self.web_view)
         self.onedrive_container.setLayout(od_cont_layout)
-
-        login_url = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize'
-        self.web_view.setUrl(QtCore.QUrl(login_url))
 
 
         spacer = QtWidgets.QSpacerItem(100, 100)
