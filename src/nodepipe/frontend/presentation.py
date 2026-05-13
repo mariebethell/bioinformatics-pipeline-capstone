@@ -17,6 +17,9 @@ from shared.graph import Graph
 from backend.pipeline_builder import PipelineFactory
 from backend.tool_registry import ToolRegistry
 
+from playwright.async_api import async_playwright
+import asyncio
+
 # later remove when refactoring
 import uuid
 import ipaddress
@@ -64,7 +67,8 @@ class AppFrame(QtWidgets.QMainWindow):
         btns = { 
             'Settings' : self.settings.init_view,
             'Home' : self.home.init_view,
-            'Pipeline Workbench' : self.workbench.init_view
+            'Pipeline Workbench' : self.workbench.init_view,
+            'upTest' : OneDriveUploader.run_test
             }
 
         for label, func in btns.items():
@@ -187,6 +191,102 @@ class GraphGenerator():
                     #     print(f'{type(qt_node)} -> {target}')
 
         return self.graph
+
+
+class OneDriveUploader:
+    def __init__(self):
+        try:
+            async_sm = asyncio.get_event_loop()
+            async_sm.create_task(self._build_engine())
+        
+        except RuntimeError:
+            pass # Fallback to new event loop
+
+        asyncio.run(self._build_engine())
+        return
+
+    def __del__(self):
+        try:
+            async_sm = asyncio.get_event_loop()
+            async_sm.create_task(self.stop())
+        
+        except RuntimeError:
+            pass # Fallback to new event loop
+            
+        asyncio.run(self.stop())
+        return
+
+    async def stop(self):
+        if self.playwright is not None:
+            await self.playwright.stop()
+
+    async def _build_engine(self):
+        return # Temp hack to fix scoping issue
+        self.playwright = await async_playwright().start()
+        self.engine = await self.playwright.chromium.launch(headless=True)
+        self.page = await self.engine.new_page()
+        await self.page.goto('https://csusm-my.sharepoint.com/:f:/g/personal/lopez2349_csusm_edu/IgA49nG5FJ9zQKUU0pp3-bzpAai6HcPCUIlidkIByGlnaKE?e=OITKUA')
+
+    def upload_file(self, file: Path):        
+        try:
+            async_sm = asyncio.get_event_loop()
+            async_sm.create_task(self._upload_file_worker(file))
+            return
+        
+        except RuntimeError:
+            pass # Fallback to new event loop
+        
+        asyncio.run(self._upload_file_worker(file))
+        return
+
+    async def _upload_file_worker(self, file:Path):
+        self.playwright = await async_playwright().start()
+        self.engine = await self.playwright.chromium.launch(headless=True)
+        self.page = await self.engine.new_page()
+        await self.page.goto('https://csusm-my.sharepoint.com/:f:/g/personal/lopez2349_csusm_edu/IgA49nG5FJ9zQKUU0pp3-bzpAai6HcPCUIlidkIByGlnaKE?e=OITKUA')
+
+        await self.page.evaluate("""() => {
+            const tempInput = document.createElement('input');
+            tempInput.type = 'file';
+            tempInput.id = 'pw-temp-input';
+            document.body.appendChild(tempInput);
+        }""")
+
+        await self.page.set_input_files("#pw-temp-input", str(file))
+        drop_zone = self.page.locator('[role="main"]')
+
+        await drop_zone.evaluate("""(dropZone) => {
+            //const dropZone = document.querySelector('[role="main"]');
+            const tempInput = document.querySelector('#pw-temp-input');
+            
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(tempInput.files[0]);
+                                 
+            // 1. DragEnter
+            dropZone.dispatchEvent(new DragEvent('dragenter', {
+                bubbles: true,
+                dataTransfer: dataTransfer
+            }));
+
+            // 2. DragOver (Crucial for many JS libraries to accept the drop)
+            dropZone.dispatchEvent(new DragEvent('dragover', {
+                bubbles: true,
+                dataTransfer: dataTransfer
+            }));
+            
+            const dropEvent = new DragEvent('drop', {
+                bubbles: true,
+                dataTransfer: dataTransfer
+            });
+            
+            dropZone.dispatchEvent(dropEvent);
+            tempInput.remove(); // Clean up
+        }""")
+
+    @staticmethod
+    def run_test():
+        uploader = OneDriveUploader()
+        uploader.upload_file(Path('D:/Documents/School/CSUSM/CS490/l3 center 3.png').resolve())
 
 
 
@@ -767,9 +867,9 @@ class HomeView(QtWidgets.QWidget):
         od_cont_layout.addWidget(self.web_view)
         self.onedrive_container.setLayout(od_cont_layout)
 
-        login_url = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize'
-        self.web_view.setUrl(QtCore.QUrl(login_url))
-
+        #folder_url = 'https://csusm-my.sharepoint.com/:f:/g/personal/lopez2349_csusm_edu/IgA49nG5FJ9zQKUU0pp3-bzpAai6HcPCUIlidkIByGlnaKE?e=OITKUA'
+        folder_url = ''
+        self.web_view.setUrl(QtCore.QUrl(folder_url))
 
         spacer = QtWidgets.QSpacerItem(100, 100)
 
@@ -823,8 +923,6 @@ class HomeView(QtWidgets.QWidget):
         outer_layout.addWidget(container)
         
         self.setLayout(outer_layout)
-
-
 
 
 
