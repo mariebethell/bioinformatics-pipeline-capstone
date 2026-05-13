@@ -1,0 +1,544 @@
+Date/Time:       2026-05-10 22:44:17 
+Command line:    C:\miniconda\envs\bioinf\Scripts\briefcase package windows
+
+OS Release:      Windows 10
+OS Version:      10.0.19045
+Architecture:    AMD64
+Platform:        Windows-10-10.0.19045-SP0
+
+Python exe:      C:\miniconda\envs\bioinf\python.exe
+Python version:  3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]
+Virtual env:     False
+Conda env:       True
+
+Briefcase:       0.4.1
+Target platform: windows
+Target format:   app
+
+Environment Variables:
+	3DVPATH=C:\AMD\Chipset_Software\Binaries\3D_V-Cache_Performance_Optimizer_Driver\
+	ALLUSERSPROFILE=C:\ProgramData
+	ANDROID_SDK_HOME=C:\Android
+	APPDATA=C:\Users\Kenneth Lopez\AppData\Roaming
+	BRIEFCASE_HOME=D:\briefcase\Cache
+	CHOCOLATEYINSTALL=C:\ProgramData\chocolatey
+	CHOCOLATEYLASTPATHUPDATE=133198649952473088
+	COMMONPROGRAMFILES=C:\Program Files\Common Files
+	COMMONPROGRAMFILES(X86)=C:\Program Files (x86)\Common Files
+	COMMONPROGRAMW6432=C:\Program Files\Common Files
+	COMPUTERNAME=DESKTOP-I4E6VFG
+	COMSPEC=C:\WINDOWS\system32\cmd.exe
+	CONDA_DEFAULT_ENV=bioinf
+	CONDA_EXE=C:\miniconda\Scripts\conda.exe
+	CONDA_PREFIX=C:\miniconda\envs\bioinf
+	CONDA_PREFIX_1=C:\miniconda
+	CONDA_PROMPT_MODIFIER=(bioinf) 
+	CONDA_PYTHON_EXE=C:\miniconda\python.exe
+	CONDA_SHLVL=2
+	CUDA_PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.1
+	CUDA_PATH_V11_1=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.1
+	DRIVERDATA=C:\Windows\System32\Drivers\DriverData
+	GIT_LFS_PATH=C:\Program Files\Git LFS
+	HOMEDRIVE=C:
+	HOMEPATH=\Users\Kenneth Lopez
+	INTELLIJ IDEA COMMUNITY EDITION=C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2025.2.1\bin
+	INTEL_DEV_REDIST=C:\Program Files (x86)\Common Files\Intel\Shared Libraries\
+	JAVA_HOME=C:\Program Files\Java\jdk-25
+	KEYSHOT10=********************
+	KEYSHOT9=********************
+	KEYSHOT_EXTERNAL_LICENSE_FOLDER=********************
+	LOCALAPPDATA=C:\Users\Kenneth Lopez\AppData\Local
+	LOGONSERVER=\\DESKTOP-I4E6VFG
+	NUMBER_OF_PROCESSORS=32
+	NVM_HOME=C:\Users\Kenneth Lopez\AppData\Roaming\nvm
+	NVM_SYMLINK=C:\Program Files\nodejs
+	OCULUSBASE=C:\Program Files\Oculus\
+	ONEDRIVE=C:\Users\Kenneth Lopez\OneDrive
+	OS=Windows_NT
+	PATH=C:\miniconda\envs\bioinf\Scripts;C:\miniconda\envs\bioinf;C:\miniconda\envs\bioinf\Library\mingw-w64\bin;C:\miniconda\envs\bioinf\Library\usr\bin;C:\miniconda\envs\bioinf\Library\bin;C:\miniconda\envs\bioinf\Scripts;C:\miniconda\envs\bioinf\bin;C:\miniconda\condabin;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\ImageMagick-7.1.2-Q16-HDRI;D:\OracleDB\dbhomeXE\bin;D:\OracleDatabaseXE\dbhomeXE\bin;C:\Program Files (x86)\VMware\VMware Player\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Python311\Scripts;C:\Python311;C:\Program Files\Oculus\Support\oculus-runtime;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64_win\compiler;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\Program Files\ffmpeg;D:\Program Files\CMake\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Program Files\dotnet;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\110\Tools\Binn;C:\Program Files (x86)\Microsoft SQL Server\120\Tools\Binn;C:\Program Files\Microsoft SQL Server\120\Tools\Binn;C:\Program Files\Microsoft SQL Server\120\DTS\Binn;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit;C:\platform-tools;C:\Program Files\VideoLAN\VLC;C:\mingw64\bin;C:\Android;C:\Program Files\Microsoft VS Code\bin;C:\ProgramData\chocolatey\bin;C:\Program Files\Git LFS;C:\Program Files\PuTTY;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit;C:\Users\Kenneth Lopez\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\Strings;C:\Program Files\7-Zip;C:\Program Files\NVIDIA Corporation\NVIDIA app\NvDLISR;C:\Program Files\Mullvad VPN\resources;C:\Program Files\gs\gs10.05.1\bin;C:\Program Files\Tesseract-OCR;C:\Program Files\PowerToys\DSCModules;C:\Program Files\PowerShell\7;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\Git\cmd;C:\Program Files (x86)\Arm GNU Toolchain arm-none-eabi\12.2 mpacbti-bet1\bin;C:\Users\Kenneth Lopez\AppData\Local\Microsoft\WindowsApps;C:\Users\Kenneth Lopez\.dotnet\tools;C:\Program Files (x86)\Nmap;C:\Users\Kenneth Lopez\AppData\Roaming\npm;C:\Users\Kenneth Lopez\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Users\Kenneth Lopez\AppData\Local\Microsoft\WinGet\Packages\DuckDB.cli_Microsoft.Winget.Source_8wekyb3d8bbwe;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2025.2.1\bin;C:\Users\Kenneth Lopez\AppData\Local\Python\bin
+	PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL
+	PICO_EXTRAS_PATH=D:\Documents\Pico Projects\SDK\pico-extras"
+	PICO_SDK_PATH=D:\Documents\Pico Projects\SDK\pico-sdk"
+	POWERSHELL_DISTRIBUTION_CHANNEL=MSI:Windows 10 Pro
+	PROCESSOR_ARCHITECTURE=AMD64
+	PROCESSOR_IDENTIFIER=AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD
+	PROCESSOR_LEVEL=25
+	PROCESSOR_REVISION=6102
+	PROGRAMDATA=C:\ProgramData
+	PROGRAMFILES=C:\Program Files
+	PROGRAMFILES(X86)=C:\Program Files (x86)
+	PROGRAMW6432=C:\Program Files
+	PROMPT=$P$G
+	PSEXECUTIONPOLICYPREFERENCE=Bypass
+	PSMODULEPATH=D:\Documents\WindowsPowerShell\Modules;C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules;C:\Program Files (x86)\Microsoft SQL Server\120\Tools\PowerShell\Modules\
+	PUBLIC=C:\Users\Public
+	PYTHONPATH=C:\Python311\Lib;C:\Python311\DLLs;
+	P_SCHEMA=C:\Program Files\Siemens\Solid Edge 2022\Schema
+	SESSIONNAME=Console
+	SE_LICENSE_SERVER=C:\Program Files\Siemens\Solid Edge 2022\Preferences\SELicense.lic
+	SSL_CERT_DIR=C:\miniconda\envs\bioinf\Library\ssl\certs
+	SSL_CERT_FILE=C:\miniconda\envs\bioinf\Library\ssl\cacert.pem
+	SYSTEMDRIVE=C:
+	SYSTEMROOT=C:\WINDOWS
+	TEMP=C:\Users\KENNET~1\AppData\Local\Temp
+	TMP=C:\Users\KENNET~1\AppData\Local\Temp
+	USERDOMAIN=DESKTOP-I4E6VFG
+	USERDOMAIN_ROAMINGPROFILE=DESKTOP-I4E6VFG
+	USERNAME=Kenneth Lopez
+	USERPROFILE=C:\Users\Kenneth Lopez
+	VBOX_MSI_INSTALL_PATH=C:\Program Files\Oracle\VirtualBox\
+	VIRTUAL_ENV=C:\miniconda\envs\bioinf
+	WINDIR=C:\WINDOWS
+	_CONDA_EXE=C:\miniconda\Scripts\conda.exe
+	_CONDA_ROOT=C:\miniconda
+	__CONDA_OPENSSL_CERT_DIR_SET=1
+	__CONDA_OPENSSL_CERT_FILE_SET=1
+	__PSLOCKDOWNPOLICY=0
+
+pyproject.toml:
+[project]
+name = "nodepipe"
+version = "0.1.0"
+description = "Visual editor and executor for bioinformatics pipelines using NextFlow"
+authors = [
+    {name = "CSUSM-CSE-47-2026-CS-S03-Team-002",email = "you@example.com"}
+]
+readme = "README.md"
+requires-python = "~=3.11.0"
+dependencies = [
+    "django (==5.2.13)",
+    "django-rest-framework (>=0.1.0,<0.2.0)",
+    "daphne (>=4.2.1,<5.0.0)",
+    "channels (>=4.3.2,<5.0.0)",
+    "websockets (>=16.0,<17.0)",
+]
+
+[dependency-groups]
+dev = [
+    "pytest (>=9.0.3,<10.0.0)"
+]
+
+ui = [
+    "pyside6 (>=6.11.0,<7.0.0)",
+    "nodegraphqt (>=0.6.44,<0.7.0)",
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+package-mode = false
+
+
+# This project was generated with 0.4.1 using template: https://github.com/beeware/briefcase-template @ v0.4.1
+[tool.briefcase]
+project_name = "NodePipe"
+bundle = "com.csusm.capstone.nodepipe"
+version = "0.0.1"
+url = "https://github.com/mariebethell/bioinformatics-pipeline-capstone"
+license.file = "LICENSE"
+author = "CSUSM-CSE-47-2026-CS-S03-Team-002"
+author_email = "lopez2349@csusm.edu"
+
+[tool.briefcase.app.nodepipe]
+formal_name = "NodePipe"
+description = "Visual editor and executor for bioinformatics pipelines using NextFlow"
+long_description = """More details about the app should go here.
+"""
+sources = [
+    "src/nodepipe",
+]
+test_sources = [
+    "tests",
+]
+
+requires-python = "~=3.11.0"
+
+requires = [
+	"django (==5.2.13)",
+    "django-rest-framework (>=0.1.0,<0.2.0)",
+    "pyside6 (>=6.11.0,<7.0.0)",
+    "nodegraphqt (>=0.6.44,<0.7.0)",
+    "daphne (>=4.2.1,<5.0.0)",
+    "channels (>=4.3.2,<5.0.0)",
+    "websockets (>=16.0,<17.0)",
+]
+test_requires = [
+    "pytest",
+]
+
+[tool.briefcase.app.nodepipe.macOS]
+universal_build = true
+# As of Pyside 6.8, PySide enforces a macOS 12 minimum on wheels.
+min_os_version = "12.0"
+requires = [
+    "std-nslog~=1.0.3",
+]
+
+[tool.briefcase.app.nodepipe.linux]
+requires = [
+]
+
+[tool.briefcase.app.nodepipe.linux.system.debian]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "libgl1",
+    "libqt6dbus6",
+    "libqt6gui6",
+    "libxcb-cursor0",
+    # The following packages are explicit dependencies on recent Debian-based
+    # distros, but not on Ubuntu 22.04.
+    "libxcb-icccm4",
+    "libxcb-keysyms1",
+    "libxcb-shape0",
+    "libxkbcommon-x11-0",
+]
+
+[tool.briefcase.app.nodepipe.linux.system.rhel]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "qt6-qtbase-gui",
+]
+
+[tool.briefcase.app.nodepipe.linux.system.suse]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "libgthread-2_0-0",
+    "libQt6Gui6",
+]
+
+[tool.briefcase.app.nodepipe.linux.system.arch]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "qt6-base",
+]
+
+[tool.briefcase.app.nodepipe.linux.appimage]
+manylinux = "manylinux_2_28"
+
+system_requires = [
+# ?? FIXME
+]
+
+linuxdeploy_plugins = [
+]
+
+[tool.briefcase.app.nodepipe.linux.flatpak]
+flatpak_runtime = "org.kde.Platform"
+flatpak_runtime_version = "6.9"
+flatpak_sdk = "org.kde.Sdk"
+
+[tool.briefcase.app.nodepipe.windows]
+requires = [
+]
+
+# Mobile deployments
+[tool.briefcase.app.nodepipe.iOS]
+supported = false
+
+[tool.briefcase.app.nodepipe.android]
+supported = false
+
+# Web deployments
+[tool.briefcase.app.nodepipe.web]
+supported = false
+
+Briefcase Log:
+[22:44:14]                                                                                                                                                         subprocess.py:839
+           >>> Running Command:                                                                                                                                    subprocess.py:839
+           >>>     'D:\briefcase\Cache\tools\wix\PFiles64\WiX Toolset v5.0\bin\wix.exe' --version                                                                  subprocess.py:839
+           >>> Working Directory:                                                                                                                                  subprocess.py:839
+           >>>     D:\Documents\School\CSUSM\CS490\Project\bioinformatics-pipeline-capstone                                                                        subprocess.py:839
+[22:44:15] >>> Command Output:                                                                                                                                     subprocess.py:839
+           >>>     5.0.2+aa65968c                                                                                                                                  subprocess.py:839
+           >>> Return code: 0                                                                                                                                      subprocess.py:839
+                                                                                                                                                                   subprocess.py:839
+           Using WiX at D:\briefcase\Cache\tools\wix                                                                                                                      wix.py:108
+                                                                                                                                                                     __init__.py:528
+           *************************************************************************                                                                                 __init__.py:528
+           ** WARNING: No signing identity provided                               **                                                                                 __init__.py:528
+           *************************************************************************                                                                                 __init__.py:528
+                                                                                                                                                                     __init__.py:528
+               Briefcase will not sign the app. To provide a signing identity,                                                                                       __init__.py:528
+               use the `--identity` option; or, to explicitly disable signing,                                                                                       __init__.py:528
+               use `--adhoc-sign`.                                                                                                                                   __init__.py:528
+                                                                                                                                                                     __init__.py:528
+           *************************************************************************                                                                                 __init__.py:528
+           Building MSI... started                                                                                                                                   __init__.py:568
+                                                                                                                                                                   subprocess.py:839
+           >>> Running Command:                                                                                                                                    subprocess.py:839
+           >>>     'D:\briefcase\Cache\tools\wix\PFiles64\WiX Toolset v5.0\bin\wix.exe' build -ext                                                                 subprocess.py:839
+           'D:\briefcase\Cache\tools\wix\CFiles64\WixToolset\extensions\WixToolset.UI.wixext\5.0.2\wixext5\WixToolset.UI.wixext.dll' -arch x64 nodepipe.wxs -loc                    
+           unicode.wxl -pdbtype none -o 'D:\Documents\School\CSUSM\CS490\Project\bioinformatics-pipeline-capstone\dist\NodePipe-0.0.1.msi'                                          
+           >>> Working Directory:                                                                                                                                  subprocess.py:839
+           >>>     D:\Documents\School\CSUSM\CS490\Project\bioinformatics-pipeline-capstone\build\nodepipe\windows\app                                             subprocess.py:839
+[22:44:17] D:\a\wix\wix\src\ext\UI\wixlib\LicenseAgreementDlg.wxs(22) : error WIX0103: Cannot find the Control file 'LICENSE.rtf'. The following paths were        subprocess.py:196
+           checked: LICENSE.rtf                                                                                                                                                     
+           >>> Return code: 103                                                                                                                                    subprocess.py:839
+                                                                                                                                                                   subprocess.py:839
+           Building MSI... errored                                                                                                                                   __init__.py:568
+                                                                                                                                                                      __main__.py:42
+           Unable to package app nodepipe.                                                                                                                            __main__.py:43
+           Saving log... started                                                                                                                                      console.py:443
+
+Main thread traceback:
+╭─────────────────────────────────────────────────────────────────────── Traceback (most recent call last) ────────────────────────────────────────────────────────────────────────╮
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\platforms\windows\__init__.py:569 in _package_msi                                                                           │
+│                                                                                                                                                                                  │
+│   566 │   │   """Build the msi installer."""                                                                                                                                     │
+│   567 │   │   try:                                                                                                                                                               │
+│   568 │   │   │   with self.console.wait_bar("Building MSI..."):                                                                                                                 │
+│ ❱ 569 │   │   │   │   self.tools.subprocess.run(                                                                                                                                 │
+│   570 │   │   │   │   │   [                                                                                                                                                      │
+│   571 │   │   │   │   │   │   self.tools.wix.wix_exe,                                                                                                                            │
+│   572 │   │   │   │   │   │   "build",                                                                                                                                           │
+│                                                                                                                                                                                  │
+│ ╭──────────────────────────────────────────── locals ────────────────────────────────────────────╮                                                                               │
+│ │  app = <com.csusm.capstone.nodepipe.nodepipe v0.0.1 AppConfig>                                 │                                                                               │
+│ │ self = <briefcase.platforms.windows.app.WindowsAppPackageCommand object at 0x000001497D5F7350> │                                                                               │
+│ ╰────────────────────────────────────────────────────────────────────────────────────────────────╯                                                                               │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\integrations\subprocess.py:145 in inner                                                                                     │
+│                                                                                                                                                                                  │
+│   142 │   │   │   with sub.tools.console.release_console_control():                                                                                                              │
+│   143 │   │   │   │   return sub_method(sub, args, *wrapped_args, **wrapped_kwargs)                                                                                              │
+│   144 │   │   else:                                                                                                                                                              │
+│ ❱ 145 │   │   │   return sub_method(sub, args, *wrapped_args, **wrapped_kwargs)                                                                                                  │
+│   146 │                                                                                                                                                                          │
+│   147 │   return inner                                                                                                                                                           │
+│   148                                                                                                                                                                            │
+│                                                                                                                                                                                  │
+│ ╭─────────────────────────────────────────────────────────────────────────────── locals ────────────────────────────────────────────────────────────────────────────────╮        │
+│ │                    args = [                                                                                                                                           │        │
+│ │                           │   WindowsPath('D:/briefcase/Cache/tools/wix/PFiles64/WiX Toolset v5.0/bin/wix.exe'),                                                      │        │
+│ │                           │   'build',                                                                                                                                │        │
+│ │                           │   '-ext',                                                                                                                                 │        │
+│ │                           │   WindowsPath('D:/briefcase/Cache/tools/wix/CFiles64/WixToolset/extensions/WixToolset.UI.wixext/5.0.2/wixext5/WixToolset.UI.wixext.dll'), │        │
+│ │                           │   '-arch',                                                                                                                                │        │
+│ │                           │   'x64',                                                                                                                                  │        │
+│ │                           │   'nodepipe.wxs',                                                                                                                         │        │
+│ │                           │   '-loc',                                                                                                                                 │        │
+│ │                           │   'unicode.wxl',                                                                                                                          │        │
+│ │                           │   '-pdbtype',                                                                                                                             │        │
+│ │                           │   ... +3                                                                                                                                  │        │
+│ │                           ]                                                                                                                                           │        │
+│ │              executable = 'D:\\briefcase\\Cache\\tools\\wix\\PFiles64\\WiX Toolset v5.0\\bin\\wix.exe'                                                                │        │
+│ │ remove_dynamic_elements = False                                                                                                                                       │        │
+│ │                     sub = <briefcase.integrations.subprocess.Subprocess object at 0x000001497E719F10>                                                                 │        │
+│ │            wrapped_args = ()                                                                                                                                          │        │
+│ │          wrapped_kwargs = {'check': True, 'cwd': WindowsPath('D:/Documents/School/CSUSM/CS490/Project/bioinformatics-pipeline-capstone/build/nodepipe/windows/app')}  │        │
+│ ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯        │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\integrations\subprocess.py:539 in run                                                                                       │
+│                                                                                                                                                                                  │
+│   536 │   │   # caller sets stream_output=False, then ensure_console_is_safe() will                                                                                              │
+│   537 │   │   # disable any dynamic console elements while the command runs.                                                                                                     │
+│   538 │   │   if stream_output:                                                                                                                                                  │
+│ ❱ 539 │   │   │   return self._run_and_stream_output(args, filter_func=filter_func, **kwargs)                                                                                    │
+│   540 │   │                                                                                                                                                                      │
+│   541 │   │   # Can't filter non-streamed output.                                                                                                                                │
+│   542 │   │   if filter_func:                                                                                                                                                    │
+│                                                                                                                                                                                  │
+│ ╭────────────────────────────────────────────────────────────────────────── locals ───────────────────────────────────────────────────────────────────────────╮                  │
+│ │          args = [                                                                                                                                           │                  │
+│ │                 │   WindowsPath('D:/briefcase/Cache/tools/wix/PFiles64/WiX Toolset v5.0/bin/wix.exe'),                                                      │                  │
+│ │                 │   'build',                                                                                                                                │                  │
+│ │                 │   '-ext',                                                                                                                                 │                  │
+│ │                 │   WindowsPath('D:/briefcase/Cache/tools/wix/CFiles64/WixToolset/extensions/WixToolset.UI.wixext/5.0.2/wixext5/WixToolset.UI.wixext.dll'), │                  │
+│ │                 │   '-arch',                                                                                                                                │                  │
+│ │                 │   'x64',                                                                                                                                  │                  │
+│ │                 │   'nodepipe.wxs',                                                                                                                         │                  │
+│ │                 │   '-loc',                                                                                                                                 │                  │
+│ │                 │   'unicode.wxl',                                                                                                                          │                  │
+│ │                 │   '-pdbtype',                                                                                                                             │                  │
+│ │                 │   ... +3                                                                                                                                  │                  │
+│ │                 ]                                                                                                                                           │                  │
+│ │   filter_func = None                                                                                                                                        │                  │
+│ │        kwargs = {'check': True, 'cwd': WindowsPath('D:/Documents/School/CSUSM/CS490/Project/bioinformatics-pipeline-capstone/build/nodepipe/windows/app')}  │                  │
+│ │          self = <briefcase.integrations.subprocess.Subprocess object at 0x000001497E719F10>                                                                 │                  │
+│ │ stream_output = True                                                                                                                                        │                  │
+│ ╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯                  │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\integrations\subprocess.py:616 in _run_and_stream_output                                                                    │
+│                                                                                                                                                                                  │
+│   613 │   │   self._log_return_code(return_code)                                                                                                                                 │
+│   614 │   │                                                                                                                                                                      │
+│   615 │   │   if check and return_code:                                                                                                                                          │
+│ ❱ 616 │   │   │   raise subprocess.CalledProcessError(return_code, args, stderr=stderr)                                                                                          │
+│   617 │   │                                                                                                                                                                      │
+│   618 │   │   return subprocess.CompletedProcess(args, return_code, stderr=stderr)                                                                                               │
+│   619                                                                                                                                                                            │
+│                                                                                                                                                                                  │
+│ ╭───────────────────────────────────────────────────────────────────────── locals ──────────────────────────────────────────────────────────────────────────╮                    │
+│ │        args = [                                                                                                                                           │                    │
+│ │               │   WindowsPath('D:/briefcase/Cache/tools/wix/PFiles64/WiX Toolset v5.0/bin/wix.exe'),                                                      │                    │
+│ │               │   'build',                                                                                                                                │                    │
+│ │               │   '-ext',                                                                                                                                 │                    │
+│ │               │   WindowsPath('D:/briefcase/Cache/tools/wix/CFiles64/WixToolset/extensions/WixToolset.UI.wixext/5.0.2/wixext5/WixToolset.UI.wixext.dll'), │                    │
+│ │               │   '-arch',                                                                                                                                │                    │
+│ │               │   'x64',                                                                                                                                  │                    │
+│ │               │   'nodepipe.wxs',                                                                                                                         │                    │
+│ │               │   '-loc',                                                                                                                                 │                    │
+│ │               │   'unicode.wxl',                                                                                                                          │                    │
+│ │               │   '-pdbtype',                                                                                                                             │                    │
+│ │               │   ... +3                                                                                                                                  │                    │
+│ │               ]                                                                                                                                           │                    │
+│ │       check = True                                                                                                                                        │                    │
+│ │ filter_func = None                                                                                                                                        │                    │
+│ │      kwargs = {                                                                                                                                           │                    │
+│ │               │   'cwd': WindowsPath('D:/Documents/School/CSUSM/CS490/Project/bioinformatics-pipeline-capstone/build/nodepipe/windows/app'),              │                    │
+│ │               │   'stdout': -1,                                                                                                                           │                    │
+│ │               │   'stderr': -2,                                                                                                                           │                    │
+│ │               │   'bufsize': 1                                                                                                                            │                    │
+│ │               }                                                                                                                                           │                    │
+│ │     process = <Popen: returncode: 103 args: ['D:\\briefcase\\Cache\\tools\\wix\\PFiles64\\...>                                                            │                    │
+│ │ return_code = 103                                                                                                                                         │                    │
+│ │        self = <briefcase.integrations.subprocess.Subprocess object at 0x000001497E719F10>                                                                 │                    │
+│ │      stderr = None                                                                                                                                        │                    │
+│ ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯                    │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+CalledProcessError: Command '[WindowsPath('D:/briefcase/Cache/tools/wix/PFiles64/WiX Toolset v5.0/bin/wix.exe'), 'build', '-ext', WindowsPath('D:/briefcase/Cache/tools/wix/CFiles64/WixToolset/extensions/WixToolset.UI.wixext/5.0.2/wixext5/WixToolset.UI.wixext.dll'), '-arch', 'x64', 'nodepipe.wxs', '-loc', 'unicode.wxl', '-pdbtype', 'none', '-o', WindowsPath('D:/Documents/School/CSUSM/CS490/Project/bioinformatics-pipeline-capstone/dist/NodePipe-0.0.1.msi')]' returned non-zero exit status 103.
+
+The above exception was the direct cause of the following exception:
+
+╭─────────────────────────────────────────────────────────────────────── Traceback (most recent call last) ────────────────────────────────────────────────────────────────────────╮
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\__main__.py:27 in main                                                                                                      │
+│                                                                                                                                                                                  │
+│   24 │   │   │   Path.cwd() / "pyproject.toml",                                                                                                                                  │
+│   25 │   │   │   overrides=overrides,                                                                                                                                            │
+│   26 │   │   )                                                                                                                                                                   │
+│ ❱ 27 │   │   command(**options)                                                                                                                                                  │
+│   28 │   except HelpText as e:                                                                                                                                                   │
+│   29 │   │   console.info()                                                                                                                                                      │
+│   30 │   │   console.info(str(e))                                                                                                                                                │
+│                                                                                                                                                                                  │
+│ ╭──────────────────────────────────────────────── locals ─────────────────────────────────────────────────╮                                                                      │
+│ │       command = <briefcase.platforms.windows.app.WindowsAppPackageCommand object at 0x000001497D5F7350> │                                                                      │
+│ │       console = <briefcase.console.Console object at 0x000001497A896050>                                │                                                                      │
+│ │             e = BriefcaseCommandError('Unable to package app nodepipe.')                                │                                                                      │
+│ │ extra_cmdline = []                                                                                      │                                                                      │
+│ │       options = {                                                                                       │                                                                      │
+│ │                 │   'update': False,                                                                    │                                                                      │
+│ │                 │   'packaging_format': 'msi',                                                          │                                                                      │
+│ │                 │   'adhoc_sign': False,                                                                │                                                                      │
+│ │                 │   'identity': None,                                                                   │                                                                      │
+│ │                 │   'file_digest': 'sha256',                                                            │                                                                      │
+│ │                 │   'use_local_machine': False,                                                         │                                                                      │
+│ │                 │   'cert_store': 'My',                                                                 │                                                                      │
+│ │                 │   'timestamp_url': 'http://timestamp.digicert.com',                                   │                                                                      │
+│ │                 │   'timestamp_digest': 'sha256'                                                        │                                                                      │
+│ │                 }                                                                                       │                                                                      │
+│ │     overrides = {}                                                                                      │                                                                      │
+│ │        result = 200                                                                                     │                                                                      │
+│ ╰─────────────────────────────────────────────────────────────────────────────────────────────────────────╯                                                                      │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\commands\package.py:194 in __call__                                                                                         │
+│                                                                                                                                                                                  │
+│   191 │   │                                                                                                                                                                      │
+│   192 │   │   state = None                                                                                                                                                       │
+│   193 │   │   for _, app_obj in sorted(apps_to_package.items()):                                                                                                                 │
+│ ❱ 194 │   │   │   state = self._package_app(                                                                                                                                     │
+│   195 │   │   │   │   app_obj,                                                                                                                                                   │
+│   196 │   │   │   │   update=update,                                                                                                                                             │
+│   197 │   │   │   │   **full_options(state, options),                                                                                                                            │
+│                                                                                                                                                                                  │
+│ ╭───────────────────────────────────────────────── locals ──────────────────────────────────────────────────╮                                                                    │
+│ │               _ = 'nodepipe'                                                                              │                                                                    │
+│ │             app = None                                                                                    │                                                                    │
+│ │        app_name = None                                                                                    │                                                                    │
+│ │         app_obj = <com.csusm.capstone.nodepipe.nodepipe v0.0.1 AppConfig>                                 │                                                                    │
+│ │ apps_to_package = {'nodepipe': <com.csusm.capstone.nodepipe.nodepipe v0.0.1 AppConfig>}                   │                                                                    │
+│ │         options = {                                                                                       │                                                                    │
+│ │                   │   'packaging_format': 'msi',                                                          │                                                                    │
+│ │                   │   'adhoc_sign': False,                                                                │                                                                    │
+│ │                   │   'identity': None,                                                                   │                                                                    │
+│ │                   │   'file_digest': 'sha256',                                                            │                                                                    │
+│ │                   │   'use_local_machine': False,                                                         │                                                                    │
+│ │                   │   'cert_store': 'My',                                                                 │                                                                    │
+│ │                   │   'timestamp_url': 'http://timestamp.digicert.com',                                   │                                                                    │
+│ │                   │   'timestamp_digest': 'sha256'                                                        │                                                                    │
+│ │                   }                                                                                       │                                                                    │
+│ │            self = <briefcase.platforms.windows.app.WindowsAppPackageCommand object at 0x000001497D5F7350> │                                                                    │
+│ │           state = None                                                                                    │                                                                    │
+│ │          update = False                                                                                   │                                                                    │
+│ ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────╯                                                                    │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\commands\package.py:134 in _package_app                                                                                     │
+│                                                                                                                                                                                  │
+│   131 │   │   self.clean_dist_folder(app, **options)                                                                                                                             │
+│   132 │   │                                                                                                                                                                      │
+│   133 │   │   # Package the app                                                                                                                                                  │
+│ ❱ 134 │   │   state = self.package_app(app, **full_options(state, options))                                                                                                      │
+│   135 │   │                                                                                                                                                                      │
+│   136 │   │   filename = self.distribution_path(app).relative_to(self.base_path)                                                                                                 │
+│   137 │   │   self.console.info(f"Packaged {filename}", prefix=app.app_name)                                                                                                     │
+│                                                                                                                                                                                  │
+│ ╭──────────────────────────────────────────────────────────────────────── locals ────────────────────────────────────────────────────────────────────────╮                       │
+│ │              app = <com.csusm.capstone.nodepipe.nodepipe v0.0.1 AppConfig>                                                                             │                       │
+│ │      binary_file = WindowsPath('D:/Documents/School/CSUSM/CS490/Project/bioinformatics-pipeline-capstone/build/nodepipe/windows/app/src/NodePipe.exe') │                       │
+│ │          options = {                                                                                                                                   │                       │
+│ │                    │   'adhoc_sign': False,                                                                                                            │                       │
+│ │                    │   'identity': None,                                                                                                               │                       │
+│ │                    │   'file_digest': 'sha256',                                                                                                        │                       │
+│ │                    │   'use_local_machine': False,                                                                                                     │                       │
+│ │                    │   'cert_store': 'My',                                                                                                             │                       │
+│ │                    │   'timestamp_url': 'http://timestamp.digicert.com',                                                                               │                       │
+│ │                    │   'timestamp_digest': 'sha256'                                                                                                    │                       │
+│ │                    }                                                                                                                                   │                       │
+│ │ packaging_format = 'msi'                                                                                                                               │                       │
+│ │             self = <briefcase.platforms.windows.app.WindowsAppPackageCommand object at 0x000001497D5F7350>                                             │                       │
+│ │            state = None                                                                                                                                │                       │
+│ │    template_file = WindowsPath('D:/Documents/School/CSUSM/CS490/Project/bioinformatics-pipeline-capstone/build/nodepipe/windows/app')                  │                       │
+│ │           update = False                                                                                                                               │                       │
+│ ╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯                       │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\platforms\windows\__init__.py:555 in package_app                                                                            │
+│                                                                                                                                                                                  │
+│   552 │   │   if app.packaging_format == "zip":                                                                                                                                  │
+│   553 │   │   │   self._package_zip(app)                                                                                                                                         │
+│   554 │   │   else:                                                                                                                                                              │
+│ ❱ 555 │   │   │   self._package_msi(app)                                                                                                                                         │
+│   556 │   │   │                                                                                                                                                                  │
+│   557 │   │   │   if sign_app:                                                                                                                                                   │
+│   558 │   │   │   │   self.console.info("Signing MSI...", prefix=app.app_name)                                                                                                   │
+│                                                                                                                                                                                  │
+│ ╭────────────────────────────────────────────────── locals ───────────────────────────────────────────────────╮                                                                  │
+│ │        adhoc_sign = False                                                                                   │                                                                  │
+│ │               app = <com.csusm.capstone.nodepipe.nodepipe v0.0.1 AppConfig>                                 │                                                                  │
+│ │        cert_store = 'My'                                                                                    │                                                                  │
+│ │       file_digest = 'sha256'                                                                                │                                                                  │
+│ │          identity = None                                                                                    │                                                                  │
+│ │            kwargs = {}                                                                                      │                                                                  │
+│ │              self = <briefcase.platforms.windows.app.WindowsAppPackageCommand object at 0x000001497D5F7350> │                                                                  │
+│ │          sign_app = False                                                                                   │                                                                  │
+│ │  timestamp_digest = 'sha256'                                                                                │                                                                  │
+│ │     timestamp_url = 'http://timestamp.digicert.com'                                                         │                                                                  │
+│ │ use_local_machine = False                                                                                   │                                                                  │
+│ ╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────╯                                                                  │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\platforms\windows\__init__.py:589 in _package_msi                                                                           │
+│                                                                                                                                                                                  │
+│   586 │   │   │   │   │   cwd=self.bundle_path(app),                                                                                                                             │
+│   587 │   │   │   │   )                                                                                                                                                          │
+│   588 │   │   except subprocess.CalledProcessError as e:                                                                                                                         │
+│ ❱ 589 │   │   │   raise BriefcaseCommandError(f"Unable to package app {app.app_name}.") from e                                                                                   │
+│   590 │                                                                                                                                                                          │
+│   591 │   def _package_zip(self, app):                                                                                                                                           │
+│   592 │   │   """Package the app as simple zip file."""                                                                                                                          │
+│                                                                                                                                                                                  │
+│ ╭──────────────────────────────────────────── locals ────────────────────────────────────────────╮                                                                               │
+│ │  app = <com.csusm.capstone.nodepipe.nodepipe v0.0.1 AppConfig>                                 │                                                                               │
+│ │ self = <briefcase.platforms.windows.app.WindowsAppPackageCommand object at 0x000001497D5F7350> │                                                                               │
+│ ╰────────────────────────────────────────────────────────────────────────────────────────────────╯                                                                               │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+BriefcaseCommandError: Unable to package app nodepipe.

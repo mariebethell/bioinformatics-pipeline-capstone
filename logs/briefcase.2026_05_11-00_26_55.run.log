@@ -1,0 +1,1108 @@
+Date/Time:       2026-05-11 00:26:55 
+Command line:    C:\miniconda\envs\bioinf\Scripts\briefcase run windows
+
+OS Release:      Windows 10
+OS Version:      10.0.19045
+Architecture:    AMD64
+Platform:        Windows-10-10.0.19045-SP0
+
+Python exe:      C:\miniconda\envs\bioinf\python.exe
+Python version:  3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]
+Virtual env:     False
+Conda env:       True
+
+Briefcase:       0.4.1
+Target platform: windows
+Target format:   app
+
+Environment Variables:
+	3DVPATH=C:\AMD\Chipset_Software\Binaries\3D_V-Cache_Performance_Optimizer_Driver\
+	ALLUSERSPROFILE=C:\ProgramData
+	ANDROID_SDK_HOME=C:\Android
+	APPDATA=C:\Users\Kenneth Lopez\AppData\Roaming
+	BRIEFCASE_HOME=D:\briefcase\Cache
+	CHOCOLATEYINSTALL=C:\ProgramData\chocolatey
+	CHOCOLATEYLASTPATHUPDATE=133198649952473088
+	COMMONPROGRAMFILES=C:\Program Files\Common Files
+	COMMONPROGRAMFILES(X86)=C:\Program Files (x86)\Common Files
+	COMMONPROGRAMW6432=C:\Program Files\Common Files
+	COMPUTERNAME=DESKTOP-I4E6VFG
+	COMSPEC=C:\WINDOWS\system32\cmd.exe
+	CONDA_DEFAULT_ENV=bioinf
+	CONDA_EXE=C:\miniconda\Scripts\conda.exe
+	CONDA_PREFIX=C:\miniconda\envs\bioinf
+	CONDA_PREFIX_1=C:\miniconda
+	CONDA_PROMPT_MODIFIER=(bioinf) 
+	CONDA_PYTHON_EXE=C:\miniconda\python.exe
+	CONDA_SHLVL=2
+	CUDA_PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.1
+	CUDA_PATH_V11_1=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.1
+	DRIVERDATA=C:\Windows\System32\Drivers\DriverData
+	GIT_LFS_PATH=C:\Program Files\Git LFS
+	HOMEDRIVE=C:
+	HOMEPATH=\Users\Kenneth Lopez
+	INTELLIJ IDEA COMMUNITY EDITION=C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2025.2.1\bin
+	INTEL_DEV_REDIST=C:\Program Files (x86)\Common Files\Intel\Shared Libraries\
+	JAVA_HOME=C:\Program Files\Java\jdk-25
+	KEYSHOT10=********************
+	KEYSHOT9=********************
+	KEYSHOT_EXTERNAL_LICENSE_FOLDER=********************
+	LOCALAPPDATA=C:\Users\Kenneth Lopez\AppData\Local
+	LOGONSERVER=\\DESKTOP-I4E6VFG
+	NUMBER_OF_PROCESSORS=32
+	NVM_HOME=C:\Users\Kenneth Lopez\AppData\Roaming\nvm
+	NVM_SYMLINK=C:\Program Files\nodejs
+	OCULUSBASE=C:\Program Files\Oculus\
+	ONEDRIVE=C:\Users\Kenneth Lopez\OneDrive
+	OS=Windows_NT
+	PATH=C:\miniconda\envs\bioinf\Scripts;C:\miniconda\envs\bioinf;C:\miniconda\envs\bioinf\Library\mingw-w64\bin;C:\miniconda\envs\bioinf\Library\usr\bin;C:\miniconda\envs\bioinf\Library\bin;C:\miniconda\envs\bioinf\Scripts;C:\miniconda\envs\bioinf\bin;C:\miniconda\condabin;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\ImageMagick-7.1.2-Q16-HDRI;D:\OracleDB\dbhomeXE\bin;D:\OracleDatabaseXE\dbhomeXE\bin;C:\Program Files (x86)\VMware\VMware Player\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\java8path;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Python311\Scripts;C:\Python311;C:\Program Files\Oculus\Support\oculus-runtime;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64_win\compiler;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\Program Files\ffmpeg;D:\Program Files\CMake\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Program Files\dotnet;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\110\Tools\Binn;C:\Program Files (x86)\Microsoft SQL Server\120\Tools\Binn;C:\Program Files\Microsoft SQL Server\120\Tools\Binn;C:\Program Files\Microsoft SQL Server\120\DTS\Binn;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit;C:\platform-tools;C:\Program Files\VideoLAN\VLC;C:\mingw64\bin;C:\Android;C:\Program Files\Microsoft VS Code\bin;C:\ProgramData\chocolatey\bin;C:\Program Files\Git LFS;C:\Program Files\PuTTY;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit;C:\Users\Kenneth Lopez\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\Strings;C:\Program Files\7-Zip;C:\Program Files\NVIDIA Corporation\NVIDIA app\NvDLISR;C:\Program Files\Mullvad VPN\resources;C:\Program Files\gs\gs10.05.1\bin;C:\Program Files\Tesseract-OCR;C:\Program Files\PowerToys\DSCModules;C:\Program Files\PowerShell\7;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\Git\cmd;C:\Program Files (x86)\Arm GNU Toolchain arm-none-eabi\12.2 mpacbti-bet1\bin;C:\Users\Kenneth Lopez\AppData\Local\Microsoft\WindowsApps;C:\Users\Kenneth Lopez\.dotnet\tools;C:\Program Files (x86)\Nmap;C:\Users\Kenneth Lopez\AppData\Roaming\npm;C:\Users\Kenneth Lopez\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Users\Kenneth Lopez\AppData\Local\Microsoft\WinGet\Packages\DuckDB.cli_Microsoft.Winget.Source_8wekyb3d8bbwe;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2025.2.1\bin;C:\Users\Kenneth Lopez\AppData\Local\Python\bin
+	PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL
+	PICO_EXTRAS_PATH=D:\Documents\Pico Projects\SDK\pico-extras"
+	PICO_SDK_PATH=D:\Documents\Pico Projects\SDK\pico-sdk"
+	POWERSHELL_DISTRIBUTION_CHANNEL=MSI:Windows 10 Pro
+	PROCESSOR_ARCHITECTURE=AMD64
+	PROCESSOR_IDENTIFIER=AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD
+	PROCESSOR_LEVEL=25
+	PROCESSOR_REVISION=6102
+	PROGRAMDATA=C:\ProgramData
+	PROGRAMFILES=C:\Program Files
+	PROGRAMFILES(X86)=C:\Program Files (x86)
+	PROGRAMW6432=C:\Program Files
+	PROMPT=$P$G
+	PSEXECUTIONPOLICYPREFERENCE=Bypass
+	PSMODULEPATH=D:\Documents\WindowsPowerShell\Modules;C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules;C:\Program Files (x86)\Microsoft SQL Server\120\Tools\PowerShell\Modules\
+	PUBLIC=C:\Users\Public
+	PYTHONPATH=C:\Python311\Lib;C:\Python311\DLLs;
+	P_SCHEMA=C:\Program Files\Siemens\Solid Edge 2022\Schema
+	SESSIONNAME=Console
+	SE_LICENSE_SERVER=C:\Program Files\Siemens\Solid Edge 2022\Preferences\SELicense.lic
+	SSL_CERT_DIR=C:\miniconda\envs\bioinf\Library\ssl\certs
+	SSL_CERT_FILE=C:\miniconda\envs\bioinf\Library\ssl\cacert.pem
+	SYSTEMDRIVE=C:
+	SYSTEMROOT=C:\WINDOWS
+	TEMP=C:\Users\KENNET~1\AppData\Local\Temp
+	TMP=C:\Users\KENNET~1\AppData\Local\Temp
+	USERDOMAIN=DESKTOP-I4E6VFG
+	USERDOMAIN_ROAMINGPROFILE=DESKTOP-I4E6VFG
+	USERNAME=Kenneth Lopez
+	USERPROFILE=C:\Users\Kenneth Lopez
+	VBOX_MSI_INSTALL_PATH=C:\Program Files\Oracle\VirtualBox\
+	VIRTUAL_ENV=C:\miniconda\envs\bioinf
+	WINDIR=C:\WINDOWS
+	_CONDA_EXE=C:\miniconda\Scripts\conda.exe
+	_CONDA_ROOT=C:\miniconda
+	__CONDA_OPENSSL_CERT_DIR_SET=1
+	__CONDA_OPENSSL_CERT_FILE_SET=1
+	__PSLOCKDOWNPOLICY=0
+
+pyproject.toml:
+[project]
+name = "nodepipe"
+version = "0.1.0"
+description = "Visual editor and executor for bioinformatics pipelines using NextFlow"
+authors = [
+    {name = "CSUSM-CSE-47-2026-CS-S03-Team-002",email = "you@example.com"}
+]
+readme = "README.md"
+requires-python = "~=3.11.0"
+dependencies = [
+    "django (==5.2.13)",
+    "django-rest-framework (>=0.1.0,<0.2.0)",
+    "daphne (>=4.2.1,<5.0.0)",
+    "channels (>=4.3.2,<5.0.0)",
+    "websockets (>=16.0,<17.0)",
+    "aiohttp (>=3.13.5,<4.0.0)",
+]
+
+[dependency-groups]
+dev = [
+    "pytest (>=9.0.3,<10.0.0)"
+]
+
+ui = [
+    "pyside6 (>=6.11.0,<7.0.0)",
+    "nodegraphqt (>=0.6.44,<0.7.0)",
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+package-mode = false
+
+
+# This project was generated with 0.4.1 using template: https://github.com/beeware/briefcase-template @ v0.4.1
+[tool.briefcase]
+project_name = "NodePipe"
+bundle = "com.csusm.capstone.nodepipe"
+version = "0.0.1"
+url = "https://github.com/mariebethell/bioinformatics-pipeline-capstone"
+license.file = "LICENSE"
+author = "CSUSM-CSE-47-2026-CS-S03-Team-002"
+author_email = "lopez2349@csusm.edu"
+
+[tool.briefcase.app.nodepipe]
+formal_name = "NodePipe"
+description = "Visual editor and executor for bioinformatics pipelines using NextFlow"
+long_description = """More details about the app should go here.
+"""
+sources = [
+    "src/nodepipe",
+]
+test_sources = [
+    "tests",
+]
+
+requires-python = "~=3.11.0"
+
+requires = [
+	"django (==5.2.13)",
+    "django-rest-framework (>=0.1.0,<0.2.0)",
+    "pyside6 (>=6.11.0,<7.0.0)",
+    "nodegraphqt (>=0.6.44,<0.7.0)",
+    "daphne (>=4.2.1,<5.0.0)",
+    "channels (>=4.3.2,<5.0.0)",
+    "websockets (>=16.0,<17.0)",
+]
+test_requires = [
+    "pytest",
+]
+
+[tool.briefcase.app.nodepipe.macOS]
+universal_build = true
+# As of Pyside 6.8, PySide enforces a macOS 12 minimum on wheels.
+min_os_version = "12.0"
+requires = [
+    "std-nslog~=1.0.3",
+]
+
+[tool.briefcase.app.nodepipe.linux]
+requires = [
+]
+
+[tool.briefcase.app.nodepipe.linux.system.debian]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "libgl1",
+    "libqt6dbus6",
+    "libqt6gui6",
+    "libxcb-cursor0",
+    # The following packages are explicit dependencies on recent Debian-based
+    # distros, but not on Ubuntu 22.04.
+    "libxcb-icccm4",
+    "libxcb-keysyms1",
+    "libxcb-shape0",
+    "libxkbcommon-x11-0",
+]
+
+[tool.briefcase.app.nodepipe.linux.system.rhel]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "qt6-qtbase-gui",
+]
+
+[tool.briefcase.app.nodepipe.linux.system.suse]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "libgthread-2_0-0",
+    "libQt6Gui6",
+]
+
+[tool.briefcase.app.nodepipe.linux.system.arch]
+system_requires = [
+]
+
+system_runtime_requires = [
+    "qt6-base",
+]
+
+[tool.briefcase.app.nodepipe.linux.appimage]
+manylinux = "manylinux_2_28"
+
+system_requires = [
+# ?? FIXME
+]
+
+linuxdeploy_plugins = [
+]
+
+[tool.briefcase.app.nodepipe.linux.flatpak]
+flatpak_runtime = "org.kde.Platform"
+flatpak_runtime_version = "6.9"
+flatpak_sdk = "org.kde.Sdk"
+
+[tool.briefcase.app.nodepipe.windows]
+requires = [
+]
+
+# Mobile deployments
+[tool.briefcase.app.nodepipe.iOS]
+supported = false
+
+[tool.briefcase.app.nodepipe.android]
+supported = false
+
+# Web deployments
+[tool.briefcase.app.nodepipe.web]
+supported = false
+
+Briefcase Log:
+[00:10:49]                                                                                                                                                         windows_sdk.py:82
+           [Windows SDK] Finding Suitable Installation...                                                                                                          windows_sdk.py:82
+           Evaluating Registry SDK version '10.0.26100.0' at C:\Program Files (x86)\Windows Kits\10                                                               windows_sdk.py:133
+                                                                                                                                                                   subprocess.py:839
+           >>> Running Command:                                                                                                                                    subprocess.py:839
+           >>>     'C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe' '-?'                                                                 subprocess.py:839
+           >>> Working Directory:                                                                                                                                  subprocess.py:839
+           >>>     D:\Documents\School\CSUSM\CS490\Project\bioinformatics-pipeline-capstone                                                                        subprocess.py:839
+           >>> Command Output:                                                                                                                                     subprocess.py:839
+           >>>     Usage: signtool <command> [options] or signtool @<response file>                                                                                subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>>       Valid commands:                                                                                                                               subprocess.py:839
+           >>>         sign       --  Sign files using an embedded signature.                                                                                      subprocess.py:839
+           >>>         timestamp  --  Timestamp previously-signed files.                                                                                           subprocess.py:839
+           >>>         verify     --  Verify embedded or catalog signatures.                                                                                       subprocess.py:839
+           >>>         catdb      --  Modify a catalog database.                                                                                                   subprocess.py:839
+           >>>         remove     --  Remove embedded signature(s) or reduce the size of an                                                                        subprocess.py:839
+           >>>                        embedded signed file.                                                                                                        subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>>                        For help on a specific command, enter "signtool <command> /?"                                                                subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>>       Respsonse files should be formatted with one argument per line, with the first argument being the command.                                    subprocess.py:839
+           >>>       Multiple commands may be specified by separating with an empty line. For example, a file containing:                                          subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>>         sign                                                                                                                                        subprocess.py:839
+           >>>         /n "My cert"                                                                                                                                subprocess.py:839
+           >>>         /fd SHA256                                                                                                                                  subprocess.py:839
+           >>>         myfile.exe                                                                                                                                  subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>>         verify                                                                                                                                      subprocess.py:839
+           >>>         myfile.exe                                                                                                                                  subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>>       can be used to sign and verify myfile.exe by calling "signtool @responsefile".                                                                subprocess.py:839
+           >>> Return code: 0                                                                                                                                      subprocess.py:839
+                                                                                                                                                                   subprocess.py:839
+           Using Windows SDK v10.0.26100.0 at C:\Program Files (x86)\Windows Kits\10                                                                              windows_sdk.py:233
+                                                                                                                                                                       create.py:949
+           [nodepipe] Generating application template...                                                                                                               create.py:949
+           Assigning nodepipe an application GUID of 11763106-aed2-5f36-8be4-403c5c94e189                                                                            __init__.py:163
+           Using app template: https://github.com/beeware/briefcase-windows-app-template.git, branch v0.4.1                                                             base.py:1340
+           Using existing template (sha 12d4a8af582b24dd3d90336f5f83437efa28385f, updated Fri Mar 20 12:13:32 2026)                                                     base.py:1241
+                                                                                                                                                                       create.py:971
+           [nodepipe] Installing support package...                                                                                                                    create.py:971
+           Using support package https://www.python.org/ftp/python/3.11.9/python-3.11.9-embed-amd64.zip                                                                create.py:374
+[00:10:50] python-3.11.9-embed-amd64.zip already downloaded                                                                                                              file.py:225
+           Unpacking support package... started                                                                                                                        create.py:289
+           Unpacking support package... done                                                                                                                           create.py:289
+                                                                                                                                                                       create.py:982
+           [nodepipe] Installing stub binary...                                                                                                                        create.py:982
+           Using stub binary https://briefcase-support.s3.amazonaws.com/python/3.11/windows/GUI-Stub-3.11-b10.zip                                                      create.py:485
+           GUI-Stub-3.11-b10.zip already downloaded                                                                                                                      file.py:225
+           Installing stub binary... started                                                                                                                           create.py:430
+           Installing stub binary... done                                                                                                                              create.py:430
+                                                                                                                                                                       create.py:989
+           [nodepipe] Installing application code...                                                                                                                   create.py:989
+           Installing src/nodepipe... started                                                                                                                          create.py:745
+           Installing src/nodepipe... done                                                                                                                             create.py:745
+                                                                                                                                                                       create.py:992
+           [nodepipe] Installing requirements...                                                                                                                       create.py:992
+           Installing app requirements... started                                                                                                                      create.py:668
+                                                                                                                                                                   subprocess.py:839
+           >>> Running Command:                                                                                                                                    subprocess.py:839
+           >>>     'C:\miniconda\envs\bioinf\python.exe' -u -X utf8 -m pip install --disable-pip-version-check --upgrade --no-user                                 subprocess.py:839
+           '--target=D:\Documents\School\CSUSM\CS490\Project\bioinformatics-pipeline-capstone\build\nodepipe\windows\app\src\app_packages' 'django (==5.2.13)'                      
+           'django-rest-framework (>=0.1.0,<0.2.0)' 'daphne (>=4.2.1,<5.0.0)' 'channels (>=4.3.2,<5.0.0)' 'websockets (>=16.0,<17.0)' 'aiohttp (>=3.13.5,<4.0.0)'                   
+           'django (==5.2.13)' 'django-rest-framework (>=0.1.0,<0.2.0)' 'pyside6 (>=6.11.0,<7.0.0)' 'nodegraphqt (>=0.6.44,<0.7.0)' 'daphne (>=4.2.1,<5.0.0)'                       
+           'channels (>=4.3.2,<5.0.0)' 'websockets (>=16.0,<17.0)'                                                                                                                  
+           >>> Working Directory:                                                                                                                                  subprocess.py:839
+           >>>     D:\Documents\School\CSUSM\CS490\Project\bioinformatics-pipeline-capstone                                                                        subprocess.py:839
+[00:10:51] Collecting django==5.2.13                                                                                                                               subprocess.py:196
+             Using cached django-5.2.13-py3-none-any.whl.metadata (4.1 kB)                                                                                         subprocess.py:196
+           Collecting django-rest-framework<0.2.0,>=0.1.0                                                                                                          subprocess.py:196
+             Using cached django_rest_framework-0.1.0-py3-none-any.whl                                                                                             subprocess.py:196
+           Collecting daphne<5.0.0,>=4.2.1                                                                                                                         subprocess.py:196
+             Using cached daphne-4.2.1-py3-none-any.whl.metadata (1.7 kB)                                                                                          subprocess.py:196
+           Collecting channels<5.0.0,>=4.3.2                                                                                                                       subprocess.py:196
+             Using cached channels-4.3.2-py3-none-any.whl.metadata (4.7 kB)                                                                                        subprocess.py:196
+           Collecting websockets<17.0,>=16.0                                                                                                                       subprocess.py:196
+             Using cached websockets-16.0-cp311-cp311-win_amd64.whl.metadata (7.0 kB)                                                                              subprocess.py:196
+           Collecting aiohttp<4.0.0,>=3.13.5                                                                                                                       subprocess.py:196
+             Using cached aiohttp-3.13.5-cp311-cp311-win_amd64.whl.metadata (8.4 kB)                                                                               subprocess.py:196
+           Collecting pyside6<7.0.0,>=6.11.0                                                                                                                       subprocess.py:196
+             Using cached pyside6-6.11.0-cp310-abi3-win_amd64.whl.metadata (5.5 kB)                                                                                subprocess.py:196
+           Collecting nodegraphqt<0.7.0,>=0.6.44                                                                                                                   subprocess.py:196
+             Using cached nodegraphqt-0.6.44-py3-none-any.whl.metadata (3.1 kB)                                                                                    subprocess.py:196
+           Collecting asgiref>=3.8.1 (from django==5.2.13)                                                                                                         subprocess.py:196
+             Using cached asgiref-3.11.1-py3-none-any.whl.metadata (9.3 kB)                                                                                        subprocess.py:196
+[00:10:52] Collecting sqlparse>=0.3.1 (from django==5.2.13)                                                                                                        subprocess.py:196
+             Using cached sqlparse-0.5.5-py3-none-any.whl.metadata (4.7 kB)                                                                                        subprocess.py:196
+           Collecting tzdata (from django==5.2.13)                                                                                                                 subprocess.py:196
+             Using cached tzdata-2026.2-py2.py3-none-any.whl.metadata (1.4 kB)                                                                                     subprocess.py:196
+           Collecting djangorestframework (from django-rest-framework<0.2.0,>=0.1.0)                                                                               subprocess.py:196
+             Using cached djangorestframework-3.17.1-py3-none-any.whl.metadata (7.9 kB)                                                                            subprocess.py:196
+           Collecting autobahn>=22.4.2 (from daphne<5.0.0,>=4.2.1)                                                                                                 subprocess.py:196
+             Using cached autobahn-25.12.2-cp311-cp311-win_amd64.whl.metadata (32 kB)                                                                              subprocess.py:196
+           Collecting twisted>=22.4 (from twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                                                                subprocess.py:196
+             Using cached twisted-25.5.0-py3-none-any.whl.metadata (22 kB)                                                                                         subprocess.py:196
+           Collecting aiohappyeyeballs>=2.5.0 (from aiohttp<4.0.0,>=3.13.5)                                                                                        subprocess.py:196
+             Using cached aiohappyeyeballs-2.6.1-py3-none-any.whl.metadata (5.9 kB)                                                                                subprocess.py:196
+           Collecting aiosignal>=1.4.0 (from aiohttp<4.0.0,>=3.13.5)                                                                                               subprocess.py:196
+             Using cached aiosignal-1.4.0-py3-none-any.whl.metadata (3.7 kB)                                                                                       subprocess.py:196
+           Collecting attrs>=17.3.0 (from aiohttp<4.0.0,>=3.13.5)                                                                                                  subprocess.py:196
+             Using cached attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)                                                                                          subprocess.py:196
+           Collecting frozenlist>=1.1.1 (from aiohttp<4.0.0,>=3.13.5)                                                                                              subprocess.py:196
+             Using cached frozenlist-1.8.0-cp311-cp311-win_amd64.whl.metadata (21 kB)                                                                              subprocess.py:196
+           Collecting multidict<7.0,>=4.5 (from aiohttp<4.0.0,>=3.13.5)                                                                                            subprocess.py:196
+             Using cached multidict-6.7.1-cp311-cp311-win_amd64.whl.metadata (5.5 kB)                                                                              subprocess.py:196
+           Collecting propcache>=0.2.0 (from aiohttp<4.0.0,>=3.13.5)                                                                                               subprocess.py:196
+             Using cached propcache-0.5.2-cp311-cp311-win_amd64.whl.metadata (17 kB)                                                                               subprocess.py:196
+[00:10:53] Collecting yarl<2.0,>=1.17.0 (from aiohttp<4.0.0,>=3.13.5)                                                                                              subprocess.py:196
+             Using cached yarl-1.23.0-cp311-cp311-win_amd64.whl.metadata (82 kB)                                                                                   subprocess.py:196
+           Collecting shiboken6==6.11.0 (from pyside6<7.0.0,>=6.11.0)                                                                                              subprocess.py:196
+             Using cached shiboken6-6.11.0-cp310-abi3-win_amd64.whl.metadata (2.5 kB)                                                                              subprocess.py:196
+           Collecting PySide6_Essentials==6.11.0 (from pyside6<7.0.0,>=6.11.0)                                                                                     subprocess.py:196
+             Using cached pyside6_essentials-6.11.0-cp310-abi3-win_amd64.whl.metadata (3.8 kB)                                                                     subprocess.py:196
+           Collecting PySide6_Addons==6.11.0 (from pyside6<7.0.0,>=6.11.0)                                                                                         subprocess.py:196
+             Using cached pyside6_addons-6.11.0-cp310-abi3-win_amd64.whl.metadata (4.2 kB)                                                                         subprocess.py:196
+           Collecting Qt.py>=1.4.1 (from nodegraphqt<0.7.0,>=0.6.44)                                                                                               subprocess.py:196
+             Using cached qt_py-2.0.4-py3-none-any.whl.metadata (34 kB)                                                                                            subprocess.py:196
+           Collecting idna>=2.0 (from yarl<2.0,>=1.17.0->aiohttp<4.0.0,>=3.13.5)                                                                                   subprocess.py:196
+             Using cached idna-3.14-py3-none-any.whl.metadata (8.0 kB)                                                                                             subprocess.py:196
+           Collecting typing-extensions>=4.2 (from aiosignal>=1.4.0->aiohttp<4.0.0,>=3.13.5)                                                                       subprocess.py:196
+             Using cached typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)                                                                              subprocess.py:196
+           Collecting cbor2>=5.2.0 (from autobahn>=22.4.2->daphne<5.0.0,>=4.2.1)                                                                                   subprocess.py:196
+             Using cached cbor2-6.0.1-cp311-cp311-win_amd64.whl.metadata (5.7 kB)                                                                                  subprocess.py:196
+           Collecting cffi>=2.0.0 (from autobahn>=22.4.2->daphne<5.0.0,>=4.2.1)                                                                                    subprocess.py:196
+             Using cached cffi-2.0.0-cp311-cp311-win_amd64.whl.metadata (2.6 kB)                                                                                   subprocess.py:196
+           Collecting cryptography>=3.4.6 (from autobahn>=22.4.2->daphne<5.0.0,>=4.2.1)                                                                            subprocess.py:196
+             Using cached cryptography-48.0.0-cp311-abi3-win_amd64.whl.metadata (4.3 kB)                                                                           subprocess.py:196
+           Collecting hyperlink>=21.0.0 (from autobahn>=22.4.2->daphne<5.0.0,>=4.2.1)                                                                              subprocess.py:196
+             Using cached hyperlink-21.0.0-py2.py3-none-any.whl.metadata (1.5 kB)                                                                                  subprocess.py:196
+           Collecting msgpack>=1.0.2 (from autobahn>=22.4.2->daphne<5.0.0,>=4.2.1)                                                                                 subprocess.py:196
+             Using cached msgpack-1.1.2-cp311-cp311-win_amd64.whl.metadata (8.4 kB)                                                                                subprocess.py:196
+           Collecting py-ubjson>=0.16.1 (from autobahn>=22.4.2->daphne<5.0.0,>=4.2.1)                                                                              subprocess.py:196
+             Using cached py_ubjson-0.16.1-cp311-cp311-win_amd64.whl                                                                                               subprocess.py:196
+[00:10:54] Collecting txaio>=25.12.2 (from autobahn>=22.4.2->daphne<5.0.0,>=4.2.1)                                                                                 subprocess.py:196
+             Using cached txaio-25.12.2-py3-none-any.whl.metadata (7.0 kB)                                                                                         subprocess.py:196
+           Collecting ujson>=4.0.2 (from autobahn>=22.4.2->daphne<5.0.0,>=4.2.1)                                                                                   subprocess.py:196
+             Using cached ujson-5.12.1-cp311-cp311-win_amd64.whl.metadata (9.8 kB)                                                                                 subprocess.py:196
+           Collecting pycparser (from cffi>=2.0.0->autobahn>=22.4.2->daphne<5.0.0,>=4.2.1)                                                                         subprocess.py:196
+             Using cached pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)                                                                                         subprocess.py:196
+           Collecting types-PySide6 (from Qt.py>=1.4.1->nodegraphqt<0.7.0,>=0.6.44)                                                                                subprocess.py:196
+             Using cached types_pyside6-6.10.1.1-py2.py3-none-any.whl.metadata (7.2 kB)                                                                            subprocess.py:196
+           Collecting automat>=24.8.0 (from twisted>=22.4->twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                                               subprocess.py:196
+             Using cached automat-25.4.16-py3-none-any.whl.metadata (8.4 kB)                                                                                       subprocess.py:196
+           Collecting constantly>=15.1 (from twisted>=22.4->twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                                              subprocess.py:196
+             Using cached constantly-23.10.4-py3-none-any.whl.metadata (1.8 kB)                                                                                    subprocess.py:196
+           Collecting incremental>=24.7.0 (from twisted>=22.4->twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                                           subprocess.py:196
+             Using cached incremental-24.11.0-py3-none-any.whl.metadata (9.5 kB)                                                                                   subprocess.py:196
+           Collecting zope-interface>=5 (from twisted>=22.4->twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                                             subprocess.py:196
+             Using cached zope_interface-8.4-cp311-cp311-win_amd64.whl.metadata (47 kB)                                                                            subprocess.py:196
+           Collecting packaging>=17.0 (from incremental>=24.7.0->twisted>=22.4->twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                          subprocess.py:196
+             Using cached packaging-26.2-py3-none-any.whl.metadata (3.5 kB)                                                                                        subprocess.py:196
+           Collecting pyopenssl>=21.0.0 (from twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                                                            subprocess.py:196
+             Using cached pyopenssl-26.2.0-py3-none-any.whl.metadata (19 kB)                                                                                       subprocess.py:196
+           Collecting service-identity>=18.1.0 (from twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                                                     subprocess.py:196
+             Using cached service_identity-24.2.0-py3-none-any.whl.metadata (5.1 kB)                                                                               subprocess.py:196
+           Collecting pyasn1 (from service-identity>=18.1.0->twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                                             subprocess.py:196
+             Using cached pyasn1-0.6.3-py3-none-any.whl.metadata (8.4 kB)                                                                                          subprocess.py:196
+           Collecting pyasn1-modules (from service-identity>=18.1.0->twisted[tls]>=22.4->daphne<5.0.0,>=4.2.1)                                                     subprocess.py:196
+             Using cached pyasn1_modules-0.4.2-py3-none-any.whl.metadata (3.5 kB)                                                                                  subprocess.py:196
+           Using cached django-5.2.13-py3-none-any.whl (8.3 MB)                                                                                                    subprocess.py:196
+           Using cached daphne-4.2.1-py3-none-any.whl (29 kB)                                                                                                      subprocess.py:196
+           Using cached channels-4.3.2-py3-none-any.whl (31 kB)                                                                                                    subprocess.py:196
+           Using cached websockets-16.0-cp311-cp311-win_amd64.whl (178 kB)                                                                                         subprocess.py:196
+           Using cached aiohttp-3.13.5-cp311-cp311-win_amd64.whl (462 kB)                                                                                          subprocess.py:196
+           Using cached pyside6-6.11.0-cp310-abi3-win_amd64.whl (577 kB)                                                                                           subprocess.py:196
+           Using cached pyside6_addons-6.11.0-cp310-abi3-win_amd64.whl (168.7 MB)                                                                                  subprocess.py:196
+[00:10:55] Using cached pyside6_essentials-6.11.0-cp310-abi3-win_amd64.whl (75.8 MB)                                                                               subprocess.py:196
+           Using cached shiboken6-6.11.0-cp310-abi3-win_amd64.whl (1.2 MB)                                                                                         subprocess.py:196
+           Using cached nodegraphqt-0.6.44-py3-none-any.whl (141 kB)                                                                                               subprocess.py:196
+           Using cached asgiref-3.11.1-py3-none-any.whl (24 kB)                                                                                                    subprocess.py:196
+           Using cached multidict-6.7.1-cp311-cp311-win_amd64.whl (45 kB)                                                                                          subprocess.py:196
+           Using cached yarl-1.23.0-cp311-cp311-win_amd64.whl (87 kB)                                                                                              subprocess.py:196
+           Using cached aiohappyeyeballs-2.6.1-py3-none-any.whl (15 kB)                                                                                            subprocess.py:196
+           Using cached aiosignal-1.4.0-py3-none-any.whl (7.5 kB)                                                                                                  subprocess.py:196
+           Using cached attrs-26.1.0-py3-none-any.whl (67 kB)                                                                                                      subprocess.py:196
+           Using cached autobahn-25.12.2-cp311-cp311-win_amd64.whl (2.2 MB)                                                                                        subprocess.py:196
+           Using cached cbor2-6.0.1-cp311-cp311-win_amd64.whl (288 kB)                                                                                             subprocess.py:196
+           Using cached cffi-2.0.0-cp311-cp311-win_amd64.whl (182 kB)                                                                                              subprocess.py:196
+           Using cached cryptography-48.0.0-cp311-abi3-win_amd64.whl (3.8 MB)                                                                                      subprocess.py:196
+           Using cached frozenlist-1.8.0-cp311-cp311-win_amd64.whl (44 kB)                                                                                         subprocess.py:196
+           Using cached hyperlink-21.0.0-py2.py3-none-any.whl (74 kB)                                                                                              subprocess.py:196
+           Using cached idna-3.14-py3-none-any.whl (72 kB)                                                                                                         subprocess.py:196
+           Using cached msgpack-1.1.2-cp311-cp311-win_amd64.whl (71 kB)                                                                                            subprocess.py:196
+           Using cached propcache-0.5.2-cp311-cp311-win_amd64.whl (42 kB)                                                                                          subprocess.py:196
+           Using cached qt_py-2.0.4-py3-none-any.whl (46 kB)                                                                                                       subprocess.py:196
+           Using cached sqlparse-0.5.5-py3-none-any.whl (46 kB)                                                                                                    subprocess.py:196
+           Using cached twisted-25.5.0-py3-none-any.whl (3.2 MB)                                                                                                   subprocess.py:196
+           Using cached automat-25.4.16-py3-none-any.whl (42 kB)                                                                                                   subprocess.py:196
+           Using cached constantly-23.10.4-py3-none-any.whl (13 kB)                                                                                                subprocess.py:196
+           Using cached incremental-24.11.0-py3-none-any.whl (21 kB)                                                                                               subprocess.py:196
+           Using cached packaging-26.2-py3-none-any.whl (100 kB)                                                                                                   subprocess.py:196
+           Using cached pyopenssl-26.2.0-py3-none-any.whl (55 kB)                                                                                                  subprocess.py:196
+           Using cached service_identity-24.2.0-py3-none-any.whl (11 kB)                                                                                           subprocess.py:196
+           Using cached txaio-25.12.2-py3-none-any.whl (31 kB)                                                                                                     subprocess.py:196
+           Using cached typing_extensions-4.15.0-py3-none-any.whl (44 kB)                                                                                          subprocess.py:196
+           Using cached ujson-5.12.1-cp311-cp311-win_amd64.whl (45 kB)                                                                                             subprocess.py:196
+           Using cached zope_interface-8.4-cp311-cp311-win_amd64.whl (214 kB)                                                                                      subprocess.py:196
+           Using cached djangorestframework-3.17.1-py3-none-any.whl (898 kB)                                                                                       subprocess.py:196
+           Using cached pyasn1-0.6.3-py3-none-any.whl (83 kB)                                                                                                      subprocess.py:196
+           Using cached pyasn1_modules-0.4.2-py3-none-any.whl (181 kB)                                                                                             subprocess.py:196
+           Using cached pycparser-3.0-py3-none-any.whl (48 kB)                                                                                                     subprocess.py:196
+           Using cached types_pyside6-6.10.1.1-py2.py3-none-any.whl (590 kB)                                                                                       subprocess.py:196
+           Using cached tzdata-2026.2-py2.py3-none-any.whl (349 kB)                                                                                                subprocess.py:196
+           Installing collected packages: types-PySide6, py-ubjson, zope-interface, websockets, ujson, tzdata, typing-extensions, txaio, sqlparse, shiboken6,      subprocess.py:196
+           Qt.py, pycparser, pyasn1, propcache, packaging, multidict, msgpack, idna, frozenlist, constantly, cbor2, automat, attrs, asgiref, aiohappyeyeballs,                      
+           yarl, PySide6_Essentials, pyasn1-modules, nodegraphqt, incremental, hyperlink, django, cffi, aiosignal, twisted, PySide6_Addons, djangorestframework,                    
+           cryptography, channels, aiohttp, service-identity, pyside6, pyopenssl, django-rest-framework, autobahn, daphne                                                           
+[00:11:20]                                                                                                                                                         subprocess.py:196
+           Successfully installed PySide6_Addons-6.11.0 PySide6_Essentials-6.11.0 Qt.py-2.0.4 aiohappyeyeballs-2.6.1 aiohttp-3.13.5 aiosignal-1.4.0 asgiref-3.11.1 subprocess.py:196
+           attrs-26.1.0 autobahn-25.12.2 automat-25.4.16 cbor2-6.0.1 cffi-2.0.0 channels-4.3.2 constantly-23.10.4 cryptography-48.0.0 daphne-4.2.1 django-5.2.13                    
+           django-rest-framework-0.1.0 djangorestframework-3.17.1 frozenlist-1.8.0 hyperlink-21.0.0 idna-3.14 incremental-24.11.0 msgpack-1.1.2 multidict-6.7.1                     
+           nodegraphqt-0.6.44 packaging-26.2 propcache-0.5.2 py-ubjson-0.16.1 pyasn1-0.6.3 pyasn1-modules-0.4.2 pycparser-3.0 pyopenssl-26.2.0 pyside6-6.11.0                       
+           service-identity-24.2.0 shiboken6-6.11.0 sqlparse-0.5.5 twisted-25.5.0 txaio-25.12.2 types-PySide6-6.10.1.1 typing-extensions-4.15.0 tzdata-2026.2                       
+           ujson-5.12.1 websockets-16.0 yarl-1.23.0 zope-interface-8.4                                                                                                              
+[00:12:05] >>> Return code: 0                                                                                                                                      subprocess.py:839
+                                                                                                                                                                   subprocess.py:839
+           Installing app requirements... done                                                                                                                         create.py:668
+                                                                                                                                                                       create.py:995
+           [nodepipe] Installing application resources...                                                                                                              create.py:995
+           Installing license... started                                                                                                                             __init__.py:315
+           Installing license... done                                                                                                                                __init__.py:315
+                                                                                                                                                                      create.py:1000
+           [nodepipe] Removing unneeded app content...                                                                                                                create.py:1000
+           Removing unneeded app bundle content... started                                                                                                             create.py:909
+           Removing src\python.exe                                                                                                                                     create.py:919
+           Removing src\pythonw.exe                                                                                                                                    create.py:919
+           Removing directory src\app\nodepipe\backend\__pycache__                                                                                                     create.py:916
+           Removing directory src\app\nodepipe\backend\tools\__pycache__                                                                                               create.py:916
+           Removing directory src\app\nodepipe\frontend\__pycache__                                                                                                    create.py:916
+           Removing directory src\app\nodepipe\network\__pycache__                                                                                                     create.py:916
+           Removing directory src\app\nodepipe\network\client\__pycache__                                                                                              create.py:916
+           Removing directory src\app\nodepipe\network\server\__pycache__                                                                                              create.py:916
+           Removing directory src\app\nodepipe\network\server\compute\__pycache__                                                                                      create.py:916
+           Removing directory src\app\nodepipe\network\server\computeServer\__pycache__                                                                                create.py:916
+           Removing directory src\app\nodepipe\network\server\computeServer\gateway\__pycache__                                                                        create.py:916
+           Removing directory src\app\nodepipe\session\__pycache__                                                                                                     create.py:916
+           Removing directory src\app\nodepipe\shared\__pycache__                                                                                                      create.py:916
+           Removing directory src\app\nodepipe\tests\__pycache__                                                                                                       create.py:916
+           Removing directory src\app\nodepipe\tests\networking\__pycache__                                                                                            create.py:916
+           Removing directory src\app\nodepipe\tests\server\__pycache__                                                                                                create.py:916
+           Removing directory src\app\nodepipe\tests\shared\__pycache__                                                                                                create.py:916
+           Removing directory src\app_packages\__pycache__                                                                                                             create.py:916
+           Removing directory src\app_packages\aiohappyeyeballs\__pycache__                                                                                            create.py:916
+           Removing directory src\app_packages\aiohttp\__pycache__                                                                                                     create.py:916
+           Removing directory src\app_packages\aiohttp\_websocket\__pycache__                                                                                          create.py:916
+           Removing directory src\app_packages\aiosignal\__pycache__                                                                                                   create.py:916
+           Removing directory src\app_packages\asgiref\__pycache__                                                                                                     create.py:916
+           Removing directory src\app_packages\attr\__pycache__                                                                                                        create.py:916
+           Removing directory src\app_packages\attrs\__pycache__                                                                                                       create.py:916
+           Removing directory src\app_packages\autobahn\__pycache__                                                                                                    create.py:916
+           Removing directory src\app_packages\autobahn\asyncio\__pycache__                                                                                            create.py:916
+           Removing directory src\app_packages\autobahn\asyncio\test\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\autobahn\flatbuffers\__pycache__                                                                                        create.py:916
+           Removing directory src\app_packages\autobahn\flatbuffers\reflection\__pycache__                                                                             create.py:916
+           Removing directory src\app_packages\autobahn\nvx\__pycache__                                                                                                create.py:916
+           Removing directory src\app_packages\autobahn\nvx\test\__pycache__                                                                                           create.py:916
+           Removing directory src\app_packages\autobahn\rawsocket\__pycache__                                                                                          create.py:916
+           Removing directory src\app_packages\autobahn\rawsocket\test\__pycache__                                                                                     create.py:916
+           Removing directory src\app_packages\autobahn\test\__pycache__                                                                                               create.py:916
+           Removing directory src\app_packages\autobahn\twisted\__pycache__                                                                                            create.py:916
+           Removing directory src\app_packages\autobahn\twisted\test\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\autobahn\twisted\testing\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\autobahn\wamp\__pycache__                                                                                               create.py:916
+           Removing directory src\app_packages\autobahn\wamp\gen\__pycache__                                                                                           create.py:916
+           Removing directory src\app_packages\autobahn\wamp\gen\wamp\__pycache__                                                                                      create.py:916
+           Removing directory src\app_packages\autobahn\wamp\gen\wamp\proto\__pycache__                                                                                create.py:916
+           Removing directory src\app_packages\autobahn\wamp\test\__pycache__                                                                                          create.py:916
+           Removing directory src\app_packages\autobahn\websocket\__pycache__                                                                                          create.py:916
+           Removing directory src\app_packages\autobahn\websocket\test\__pycache__                                                                                     create.py:916
+           Removing directory src\app_packages\autobahn\_flatc\__pycache__                                                                                             create.py:916
+           Removing directory src\app_packages\automat\__pycache__                                                                                                     create.py:916
+           Removing directory src\app_packages\automat\_test\__pycache__                                                                                               create.py:916
+           Removing directory src\app_packages\cbor2\__pycache__                                                                                                       create.py:916
+           Removing directory src\app_packages\cffi\__pycache__                                                                                                        create.py:916
+           Removing directory src\app_packages\channels\__pycache__                                                                                                    create.py:916
+           Removing directory src\app_packages\channels\generic\__pycache__                                                                                            create.py:916
+           Removing directory src\app_packages\channels\management\__pycache__                                                                                         create.py:916
+           Removing directory src\app_packages\channels\management\commands\__pycache__                                                                                create.py:916
+           Removing directory src\app_packages\channels\security\__pycache__                                                                                           create.py:916
+           Removing directory src\app_packages\channels\testing\__pycache__                                                                                            create.py:916
+           Removing directory src\app_packages\constantly\__pycache__                                                                                                  create.py:916
+           Removing directory src\app_packages\constantly\test\__pycache__                                                                                             create.py:916
+           Removing directory src\app_packages\cryptography\__pycache__                                                                                                create.py:916
+           Removing directory src\app_packages\cryptography\hazmat\__pycache__                                                                                         create.py:916
+           Removing directory src\app_packages\cryptography\hazmat\asn1\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\cryptography\hazmat\backends\__pycache__                                                                                create.py:916
+           Removing directory src\app_packages\cryptography\hazmat\backends\openssl\__pycache__                                                                        create.py:916
+           Removing directory src\app_packages\cryptography\hazmat\bindings\__pycache__                                                                                create.py:916
+           Removing directory src\app_packages\cryptography\hazmat\bindings\openssl\__pycache__                                                                        create.py:916
+           Removing directory src\app_packages\cryptography\hazmat\decrepit\__pycache__                                                                                create.py:916
+           Removing directory src\app_packages\cryptography\hazmat\decrepit\ciphers\__pycache__                                                                        create.py:916
+           Removing directory src\app_packages\cryptography\hazmat\primitives\__pycache__                                                                              create.py:916
+           Removing directory src\app_packages\cryptography\hazmat\primitives\asymmetric\__pycache__                                                                   create.py:916
+           Removing directory src\app_packages\cryptography\hazmat\primitives\ciphers\__pycache__                                                                      create.py:916
+           Removing directory src\app_packages\cryptography\hazmat\primitives\kdf\__pycache__                                                                          create.py:916
+           Removing directory src\app_packages\cryptography\hazmat\primitives\serialization\__pycache__                                                                create.py:916
+           Removing directory src\app_packages\cryptography\hazmat\primitives\twofactor\__pycache__                                                                    create.py:916
+           Removing directory src\app_packages\cryptography\x509\__pycache__                                                                                           create.py:916
+           Removing directory src\app_packages\daphne\__pycache__                                                                                                      create.py:916
+           Removing directory src\app_packages\daphne\management\__pycache__                                                                                           create.py:916
+           Removing directory src\app_packages\daphne\management\commands\__pycache__                                                                                  create.py:916
+           Removing directory src\app_packages\daphne\twisted\plugins\__pycache__                                                                                      create.py:916
+           Removing directory src\app_packages\django\__pycache__                                                                                                      create.py:916
+           Removing directory src\app_packages\django\apps\__pycache__                                                                                                 create.py:916
+           Removing directory src\app_packages\django\conf\__pycache__                                                                                                 create.py:916
+           Removing directory src\app_packages\django\conf\locale\__pycache__                                                                                          create.py:916
+           Removing directory src\app_packages\django\conf\locale\ar\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\ar_DZ\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\conf\locale\az\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\bg\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\bn\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\bs\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\ca\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\ckb\__pycache__                                                                                      create.py:916
+           Removing directory src\app_packages\django\conf\locale\cs\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\cy\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\da\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\de\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\de_CH\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\conf\locale\el\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\en\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\en_AU\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\conf\locale\en_CA\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\conf\locale\en_GB\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\conf\locale\en_IE\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\conf\locale\eo\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\es\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\es_AR\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\conf\locale\es_CO\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\conf\locale\es_MX\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\conf\locale\es_NI\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\conf\locale\es_PR\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\conf\locale\et\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\eu\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\fa\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\fi\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\fr\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\fr_BE\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\conf\locale\fr_CA\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\conf\locale\fr_CH\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\conf\locale\fy\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\ga\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\gd\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\gl\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\he\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\hi\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\hr\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\hu\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\id\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\ig\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\is\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\it\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\ja\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\ka\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\km\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\kn\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\ko\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\ky\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\lt\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\lv\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\mk\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\ml\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\mn\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\ms\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\nb\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\nl\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\nn\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\pl\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\pt\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\pt_BR\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\conf\locale\ro\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\ru\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\sk\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\sl\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\sq\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\sr\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\sr_Latn\__pycache__                                                                                  create.py:916
+           Removing directory src\app_packages\django\conf\locale\sv\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\ta\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\te\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\tg\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\th\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\tk\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\tr\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\ug\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\uk\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\uz\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\vi\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\conf\locale\zh_Hans\__pycache__                                                                                  create.py:916
+           Removing directory src\app_packages\django\conf\locale\zh_Hant\__pycache__                                                                                  create.py:916
+           Removing directory src\app_packages\django\conf\urls\__pycache__                                                                                            create.py:916
+           Removing directory src\app_packages\django\contrib\__pycache__                                                                                              create.py:916
+           Removing directory src\app_packages\django\contrib\admin\__pycache__                                                                                        create.py:916
+           Removing directory src\app_packages\django\contrib\admin\migrations\__pycache__                                                                             create.py:916
+           Removing directory src\app_packages\django\contrib\admin\templatetags\__pycache__                                                                           create.py:916
+           Removing directory src\app_packages\django\contrib\admin\views\__pycache__                                                                                  create.py:916
+           Removing directory src\app_packages\django\contrib\admindocs\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\contrib\auth\__pycache__                                                                                         create.py:916
+           Removing directory src\app_packages\django\contrib\auth\handlers\__pycache__                                                                                create.py:916
+           Removing directory src\app_packages\django\contrib\auth\management\__pycache__                                                                              create.py:916
+           Removing directory src\app_packages\django\contrib\auth\management\commands\__pycache__                                                                     create.py:916
+           Removing directory src\app_packages\django\contrib\auth\migrations\__pycache__                                                                              create.py:916
+           Removing directory src\app_packages\django\contrib\contenttypes\__pycache__                                                                                 create.py:916
+           Removing directory src\app_packages\django\contrib\contenttypes\management\__pycache__                                                                      create.py:916
+           Removing directory src\app_packages\django\contrib\contenttypes\management\commands\__pycache__                                                             create.py:916
+           Removing directory src\app_packages\django\contrib\contenttypes\migrations\__pycache__                                                                      create.py:916
+           Removing directory src\app_packages\django\contrib\flatpages\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\contrib\flatpages\migrations\__pycache__                                                                         create.py:916
+           Removing directory src\app_packages\django\contrib\flatpages\templatetags\__pycache__                                                                       create.py:916
+           Removing directory src\app_packages\django\contrib\gis\__pycache__                                                                                          create.py:916
+           Removing directory src\app_packages\django\contrib\gis\admin\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\contrib\gis\db\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\django\contrib\gis\db\backends\__pycache__                                                                              create.py:916
+           Removing directory src\app_packages\django\contrib\gis\db\backends\base\__pycache__                                                                         create.py:916
+           Removing directory src\app_packages\django\contrib\gis\db\backends\mysql\__pycache__                                                                        create.py:916
+           Removing directory src\app_packages\django\contrib\gis\db\backends\oracle\__pycache__                                                                       create.py:916
+           Removing directory src\app_packages\django\contrib\gis\db\backends\postgis\__pycache__                                                                      create.py:916
+           Removing directory src\app_packages\django\contrib\gis\db\backends\spatialite\__pycache__                                                                   create.py:916
+           Removing directory src\app_packages\django\contrib\gis\db\models\__pycache__                                                                                create.py:916
+           Removing directory src\app_packages\django\contrib\gis\db\models\sql\__pycache__                                                                            create.py:916
+           Removing directory src\app_packages\django\contrib\gis\forms\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\contrib\gis\gdal\__pycache__                                                                                     create.py:916
+           Removing directory src\app_packages\django\contrib\gis\gdal\prototypes\__pycache__                                                                          create.py:916
+           Removing directory src\app_packages\django\contrib\gis\gdal\raster\__pycache__                                                                              create.py:916
+           Removing directory src\app_packages\django\contrib\gis\geos\__pycache__                                                                                     create.py:916
+           Removing directory src\app_packages\django\contrib\gis\geos\prototypes\__pycache__                                                                          create.py:916
+           Removing directory src\app_packages\django\contrib\gis\management\__pycache__                                                                               create.py:916
+           Removing directory src\app_packages\django\contrib\gis\management\commands\__pycache__                                                                      create.py:916
+           Removing directory src\app_packages\django\contrib\gis\serializers\__pycache__                                                                              create.py:916
+           Removing directory src\app_packages\django\contrib\gis\sitemaps\__pycache__                                                                                 create.py:916
+           Removing directory src\app_packages\django\contrib\gis\utils\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\contrib\humanize\__pycache__                                                                                     create.py:916
+           Removing directory src\app_packages\django\contrib\humanize\templatetags\__pycache__                                                                        create.py:916
+           Removing directory src\app_packages\django\contrib\messages\__pycache__                                                                                     create.py:916
+           Removing directory src\app_packages\django\contrib\messages\storage\__pycache__                                                                             create.py:916
+           Removing directory src\app_packages\django\contrib\postgres\__pycache__                                                                                     create.py:916
+           Removing directory src\app_packages\django\contrib\postgres\aggregates\__pycache__                                                                          create.py:916
+           Removing directory src\app_packages\django\contrib\postgres\fields\__pycache__                                                                              create.py:916
+           Removing directory src\app_packages\django\contrib\postgres\forms\__pycache__                                                                               create.py:916
+           Removing directory src\app_packages\django\contrib\redirects\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\contrib\redirects\migrations\__pycache__                                                                         create.py:916
+           Removing directory src\app_packages\django\contrib\sessions\__pycache__                                                                                     create.py:916
+           Removing directory src\app_packages\django\contrib\sessions\backends\__pycache__                                                                            create.py:916
+           Removing directory src\app_packages\django\contrib\sessions\management\__pycache__                                                                          create.py:916
+           Removing directory src\app_packages\django\contrib\sessions\management\commands\__pycache__                                                                 create.py:916
+           Removing directory src\app_packages\django\contrib\sessions\migrations\__pycache__                                                                          create.py:916
+           Removing directory src\app_packages\django\contrib\sitemaps\__pycache__                                                                                     create.py:916
+           Removing directory src\app_packages\django\contrib\sites\__pycache__                                                                                        create.py:916
+           Removing directory src\app_packages\django\contrib\sites\migrations\__pycache__                                                                             create.py:916
+           Removing directory src\app_packages\django\contrib\staticfiles\__pycache__                                                                                  create.py:916
+           Removing directory src\app_packages\django\contrib\staticfiles\management\__pycache__                                                                       create.py:916
+           Removing directory src\app_packages\django\contrib\staticfiles\management\commands\__pycache__                                                              create.py:916
+           Removing directory src\app_packages\django\contrib\syndication\__pycache__                                                                                  create.py:916
+           Removing directory src\app_packages\django\core\__pycache__                                                                                                 create.py:916
+           Removing directory src\app_packages\django\core\cache\__pycache__                                                                                           create.py:916
+           Removing directory src\app_packages\django\core\cache\backends\__pycache__                                                                                  create.py:916
+           Removing directory src\app_packages\django\core\checks\__pycache__                                                                                          create.py:916
+           Removing directory src\app_packages\django\core\checks\compatibility\__pycache__                                                                            create.py:916
+           Removing directory src\app_packages\django\core\checks\security\__pycache__                                                                                 create.py:916
+           Removing directory src\app_packages\django\core\files\__pycache__                                                                                           create.py:916
+           Removing directory src\app_packages\django\core\files\storage\__pycache__                                                                                   create.py:916
+           Removing directory src\app_packages\django\core\handlers\__pycache__                                                                                        create.py:916
+           Removing directory src\app_packages\django\core\mail\__pycache__                                                                                            create.py:916
+           Removing directory src\app_packages\django\core\mail\backends\__pycache__                                                                                   create.py:916
+           Removing directory src\app_packages\django\core\management\__pycache__                                                                                      create.py:916
+           Removing directory src\app_packages\django\core\management\commands\__pycache__                                                                             create.py:916
+           Removing directory src\app_packages\django\core\serializers\__pycache__                                                                                     create.py:916
+           Removing directory src\app_packages\django\core\servers\__pycache__                                                                                         create.py:916
+           Removing directory src\app_packages\django\db\__pycache__                                                                                                   create.py:916
+           Removing directory src\app_packages\django\db\backends\__pycache__                                                                                          create.py:916
+           Removing directory src\app_packages\django\db\backends\base\__pycache__                                                                                     create.py:916
+           Removing directory src\app_packages\django\db\backends\dummy\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\db\backends\mysql\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\db\backends\oracle\__pycache__                                                                                   create.py:916
+           Removing directory src\app_packages\django\db\backends\postgresql\__pycache__                                                                               create.py:916
+           Removing directory src\app_packages\django\db\backends\sqlite3\__pycache__                                                                                  create.py:916
+           Removing directory src\app_packages\django\db\migrations\__pycache__                                                                                        create.py:916
+           Removing directory src\app_packages\django\db\migrations\operations\__pycache__                                                                             create.py:916
+           Removing directory src\app_packages\django\db\models\__pycache__                                                                                            create.py:916
+           Removing directory src\app_packages\django\db\models\fields\__pycache__                                                                                     create.py:916
+           Removing directory src\app_packages\django\db\models\functions\__pycache__                                                                                  create.py:916
+           Removing directory src\app_packages\django\db\models\sql\__pycache__                                                                                        create.py:916
+           Removing directory src\app_packages\django\dispatch\__pycache__                                                                                             create.py:916
+           Removing directory src\app_packages\django\forms\__pycache__                                                                                                create.py:916
+           Removing directory src\app_packages\django\http\__pycache__                                                                                                 create.py:916
+           Removing directory src\app_packages\django\middleware\__pycache__                                                                                           create.py:916
+           Removing directory src\app_packages\django\template\__pycache__                                                                                             create.py:916
+           Removing directory src\app_packages\django\template\backends\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\template\loaders\__pycache__                                                                                     create.py:916
+           Removing directory src\app_packages\django\templatetags\__pycache__                                                                                         create.py:916
+           Removing directory src\app_packages\django\test\__pycache__                                                                                                 create.py:916
+           Removing directory src\app_packages\django\urls\__pycache__                                                                                                 create.py:916
+           Removing directory src\app_packages\django\utils\__pycache__                                                                                                create.py:916
+           Removing directory src\app_packages\django\utils\translation\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\django\views\__pycache__                                                                                                create.py:916
+           Removing directory src\app_packages\django\views\decorators\__pycache__                                                                                     create.py:916
+           Removing directory src\app_packages\django\views\generic\__pycache__                                                                                        create.py:916
+           Removing directory src\app_packages\empty\__pycache__                                                                                                       create.py:916
+           Removing directory src\app_packages\frozenlist\__pycache__                                                                                                  create.py:916
+           Removing directory src\app_packages\hyperlink\__pycache__                                                                                                   create.py:916
+           Removing directory src\app_packages\hyperlink\test\__pycache__                                                                                              create.py:916
+           Removing directory src\app_packages\idna\__pycache__                                                                                                        create.py:916
+           Removing directory src\app_packages\incremental\__pycache__                                                                                                 create.py:916
+           Removing directory src\app_packages\incremental\tests\__pycache__                                                                                           create.py:916
+           Removing directory src\app_packages\msgpack\__pycache__                                                                                                     create.py:916
+           Removing directory src\app_packages\multidict\__pycache__                                                                                                   create.py:916
+           Removing directory src\app_packages\NodeGraphQt\__pycache__                                                                                                 create.py:916
+           Removing directory src\app_packages\NodeGraphQt\base\__pycache__                                                                                            create.py:916
+           Removing directory src\app_packages\NodeGraphQt\custom_widgets\__pycache__                                                                                  create.py:916
+           Removing directory src\app_packages\NodeGraphQt\custom_widgets\properties_bin\__pycache__                                                                   create.py:916
+           Removing directory src\app_packages\NodeGraphQt\nodes\__pycache__                                                                                           create.py:916
+           Removing directory src\app_packages\NodeGraphQt\qgraphics\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\NodeGraphQt\widgets\__pycache__                                                                                         create.py:916
+           Removing directory src\app_packages\OpenSSL\__pycache__                                                                                                     create.py:916
+[00:12:06] Removing directory src\app_packages\packaging\__pycache__                                                                                                   create.py:916
+           Removing directory src\app_packages\packaging\licenses\__pycache__                                                                                          create.py:916
+           Removing directory src\app_packages\propcache\__pycache__                                                                                                   create.py:916
+           Removing directory src\app_packages\pyasn1\__pycache__                                                                                                      create.py:916
+           Removing directory src\app_packages\pyasn1\codec\__pycache__                                                                                                create.py:916
+           Removing directory src\app_packages\pyasn1\codec\ber\__pycache__                                                                                            create.py:916
+           Removing directory src\app_packages\pyasn1\codec\cer\__pycache__                                                                                            create.py:916
+           Removing directory src\app_packages\pyasn1\codec\der\__pycache__                                                                                            create.py:916
+           Removing directory src\app_packages\pyasn1\codec\native\__pycache__                                                                                         create.py:916
+           Removing directory src\app_packages\pyasn1\compat\__pycache__                                                                                               create.py:916
+           Removing directory src\app_packages\pyasn1\type\__pycache__                                                                                                 create.py:916
+           Removing directory src\app_packages\pyasn1_modules\__pycache__                                                                                              create.py:916
+           Removing directory src\app_packages\pycparser\__pycache__                                                                                                   create.py:916
+           Removing directory src\app_packages\PySide6\__pycache__                                                                                                     create.py:916
+           Removing directory src\app_packages\PySide6\QtAsyncio\__pycache__                                                                                           create.py:916
+           Removing directory src\app_packages\PySide6\scripts\__pycache__                                                                                             create.py:916
+           Removing directory src\app_packages\PySide6\scripts\deploy_lib\__pycache__                                                                                  create.py:916
+           Removing directory src\app_packages\PySide6\scripts\project_lib\__pycache__                                                                                 create.py:916
+           Removing directory src\app_packages\PySide6\scripts\qtpy2cpp_lib\__pycache__                                                                                create.py:916
+           Removing directory src\app_packages\PySide6\support\__pycache__                                                                                             create.py:916
+           Removing directory src\app_packages\rest_framework\__pycache__                                                                                              create.py:916
+           Removing directory src\app_packages\rest_framework\authtoken\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\rest_framework\authtoken\management\__pycache__                                                                         create.py:916
+           Removing directory src\app_packages\rest_framework\authtoken\management\commands\__pycache__                                                                create.py:916
+           Removing directory src\app_packages\rest_framework\authtoken\migrations\__pycache__                                                                         create.py:916
+           Removing directory src\app_packages\rest_framework\management\__pycache__                                                                                   create.py:916
+           Removing directory src\app_packages\rest_framework\management\commands\__pycache__                                                                          create.py:916
+           Removing directory src\app_packages\rest_framework\schemas\__pycache__                                                                                      create.py:916
+           Removing directory src\app_packages\rest_framework\templatetags\__pycache__                                                                                 create.py:916
+           Removing directory src\app_packages\rest_framework\utils\__pycache__                                                                                        create.py:916
+           Removing directory src\app_packages\service_identity\__pycache__                                                                                            create.py:916
+           Removing directory src\app_packages\shiboken6\__pycache__                                                                                                   create.py:916
+           Removing directory src\app_packages\sqlparse\__pycache__                                                                                                    create.py:916
+           Removing directory src\app_packages\sqlparse\engine\__pycache__                                                                                             create.py:916
+           Removing directory src\app_packages\sqlparse\filters\__pycache__                                                                                            create.py:916
+           Removing directory src\app_packages\twisted\__pycache__                                                                                                     create.py:916
+           Removing directory src\app_packages\twisted\application\__pycache__                                                                                         create.py:916
+           Removing directory src\app_packages\twisted\application\runner\__pycache__                                                                                  create.py:916
+           Removing directory src\app_packages\twisted\application\runner\test\__pycache__                                                                             create.py:916
+           Removing directory src\app_packages\twisted\application\test\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\twisted\application\twist\__pycache__                                                                                   create.py:916
+           Removing directory src\app_packages\twisted\application\twist\test\__pycache__                                                                              create.py:916
+           Removing directory src\app_packages\twisted\conch\__pycache__                                                                                               create.py:916
+           Removing directory src\app_packages\twisted\conch\client\__pycache__                                                                                        create.py:916
+           Removing directory src\app_packages\twisted\conch\insults\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\twisted\conch\openssh_compat\__pycache__                                                                                create.py:916
+           Removing directory src\app_packages\twisted\conch\scripts\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\twisted\conch\ssh\__pycache__                                                                                           create.py:916
+           Removing directory src\app_packages\twisted\conch\test\__pycache__                                                                                          create.py:916
+           Removing directory src\app_packages\twisted\conch\ui\__pycache__                                                                                            create.py:916
+           Removing directory src\app_packages\twisted\cred\__pycache__                                                                                                create.py:916
+           Removing directory src\app_packages\twisted\cred\test\__pycache__                                                                                           create.py:916
+           Removing directory src\app_packages\twisted\enterprise\__pycache__                                                                                          create.py:916
+           Removing directory src\app_packages\twisted\internet\__pycache__                                                                                            create.py:916
+           Removing directory src\app_packages\twisted\internet\iocpreactor\__pycache__                                                                                create.py:916
+           Removing directory src\app_packages\twisted\internet\test\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\twisted\logger\__pycache__                                                                                              create.py:916
+           Removing directory src\app_packages\twisted\logger\test\__pycache__                                                                                         create.py:916
+           Removing directory src\app_packages\twisted\mail\__pycache__                                                                                                create.py:916
+           Removing directory src\app_packages\twisted\mail\scripts\__pycache__                                                                                        create.py:916
+           Removing directory src\app_packages\twisted\mail\test\__pycache__                                                                                           create.py:916
+           Removing directory src\app_packages\twisted\names\__pycache__                                                                                               create.py:916
+           Removing directory src\app_packages\twisted\names\test\__pycache__                                                                                          create.py:916
+           Removing directory src\app_packages\twisted\pair\__pycache__                                                                                                create.py:916
+           Removing directory src\app_packages\twisted\pair\test\__pycache__                                                                                           create.py:916
+           Removing directory src\app_packages\twisted\persisted\__pycache__                                                                                           create.py:916
+           Removing directory src\app_packages\twisted\persisted\test\__pycache__                                                                                      create.py:916
+           Removing directory src\app_packages\twisted\plugins\__pycache__                                                                                             create.py:916
+           Removing directory src\app_packages\twisted\positioning\__pycache__                                                                                         create.py:916
+           Removing directory src\app_packages\twisted\positioning\test\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\twisted\protocols\__pycache__                                                                                           create.py:916
+           Removing directory src\app_packages\twisted\protocols\haproxy\__pycache__                                                                                   create.py:916
+           Removing directory src\app_packages\twisted\protocols\haproxy\test\__pycache__                                                                              create.py:916
+           Removing directory src\app_packages\twisted\protocols\test\__pycache__                                                                                      create.py:916
+           Removing directory src\app_packages\twisted\python\__pycache__                                                                                              create.py:916
+           Removing directory src\app_packages\twisted\python\test\__pycache__                                                                                         create.py:916
+           Removing directory src\app_packages\twisted\runner\__pycache__                                                                                              create.py:916
+           Removing directory src\app_packages\twisted\runner\test\__pycache__                                                                                         create.py:916
+           Removing directory src\app_packages\twisted\scripts\__pycache__                                                                                             create.py:916
+           Removing directory src\app_packages\twisted\scripts\test\__pycache__                                                                                        create.py:916
+           Removing directory src\app_packages\twisted\spread\__pycache__                                                                                              create.py:916
+           Removing directory src\app_packages\twisted\spread\test\__pycache__                                                                                         create.py:916
+           Removing directory src\app_packages\twisted\tap\__pycache__                                                                                                 create.py:916
+           Removing directory src\app_packages\twisted\test\__pycache__                                                                                                create.py:916
+           Removing directory src\app_packages\twisted\trial\__pycache__                                                                                               create.py:916
+           Removing directory src\app_packages\twisted\trial\test\__pycache__                                                                                          create.py:916
+           Removing directory src\app_packages\twisted\trial\_dist\__pycache__                                                                                         create.py:916
+           Removing directory src\app_packages\twisted\trial\_dist\test\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\twisted\web\__pycache__                                                                                                 create.py:916
+           Removing directory src\app_packages\twisted\web\test\__pycache__                                                                                            create.py:916
+           Removing directory src\app_packages\twisted\web\_auth\__pycache__                                                                                           create.py:916
+           Removing directory src\app_packages\twisted\words\__pycache__                                                                                               create.py:916
+           Removing directory src\app_packages\twisted\words\im\__pycache__                                                                                            create.py:916
+           Removing directory src\app_packages\twisted\words\protocols\__pycache__                                                                                     create.py:916
+           Removing directory src\app_packages\twisted\words\protocols\jabber\__pycache__                                                                              create.py:916
+           Removing directory src\app_packages\twisted\words\test\__pycache__                                                                                          create.py:916
+           Removing directory src\app_packages\twisted\words\xish\__pycache__                                                                                          create.py:916
+           Removing directory src\app_packages\twisted\_threads\__pycache__                                                                                            create.py:916
+           Removing directory src\app_packages\twisted\_threads\test\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\txaio\__pycache__                                                                                                       create.py:916
+           Removing directory src\app_packages\tzdata\__pycache__                                                                                                      create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\__pycache__                                                                                             create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\Africa\__pycache__                                                                                      create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\America\__pycache__                                                                                     create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\America\Argentina\__pycache__                                                                           create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\America\Indiana\__pycache__                                                                             create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\America\Kentucky\__pycache__                                                                            create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\America\North_Dakota\__pycache__                                                                        create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\Antarctica\__pycache__                                                                                  create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\Arctic\__pycache__                                                                                      create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\Asia\__pycache__                                                                                        create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\Atlantic\__pycache__                                                                                    create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\Australia\__pycache__                                                                                   create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\Brazil\__pycache__                                                                                      create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\Canada\__pycache__                                                                                      create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\Chile\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\Etc\__pycache__                                                                                         create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\Europe\__pycache__                                                                                      create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\Indian\__pycache__                                                                                      create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\Mexico\__pycache__                                                                                      create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\Pacific\__pycache__                                                                                     create.py:916
+           Removing directory src\app_packages\tzdata\zoneinfo\US\__pycache__                                                                                          create.py:916
+[00:12:07] Removing directory src\app_packages\ubjson\__pycache__                                                                                                      create.py:916
+           Removing directory src\app_packages\websockets\__pycache__                                                                                                  create.py:916
+           Removing directory src\app_packages\websockets\asyncio\__pycache__                                                                                          create.py:916
+           Removing directory src\app_packages\websockets\extensions\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\websockets\legacy\__pycache__                                                                                           create.py:916
+           Removing directory src\app_packages\websockets\sync\__pycache__                                                                                             create.py:916
+           Removing directory src\app_packages\yarl\__pycache__                                                                                                        create.py:916
+           Removing directory src\app_packages\zope\interface\__pycache__                                                                                              create.py:916
+           Removing directory src\app_packages\zope\interface\common\__pycache__                                                                                       create.py:916
+           Removing directory src\app_packages\zope\interface\common\tests\__pycache__                                                                                 create.py:916
+           Removing directory src\app_packages\zope\interface\tests\__pycache__                                                                                        create.py:916
+           Removing unneeded app bundle content... done                                                                                                                create.py:909
+                                                                                                                                                                      create.py:1003
+           [nodepipe] Created build\nodepipe\windows\app                                                                                                              create.py:1003
+                                                                                                                                                                           app.py:64
+           [nodepipe] Building App...                                                                                                                                      app.py:64
+           Renaming stub binary... started                                                                                                                                 app.py:74
+           Renaming stub binary... done                                                                                                                                    app.py:74
+           Removing any digital signatures from stub app... started                                                                                                        app.py:81
+                                                                                                                                                                   subprocess.py:839
+           >>> Running Command:                                                                                                                                    subprocess.py:839
+           >>>     'C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe' remove -s 'src\NodePipe.exe'                                         subprocess.py:839
+           >>> Working Directory:                                                                                                                                  subprocess.py:839
+           >>>     D:\Documents\School\CSUSM\CS490\Project\bioinformatics-pipeline-capstone\build\nodepipe\windows\app                                             subprocess.py:839
+           >>> Command Output:                                                                                                                                     subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>>     Number of errors: 1                                                                                                                             subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>>     SignTool Error: CryptSIPRemoveSignedDataMsg returned error: 0x00000057                                                                          subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>>             The parameter is incorrect.                                                                                                             subprocess.py:839
+           >>>                                                                                                                                                     subprocess.py:839
+           >>> Return code: 1                                                                                                                                      subprocess.py:839
+                                                                                                                                                                   subprocess.py:839
+           Removing any digital signatures from stub app... done                                                                                                           app.py:81
+           Setting stub app details... started                                                                                                                            app.py:109
+                                                                                                                                                                   subprocess.py:839
+           >>> Running Command:                                                                                                                                    subprocess.py:839
+           >>>     'D:\briefcase\Cache\tools\rcedit-x64.exe' 'src\NodePipe.exe' --set-version-string CompanyName CSUSM-CSE-47-2026-CS-S03-Team-002                 subprocess.py:839
+           --set-version-string FileDescription NodePipe --set-version-string FileVersion 0.0.1 --set-version-string InternalName nodepipe --set-version-string                     
+           OriginalFilename NodePipe.exe --set-version-string ProductName NodePipe --set-version-string ProductVersion 0.0.1 --set-icon icon.ico                                    
+           >>> Working Directory:                                                                                                                                  subprocess.py:839
+           >>>     D:\Documents\School\CSUSM\CS490\Project\bioinformatics-pipeline-capstone\build\nodepipe\windows\app                                             subprocess.py:839
+           >>> Return code: 0                                                                                                                                      subprocess.py:839
+                                                                                                                                                                   subprocess.py:839
+           Setting stub app details... done                                                                                                                               app.py:109
+                                                                                                                                                                         build.py:96
+           [nodepipe] Built build\nodepipe\windows\app\src\NodePipe.exe                                                                                                  build.py:96
+                                                                                                                                                                          run.py:290
+           [nodepipe] Starting app...                                                                                                                                     run.py:290
+                                                                                                                                                                   subprocess.py:839
+           >>> Running Command:                                                                                                                                    subprocess.py:839
+           >>>     'D:\Documents\School\CSUSM\CS490\Project\bioinformatics-pipeline-capstone\build\nodepipe\windows\app\src\NodePipe.exe'                          subprocess.py:839
+           >>> Working Directory:                                                                                                                                  subprocess.py:839
+           >>>     C:\Users\Kenneth Lopez                                                                                                                          subprocess.py:839
+           ===========================================================================                                                                                    run.py:175
+[00:12:30]  Container nodepipe-nodepipe-compute-1 Recreate                                                                                                         subprocess.py:196
+            Container nodepipe-nodepipe-compute-1 Recreated                                                                                                        subprocess.py:196
+            Container nodepipe-nodepipe-compute-1 Starting                                                                                                         subprocess.py:196
+            Container nodepipe-nodepipe-compute-1 Started                                                                                                          subprocess.py:196
+[00:12:31] ERROR: Failed to connect to server due to Server disconnected                                                                                           subprocess.py:196
+[00:26:55] ---------------------------------------------------------------------------                                                                             subprocess.py:196
+           Application quit abnormally!                                                                                                                            subprocess.py:196
+           Traceback (most recent call last):                                                                                                                      subprocess.py:196
+             File "\app\nodepipe\__main__.py", line 13, in <module>                                                                                                subprocess.py:196
+               App.bootup()                                                                                                                                        subprocess.py:196
+             File "\app\nodepipe\app.py", line 167, in bootup                                                                                                      subprocess.py:196
+               App.start_windows()                                                                                                                                 subprocess.py:196
+             File "\app\nodepipe\app.py", line 40, in start_windows                                                                                                subprocess.py:196
+               App.start_shared()                                                                                                                                  subprocess.py:196
+             File "\app\nodepipe\app.py", line 95, in start_shared                                                                                                 subprocess.py:196
+               presentation.start_app()                                                                                                                            subprocess.py:196
+             File "\app\nodepipe\frontend\presentation.py", line 2057, in start_app                                                                                subprocess.py:196
+               window = AppFrame()                                                                                                                                 subprocess.py:196
+                        ^^^^^^^^^^                                                                                                                                 subprocess.py:196
+             File "\app\nodepipe\frontend\presentation.py", line 61, in __init__                                                                                   subprocess.py:196
+               self.dispatcher.connect(ipaddress.ip_address('127.0.0.1'), 8000)                                                                                    subprocess.py:196
+             File "\app\nodepipe\network\client\CommandDispatcher.py", line 55, in connect                                                                         subprocess.py:196
+               self.net_client.connect(self.user_uuid, server_ip, server_port)                                                                                     subprocess.py:196
+             File "\app\nodepipe\network\client\NetClient.py", line 68, in connect                                                                                 subprocess.py:196
+               raise e # Rethrow for lower layer to deal with                                                                                                      subprocess.py:196
+               ^^^^^^^                                                                                                                                             subprocess.py:196
+             File "\app\nodepipe\network\client\NetClient.py", line 61, in connect                                                                                 subprocess.py:196
+               asyncio.run(NetClient._ping_server(server_ip, server_port))                                                                                         subprocess.py:196
+             File "asyncio\runners.py", line 190, in run                                                                                                           subprocess.py:196
+             File "asyncio\runners.py", line 118, in run                                                                                                           subprocess.py:196
+             File "asyncio\base_events.py", line 654, in run_until_complete                                                                                        subprocess.py:196
+             File "\app\nodepipe\network\client\NetClient.py", line 237, in _ping_server                                                                           subprocess.py:196
+               async with req_method(f"http://{server_ip}:{server_port}/api/ping/") as resp:                                                                       subprocess.py:196
+             File "\app_packages\aiohttp\client.py", line 1521, in __aenter__                                                                                      subprocess.py:196
+               self._resp: _RetType = await self._coro                                                                                                             subprocess.py:196
+                                      ^^^^^^^^^^^^^^^^                                                                                                             subprocess.py:196
+             File "\app_packages\aiohttp\client.py", line 788, in _request                                                                                         subprocess.py:196
+               resp = await handler(req)                                                                                                                           subprocess.py:196
+                      ^^^^^^^^^^^^^^^^^^                                                                                                                           subprocess.py:196
+             File "\app_packages\aiohttp\client.py", line 766, in _connect_and_send_request                                                                        subprocess.py:196
+               await resp.start(conn)                                                                                                                              subprocess.py:196
+             File "\app_packages\aiohttp\client_reqrep.py", line 539, in start                                                                                     subprocess.py:196
+               message, payload = await protocol.read()  # type: ignore[union-attr]                                                                                subprocess.py:196
+                                  ^^^^^^^^^^^^^^^^^^^^^                                                                                                            subprocess.py:196
+             File "\app_packages\aiohttp\streams.py", line 707, in read                                                                                            subprocess.py:196
+               await self._waiter                                                                                                                                  subprocess.py:196
+           aiohttp.client_exceptions.ServerDisconnectedError: Server disconnected                                                                                  subprocess.py:196
+                                                                                                                                                                   subprocess.py:196
+                                                                                                                                                                      __main__.py:42
+           Problem running app nodepipe.                                                                                                                              __main__.py:43
+           Saving log... started                                                                                                                                      console.py:443
+
+Main thread traceback:
+╭─────────────────────────────────────────────────────────────────────── Traceback (most recent call last) ────────────────────────────────────────────────────────────────────────╮
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\__main__.py:27 in main                                                                                                      │
+│                                                                                                                                                                                  │
+│   24 │   │   │   Path.cwd() / "pyproject.toml",                                                                                                                                  │
+│   25 │   │   │   overrides=overrides,                                                                                                                                            │
+│   26 │   │   )                                                                                                                                                                   │
+│ ❱ 27 │   │   command(**options)                                                                                                                                                  │
+│   28 │   except HelpText as e:                                                                                                                                                   │
+│   29 │   │   console.info()                                                                                                                                                      │
+│   30 │   │   console.info(str(e))                                                                                                                                                │
+│                                                                                                                                                                                  │
+│ ╭────────────────────────────────────────────── locals ───────────────────────────────────────────────╮                                                                          │
+│ │       command = <briefcase.platforms.windows.app.WindowsAppRunCommand object at 0x0000024AC59C62D0> │                                                                          │
+│ │       console = <briefcase.console.Console object at 0x0000024AC5865890>                            │                                                                          │
+│ │             e = BriefcaseCommandError('Problem running app nodepipe.')                              │                                                                          │
+│ │ extra_cmdline = []                                                                                  │                                                                          │
+│ │       options = {                                                                                   │                                                                          │
+│ │                 │   'appname': None,                                                                │                                                                          │
+│ │                 │   'update': False,                                                                │                                                                          │
+│ │                 │   'update_requirements': False,                                                   │                                                                          │
+│ │                 │   'update_support': False,                                                        │                                                                          │
+│ │                 │   'update_stub': False,                                                           │                                                                          │
+│ │                 │   'update_resources': False,                                                      │                                                                          │
+│ │                 │   'no_update': False,                                                             │                                                                          │
+│ │                 │   'test_mode': False,                                                             │                                                                          │
+│ │                 │   'debugger': None,                                                               │                                                                          │
+│ │                 │   'debugger_host': 'localhost',                                                   │                                                                          │
+│ │                 │   ... +2                                                                          │                                                                          │
+│ │                 }                                                                                   │                                                                          │
+│ │     overrides = {}                                                                                  │                                                                          │
+│ │        result = 200                                                                                 │                                                                          │
+│ ╰─────────────────────────────────────────────────────────────────────────────────────────────────────╯                                                                          │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\commands\run.py:415 in __call__                                                                                             │
+│                                                                                                                                                                                  │
+│   412 │   │   │   │   "(apps defining 'external_package_path') cannot be run."                                                                                                   │
+│   413 │   │   │   )                                                                                                                                                              │
+│   414 │   │                                                                                                                                                                      │
+│ ❱ 415 │   │   state = self.run_app(                                                                                                                                              │
+│   416 │   │   │   app,                                                                                                                                                           │
+│   417 │   │   │   passthrough=[] if passthrough is None else passthrough,                                                                                                        │
+│   418 │   │   │   **full_options(state, options),                                                                                                                                │
+│                                                                                                                                                                                  │
+│ ╭───────────────────────────────────────────────────────────────────────── locals ──────────────────────────────────────────────────────────────────────────╮                    │
+│ │                 app = <com.csusm.capstone.nodepipe.nodepipe v0.0.1 AppConfig>                                                                             │                    │
+│ │             appname = None                                                                                                                                │                    │
+│ │            debugger = None                                                                                                                                │                    │
+│ │       debugger_host = 'localhost'                                                                                                                         │                    │
+│ │       debugger_port = 5678                                                                                                                                │                    │
+│ │           exec_file = WindowsPath('D:/Documents/School/CSUSM/CS490/Project/bioinformatics-pipeline-capstone/build/nodepipe/windows/app/src/NodePipe.exe') │                    │
+│ │           no_update = False                                                                                                                               │                    │
+│ │             options = {}                                                                                                                                  │                    │
+│ │         passthrough = []                                                                                                                                  │                    │
+│ │                self = <briefcase.platforms.windows.app.WindowsAppRunCommand object at 0x0000024AC59C62D0>                                                 │                    │
+│ │               state = None                                                                                                                                │                    │
+│ │       template_file = WindowsPath('D:/Documents/School/CSUSM/CS490/Project/bioinformatics-pipeline-capstone/build/nodepipe/windows/app')                  │                    │
+│ │           test_mode = False                                                                                                                               │                    │
+│ │              update = False                                                                                                                               │                    │
+│ │ update_requirements = False                                                                                                                               │                    │
+│ │    update_resources = False                                                                                                                               │                    │
+│ │         update_stub = False                                                                                                                               │                    │
+│ │      update_support = False                                                                                                                               │                    │
+│ ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯                    │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\platforms\windows\__init__.py:362 in run_app                                                                                │
+│                                                                                                                                                                                  │
+│   359 │   │   │   )                                                                                                                                                              │
+│   360 │   │   │                                                                                                                                                                  │
+│   361 │   │   │   # Start streaming logs for the app.                                                                                                                            │
+│ ❱ 362 │   │   │   self._stream_app_logs(                                                                                                                                         │
+│   363 │   │   │   │   app,                                                                                                                                                       │
+│   364 │   │   │   │   popen=app_popen,                                                                                                                                           │
+│   365 │   │   │   │   clean_output=False,                                                                                                                                        │
+│                                                                                                                                                                                  │
+│ ╭───────────────────────────────────────────── locals ──────────────────────────────────────────────╮                                                                            │
+│ │         app = <com.csusm.capstone.nodepipe.nodepipe v0.0.1 AppConfig>                             │                                                                            │
+│ │   app_popen = <Popen: returncode: 4294967290 args: ['D:\\Documents\\School\\CSUSM\\CS490\\...>    │                                                                            │
+│ │      kwargs = {}                                                                                  │                                                                            │
+│ │ passthrough = []                                                                                  │                                                                            │
+│ │        self = <briefcase.platforms.windows.app.WindowsAppRunCommand object at 0x0000024AC59C62D0> │                                                                            │
+│ ╰───────────────────────────────────────────────────────────────────────────────────────────────────╯                                                                            │
+│                                                                                                                                                                                  │
+│ C:\miniconda\envs\bioinf\Lib\site-packages\briefcase\commands\run.py:206 in _stream_app_logs                                                                                     │
+│                                                                                                                                                                                  │
+│   203 │   │   │   │   # If we're monitoring an actual app (not just a log stream),                                                                                               │
+│   204 │   │   │   │   # and the app didn't exit cleanly, surface the error to the user.                                                                                          │
+│   205 │   │   │   │   if popen.poll() != 0:                                                                                                                                      │
+│ ❱ 206 │   │   │   │   │   raise BriefcaseCommandError(f"Problem running app {app.app_name}.")                                                                                    │
+│   207 │   │                                                                                                                                                                      │
+│   208 │   │   except KeyboardInterrupt:                                                                                                                                          │
+│   209 │   │   │   pass  # Catch CTRL-C to exit normally                                                                                                                          │
+│                                                                                                                                                                                  │
+│ ╭────────────────────────────────────────────── locals ──────────────────────────────────────────────╮                                                                           │
+│ │          app = <com.csusm.capstone.nodepipe.nodepipe v0.0.1 AppConfig>                             │                                                                           │
+│ │ clean_filter = None                                                                                │                                                                           │
+│ │ clean_output = False                                                                               │                                                                           │
+│ │   log_filter = <briefcase.commands.run.LogFilter object at 0x0000024ACB532B10>                     │                                                                           │
+│ │   log_stream = False                                                                               │                                                                           │
+│ │        popen = <Popen: returncode: 4294967290 args: ['D:\\Documents\\School\\CSUSM\\CS490\\...>    │                                                                           │
+│ │         self = <briefcase.platforms.windows.app.WindowsAppRunCommand object at 0x0000024AC59C62D0> │                                                                           │
+│ ╰────────────────────────────────────────────────────────────────────────────────────────────────────╯                                                                           │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+BriefcaseCommandError: Problem running app nodepipe.

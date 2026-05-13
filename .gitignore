@@ -6,3 +6,8 @@ db.sqlite3
 ./logs/
 ./src/nodepipe/shared-data/*
 ./src/nodepipe/.env
+
+build/
+dist/
+
+.DS_Store

@@ -25,7 +25,7 @@ from shared.APIStatus import APIStatus
 
 BIND_MOUNT_COPY_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'shared-data/input-files/')
 
-app = QtWidgets.QApplication([])
+app = None
 class AppFrame(QtWidgets.QMainWindow):
     """
     The primary window of the App, where all the views live and are stored
@@ -2054,10 +2054,8 @@ class OutputNode(DataNode):
 
         
 
-
-
-if __name__ == '__main__':
-
+def start_app():
+    app = QtWidgets.QApplication([])
 
     #gets user's screen size for resizing the window
     screen = app.primaryScreen()
@@ -2082,3 +2080,5 @@ if __name__ == '__main__':
 
     app.exec()
     
+if __name__ == '__main__':
+    start_app()
