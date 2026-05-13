@@ -1,4 +1,6 @@
 FROM docker:dind
+RUN apk add --no-cache tzdata
+ENV TZ=UTC
 WORKDIR /usr/src/compute
 ENV PYTHONUNBUFFERED=1
 COPY backend/ ./backend/

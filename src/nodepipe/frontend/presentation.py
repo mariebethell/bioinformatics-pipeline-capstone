@@ -140,11 +140,30 @@ class GraphGenerator():
         return input_file_dict
 
     def from_workbench(self):
-        # create backend nodes
+        """
+        Convert QT node graph into backend Graph. Ensures that input node is always first in the graph.
+        """
+        
+        # Traverse all nodes to find the input in case it was created after other tools
         for qt_node in self.qt_graph.all_nodes():
             if isinstance(qt_node, InputNode):
                 tool = "input"
-            elif isinstance(qt_node, ToolNode):
+
+                node = self.graph.create_node(tool)
+                node.id = qt_node.id
+
+                print(f"qt_node get value: {qt_node.get_value()}")
+                print(f"move_to_bindmount: {self.move_to_bindmount(qt_node.get_value())}")
+                node.outputs = {
+                    "reads": self.move_to_bindmount(qt_node.get_value())
+                }
+                node.args = {}  # input nodes don’t have args
+
+                self.node_map[qt_node] = node
+
+        # Traverse remaining tool nodes
+        for qt_node in self.qt_graph.all_nodes():
+            if isinstance(qt_node, ToolNode):
                 tool = qt_node.tool
             else:
                 continue
@@ -152,22 +171,14 @@ class GraphGenerator():
             node = self.graph.create_node(tool)
             node.id = qt_node.id
 
-            if isinstance(qt_node, InputNode):
-                print(f"qt_node get value: {qt_node.get_value()}")
-                print(f"move_to_bindmount: {self.move_to_bindmount(qt_node.get_value())}")
-                node.outputs = {
-                    "reads": self.move_to_bindmount(qt_node.get_value())
-                }
-                node.args = {}  # input nodes don’t have args
-            else:
-                node.args = qt_node.get_value()
-                if (tool == "trimmomatic"):
-                    node.args["steps"] = [
-                        {"name": "leading", "parameters": {"quality": 3}},
-                        {"name": "trailing", "parameters": {"quality": 3}},
-                        {"name": "sliding_window", "parameters": {"window_size": 4, "required_quality": 20}},
-                        {"name": "min_len", "parameters": {"length": 36}},
-                    ]
+            node.args = qt_node.get_value()
+            if (tool == "trimmomatic"):
+                node.args["steps"] = [
+                    {"name": "leading", "parameters": {"quality": 3}},
+                    {"name": "trailing", "parameters": {"quality": 3}},
+                    {"name": "sliding_window", "parameters": {"window_size": 4, "required_quality": 20}},
+                    {"name": "min_len", "parameters": {"length": 36}},
+                ]
 
             self.node_map[qt_node] = node
 
@@ -1016,8 +1027,6 @@ NODE_WIDGETS = {
 
     'trinity' : [
         combo_box_widget('seq_type', 'Sequence Type', items=['fq', 'fa']),
-        # threads_slider here formerly,
-        slider_widget('max_memory', 'Memory to Use (GB)', max=32)
     ],
 
     'bwa' : [], # empty as we need widgets for its two sub nodes
@@ -1378,7 +1387,8 @@ class ToolNodeWrapper(NodeBaseWidget):
                 'parameters': params
             })
 
-        values['steps'] = steps
+        if self.tool == 'trimmomatic':
+            values['steps'] = steps
 
             # if widget_def:
             #     section = widget_def.get('section')

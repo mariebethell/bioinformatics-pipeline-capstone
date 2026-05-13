@@ -51,11 +51,11 @@ arg_schema = {
         "min_value": 1,
         "max_value": 128,
         "allowed_values": None,
-        "default": 1,
-        "nullable": False,
-        "ui_expose": True,
-        "managed_by_engine": False,
-        "help_text": "Maximum number of CPU threads to use.",
+        "default": None,
+        "nullable": True,
+        "ui_expose": False,
+        "managed_by_engine": True,
+        "help_text": "CPU resources are handled by the nf-core Trinity module / Nextflow config.",
     },
 
     "max_memory": {
@@ -65,11 +65,11 @@ arg_schema = {
         "min_value": None,
         "max_value": None,
         "allowed_values": None,
-        "default": "14G",
-        "nullable": False,
-        "ui_expose": True,
-        "managed_by_engine": False,
-        "help_text": "Maximum memory to allocate, for example 14G or 50G.",
+        "default": None,
+        "nullable": True,
+        "ui_expose": False,
+        "managed_by_engine": True,
+        "help_text": "Maximum memory is handled by the nf-core Trinity module / Nextflow config.",
     },
 
     "output": {
@@ -95,7 +95,7 @@ rules = [
 
 ui_schema = {
     "sections": {
-        "basic": ["seq_type", "cpu", "max_memory"],
+        "basic": ["seq_type"],
         "advanced": [],
     }
 }
