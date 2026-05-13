@@ -39,6 +39,7 @@ from backend.modules_config_builder import (
 )
 from backend.tool_registry import ToolRegistry
 from shared.graph import Graph, Node
+from collections import deque # for BFS graph traversal
 
 from uuid import UUID, uuid4
 
@@ -155,12 +156,29 @@ class NextflowGenerator:
         self._compiled_nodes: list[CompiledNode] | None = None
 
     def _linearize_graph(self) -> list[Node]:
+        """
+        Traverses the graph using Breadth First Search and returns an ordered list.
+        Ensures that the input node is the first in the list.
+        """
         ordered = []
         curr = self.graph.get_first_node()
+        ordered.append(curr)
+        queue = deque(curr.next_nodes)
 
-        while curr:
-            ordered.append(curr)
-            curr = curr.next_node
+        while queue:
+            current_node = queue.popleft()
+            if current_node is not None:
+                if current_node not in ordered:
+                    # If the node is an input, insert it as the first node in the ordered list
+                    if current_node.tool == 'input':
+                        ordered.insert(0, current_node)
+                    ordered.append(current_node) # For all other nodes, append to the ordered list
+
+                # Traverse all connected tools
+                for node in current_node.next_nodes:
+                    if node not in ordered:
+                        ordered.append(node)
+                        queue.append(node)
 
         return ordered
 
@@ -402,3 +420,4 @@ class NextflowGenerator:
         lines.append('}')
         lines.append('')
         return '\n'.join(lines)
+    

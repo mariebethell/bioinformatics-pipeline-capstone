@@ -25,9 +25,10 @@ from shared.APIStatus import APIStatus
 
 from pathlib import Path
 
-BIND_MOUNT_COPY_DIR = str((
-    Path(__file__).resolve().parents[3] / "shared-data" / "input-files"
-))
+#BIND_MOUNT_COPY_DIR = str((
+#    Path(__file__).resolve().parents[3] / "shared-data" / "input-files"
+#))
+BIND_MOUNT_COPY_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'shared-data/input-files/')
 
 app = QtWidgets.QApplication([])
 class AppFrame(QtWidgets.QMainWindow):
@@ -134,6 +135,7 @@ class GraphGenerator():
     def move_to_bindmount(self, directory) -> str:
         os.makedirs(BIND_MOUNT_COPY_DIR, exist_ok=True) # Make input file directory within shared-data if it does not already exist
 
+        print(BIND_MOUNT_COPY_DIR)
         input_file_dict = {"reads": []}
         for file in directory["reads"]:
             uri = shutil.copy2(file, BIND_MOUNT_COPY_DIR)
@@ -144,11 +146,30 @@ class GraphGenerator():
         return input_file_dict
 
     def from_workbench(self):
-        # create backend nodes
+        """
+        Convert QT node graph into backend Graph. Ensures that input node is always first in the graph.
+        """
+        
+        # Traverse all nodes to find the input in case it was created after other tools
         for qt_node in self.qt_graph.all_nodes():
             if isinstance(qt_node, InputNode):
                 tool = "input"
-            elif isinstance(qt_node, ToolNode):
+
+                node = self.graph.create_node(tool)
+                node.id = qt_node.id
+
+                print(f"qt_node get value: {qt_node.get_value()}")
+                print(f"move_to_bindmount: {self.move_to_bindmount(qt_node.get_value())}")
+                node.outputs = {
+                    "reads": self.move_to_bindmount(qt_node.get_value())
+                }
+                node.args = {}  # input nodes don’t have args
+
+                self.node_map[qt_node] = node
+
+        # Traverse remaining tool nodes
+        for qt_node in self.qt_graph.all_nodes():
+            if isinstance(qt_node, ToolNode):
                 tool = qt_node.tool
             else:
                 continue
@@ -156,22 +177,14 @@ class GraphGenerator():
             node = self.graph.create_node(tool)
             node.id = qt_node.id
 
-            if isinstance(qt_node, InputNode):
-                print(f"qt_node get value: {qt_node.get_value()}")
-                print(f"move_to_bindmount: {self.move_to_bindmount(qt_node.get_value())}")
-                node.outputs = {
-                    "reads": self.move_to_bindmount(qt_node.get_value())
-                }
-                node.args = {}  # input nodes don’t have args
-            else:
-                node.args = qt_node.get_value()
-                if (tool == "trimmomatic"):
-                    node.args["steps"] = [
-                        {"name": "leading", "parameters": {"quality": 3}},
-                        {"name": "trailing", "parameters": {"quality": 3}},
-                        {"name": "sliding_window", "parameters": {"window_size": 4, "required_quality": 20}},
-                        {"name": "min_len", "parameters": {"length": 36}},
-                    ]
+            node.args = qt_node.get_value()
+            if (tool == "trimmomatic"):
+                node.args["steps"] = [
+                    {"name": "leading", "parameters": {"quality": 3}},
+                    {"name": "trailing", "parameters": {"quality": 3}},
+                    {"name": "sliding_window", "parameters": {"window_size": 4, "required_quality": 20}},
+                    {"name": "min_len", "parameters": {"length": 36}},
+                ]
 
             self.node_map[qt_node] = node
 
@@ -185,10 +198,10 @@ class GraphGenerator():
                         self.node_map[qt_node],
                         self.node_map[target]
                     )
-                    # if isinstance(qt_node, ToolNode): 
-                    #     print(f'{qt_node.tool} -> {target}')
-                    # else:
-                    #     print(f'{type(qt_node)} -> {target}')
+                    if isinstance(qt_node, ToolNode): 
+                        print(f'{qt_node.tool} -> {target}')
+                    else:
+                        print(f'{type(qt_node)} -> {target}')
 
         return self.graph
 

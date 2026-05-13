@@ -62,12 +62,17 @@ class Graph:
         return self.nodes.get(node_num)
     
     def get_first_node(self) -> Node:
-        return next(iter((self.nodes).values()), None) # Returns first node or None if graph is empty.
+        for node in self.nodes.values():
+            if node.tool == "input":
+                return node # If input node exists, return it as the first node
+        
+        return next(iter((self.nodes).values()), None) # If input node does not exsit, return first node that was inserted in the graph or None if graph is empty
 
     def add_node(self, node, prev=None, next=None):
-        node.prev_node = prev
-
-        if next is not None: # Fix bug where first element of next_nodes is always None
+        if prev is not None:
+            node.prev_node = prev
+        
+        if next is not None:
             node.next_nodes.append(next)
 
         self.nodes[node.node_num] = node
