@@ -27,6 +27,38 @@ from shared.APIStatus import APIStatus
 BIND_MOUNT_COPY_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'shared-data/input-files/')
 
 app = None
+user_uuid = None
+
+def get_user_uuid():
+        # checking if there is a user 
+
+    root = Path(__file__).resolve().parents[3]
+    config_path = root / 'user_config.json'
+
+    if config_path.exists(): # if the json exists
+        print('User JSON exists')
+        try:
+            with open(config_path, 'r') as file:
+                data = json.load(file)
+                if 'uuid' in data:
+                    user_uuid = uuid.UUID(data['uuid'])
+                    print(f'Loaded User UUID: {user_uuid}')
+                    return user_uuid
+        except Exception as e:
+            print(f'Error attempting to read or load data json: {e}')
+    
+    #file does not exist or is invalid
+    new_uuid = uuid.uuid4()
+    print(f'New user uuid: {new_uuid}')
+    
+    try:
+        with open(config_path, 'w') as file:
+            json.dump({'uuid': str(new_uuid)}, file, indent=2)
+            print('New user JSON config saved')
+    except Exception as e:
+        print(f'Error writing UUID: {e}')
+
+    return new_uuid
 class AppFrame(QtWidgets.QMainWindow):
     """
     The primary window of the App, where all the views live and are stored
@@ -54,7 +86,7 @@ class AppFrame(QtWidgets.QMainWindow):
         self._uuid_map = {}
         self._graph_map = {}
 
-        self.uuid = uuid.uuid4()
+        self.uuid = get_user_uuid()
 
         self.dispatcher = CommandDispatcher(model=self, user_uuid=self.uuid)
         self.active_pipeline_uuid = None
@@ -2069,7 +2101,6 @@ def start_app(app: QtWidgets.QApplication):
 
     # centers app at middle of screen
     window.move((scr_w - width) // 2, (scr_h - height) // 2)
-
 
     window.show()
 
