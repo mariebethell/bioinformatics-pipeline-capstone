@@ -1,9 +1,9 @@
 from PySide6 import QtWebEngineWidgets, QtCore
 from PySide6.QtWebEngineCore import QWebEnginePage
-from PySide6.QtCore import QObject, Signal, QThread, QCoreApplication, QPoint, QEvent, Qt, QTimer
+from PySide6.QtCore import QObject, Signal, QThread, QCoreApplication, QPoint, QEvent, Qt, QTimer, QUrl
 from PySide6.QtGui import QMouseEvent
 
-from queue import Queue
+from queue import Queue, Empty
 
 from pathlib import Path
 
@@ -18,13 +18,22 @@ class WebView(QtWebEngineWidgets.QWebEngineView):
 
         def run(self):
             print("Started OneDrive dispatch worker")
-            while True:
-                try:
-                    uri = self.queue.get(block=True, timeout=None)
-                    self.upload_signal.emit(uri)
-                    
-                except Exception as e:
-                    print(f"WARNING: Unhandled exception in OneDrive dispatch worker. Ignoring. Exception: {e}")
+            try:
+                while not self.thread().isInterruptionRequested():
+                    try:
+                        uri = self.queue.get(block=True, timeout=1)
+                        self.upload_signal.emit(uri)
+                        
+                    except Empty:
+                        pass #Give the while loop a chance to check for termination request
+
+                    except Exception as e:
+                        print(f"WARNING: Unhandled exception in OneDrive dispatch worker. Ignoring. Exception: {e}")
+
+            except RuntimeError:
+                pass # Sometimes thread gets deleted before we can check for interruption on shutdown. Just silence the execption
+                     #  we're closing anyway
+    
 
     dispatcher_start_signal = Signal()
 
@@ -33,6 +42,7 @@ class WebView(QtWebEngineWidgets.QWebEngineView):
 
         self.setPage(self.UploadablePage(self))
 
+        self.folder_url = QtCore.QUrl(folder_url)
         self._uris_to_upload = Queue() # Queue of Paths
         self._staged_file = None
 
@@ -43,13 +53,28 @@ class WebView(QtWebEngineWidgets.QWebEngineView):
         self.settings().setAttribute(self.settings().WebAttribute.JavascriptCanOpenWindows, True)
 
         self.page().chooseFiles
-        self.setUrl(QtCore.QUrl(folder_url))
+        self.setUrl(self.folder_url)
         self.loadFinished.connect(self._handle_page_loaded)
+
+    def __del__(self):
+        if self.dispatch_worker_thread is not None:
+            print("Stopping OneDrive dispatch worker")
+            self.dispatch_worker_thread.requestInterruption()
+            self.dispatch_worker_thread.wait()
+            self.dispatch_worker_thread.deleteLater()
 
 
     def _handle_page_loaded(self, success):
         if success:
             self._start_dispatch_worker()
+
+            try:
+                self.loadFinished.disconnect(self._handle_page_loaded)
+
+            except RuntimeError:
+                return # Signal was already disconnected
+            
+            self.folder_url = self.url() # Tolerate redirects
 
         else:
             print("ERROR: Webview page failed to load. Aborting OneDrive handler init")
@@ -61,7 +86,6 @@ class WebView(QtWebEngineWidgets.QWebEngineView):
             print("ERROR: Attempted to start OneDrive dispatcher when one already exists. Ignoring...")
             return
 
-        
         self.dispatch_worker = self.DispatchWorker(self._uris_to_upload)
         self.dispatch_worker_thread = QThread()
         self.dispatch_worker.moveToThread(self.dispatch_worker_thread)
@@ -108,6 +132,30 @@ class WebView(QtWebEngineWidgets.QWebEngineView):
         
         self._staged_file = uri
 
+        if not self.url().matches(self.folder_url, QUrl.ComponentFormattingOption.FullyEncoded):
+            # User changed the page, need to reset it
+            self.setUrl(self.folder_url)
+            self.loadFinished.connect(self._on_reload_finished)
+        
+        else:
+            self._inject_file_div()
+
+    def _on_reload_finished(self):
+        try:
+            self.loadFinished.disconnect(self._on_reload_finished)
+
+        except RuntimeError:
+            pass # Was already disconnected
+
+        QTimer.singleShot(5000, self._inject_file_div) # Delay to let OneDrive finish its page setup
+
+    def _inject_file_div(self):
+
+        if not isinstance(self._staged_file, Path):
+            print(f"WARNING: Staged file is not a Path object. Type is {type(self._staged_file)}. Rejecting...")
+            self._staged_file = None
+            return
+
         try:
             injector = f"""
                 (function() {{
@@ -130,7 +178,7 @@ class WebView(QtWebEngineWidgets.QWebEngineView):
                             document.body.appendChild(input);
                         }}
 
-                        if ({str(uri.is_dir()).lower()})
+                        if ({str(self._staged_file.is_dir()).lower()})
                         {{
                             input.setAttribute('webkitdirectory', '');
                             input.setAttribute('directory', '');
@@ -166,6 +214,13 @@ class WebView(QtWebEngineWidgets.QWebEngineView):
         QTimer.singleShot(100, self._simulate_drag_drop)
     
     def _simulate_drag_drop(self):
+
+        if self._staged_file is not None:
+            # File chooser override did not execute in time or at all. Both run on the main thread, not worried about race conditions
+            print(f"WARNING: File {str(self._staged_file)} was not injected in time for upload. Aborting...")
+            self._staged_file = None
+            return
+
         try:
             drop_script = """
             (function() {
