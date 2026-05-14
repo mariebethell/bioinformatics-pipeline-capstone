@@ -205,13 +205,13 @@ class GraphGenerator():
             node.id = qt_node.id
 
             node.args = qt_node.get_value()
-            if (tool == "trimmomatic"):
-                node.args["steps"] = [
-                    {"name": "leading", "parameters": {"quality": 3}},
-                    {"name": "trailing", "parameters": {"quality": 3}},
-                    {"name": "sliding_window", "parameters": {"window_size": 4, "required_quality": 20}},
-                    {"name": "min_len", "parameters": {"length": 36}},
-                ]
+            # if (tool == "trimmomatic"):
+            #     node.args["steps"] = [
+            #         {"name": "leading", "parameters": {"quality": 3}},
+            #         {"name": "trailing", "parameters": {"quality": 3}},
+            #         {"name": "sliding_window", "parameters": {"window_size": 4, "required_quality": 20}},
+            #         {"name": "min_len", "parameters": {"length": 36}},
+            #     ]
 
             self.node_map[qt_node] = node
 
@@ -1293,9 +1293,10 @@ class ToolNodeWrapper(NodeBaseWidget):
         dialog = self.SubstepDialog(self.tool, self.substep_defs, None)
 
         # filling dialog with values(!) stored in the wrapper
-        for name, widget in dialog.widgets.items():
-            if name in self.substep_vals:
-                existing_val = self.substep_vals[name]
+        for (section, name), widget in dialog.widgets.items():
+
+            if (section, name) in self.substep_vals:
+                existing_val = self.substep_vals[(section, name)]
 
                 # setting values in the dialog's widgets from existing values
                 if isinstance(widget, QtWidgets.QSlider) or isinstance(widget, QtWidgets.QSpinBox):
@@ -1315,25 +1316,26 @@ class ToolNodeWrapper(NodeBaseWidget):
 
         for section, data in dialog.sections.items():
             if section in self.section_states:
+                is_enabled = self.section_states[section]
                 data['checkbox'].setChecked(self.section_states[section])
                 data['layout'].parentWidget().setEnabled(self.section_states[section])
 
         if dialog.exec() == QtWidgets.QDialog.Accepted:
 
             # saving widget values
-            for name, widget in dialog.widgets.items():
+            for (section, name), widget in dialog.widgets.items():
                 if isinstance(widget, QtWidgets.QSlider) or isinstance(widget, QtWidgets.QSpinBox):
-                    self.substep_vals[name] = widget.value()
+                    self.substep_vals[(section, name)] = widget.value()
                 elif isinstance(widget, QtWidgets.QCheckBox):
-                    self.substep_vals[name] = widget.isChecked()
+                    self.substep_vals[(section, name)] = widget.isChecked()
                 elif isinstance(widget, QtWidgets.QPlainTextEdit):
-                    self.substep_vals[name] = widget.toPlainText()
+                    self.substep_vals[(section, name)] = widget.toPlainText()
                 elif isinstance(widget, QtWidgets.QComboBox):
-                    self.substep_vals[name] = widget.currentText()
+                    self.substep_vals[(section, name)] = widget.currentText()
                 elif hasattr(widget, '_value_widget'):
                     inner = widget._value_widget
                     if isinstance(inner, QtWidgets.QLineEdit):
-                        self.substep_vals[name] = inner.text()
+                        self.substep_vals[(section, name)] = inner.text()
 
             # storing section states
             self.section_states = {
@@ -1392,13 +1394,13 @@ class ToolNodeWrapper(NodeBaseWidget):
         steps = []
         section_params = {}
 
-        for name, val in self.substep_vals.items():
-            widget_def = next((w for w in self.substep_defs if w['name'] == name), None)
+        for (section, name), val in self.substep_vals.items():
+            #widget_def = next((w for w in self.substep_defs if w['name'] == name), None)
             
-            if not widget_def:
-                continue
+            # if not widget_def:
+            #     continue
                 
-            section = widget_def.get('section')
+            #section = widget_def.get('section')
 
             if section and not self.section_states.get(section, False):
                 continue
@@ -1470,7 +1472,7 @@ class ToolNodeWrapper(NodeBaseWidget):
                 self.section_states[section_name] = True
 
             for param_name, param_val in params.items():
-                self.substep_vals[param_name] = param_val
+                self.substep_vals[(section_name, param_name)] = param_val
             
     def delete_node(self): 
         if self.node is not None:
@@ -1576,7 +1578,7 @@ class ToolNodeWrapper(NodeBaseWidget):
 
                 if widget:
                     w_name = widget_def['name']
-                    self.widgets[w_name] = widget
+                    self.widgets[(section, w_name)] = widget
 
                     if checkbox:
                         self.nullable_checks[w_name] = checkbox
