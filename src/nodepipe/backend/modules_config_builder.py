@@ -1,5 +1,12 @@
 """
+Build Nextflow modules.config overrides for nf-core module stages.
 
+This file converts normalized backend node arguments into the Groovy configuration blocks
+used by Nextflow. It builds nf-core 'ext.args' and 'ext.args2' strings for FastQC, Trimmomatic,
+and Trinity.
+
+The generated congfig is consumed by pipeline_builder.py when creating the final
+'conf/modules.config' file for a pipeline to run.
 """
 
 from __future__ import annotations
@@ -13,6 +20,12 @@ INDENT = " " * 4
 
 
 def _coerce_bool(value) -> bool:
+    """
+    Convert common UI/config truthy values into a python boolean
+
+    Tool arguments come from checkboxes, strings, or saved JSON presets.
+    This helper keeps flag-building logic consistent accross those inputs.
+    """
     if isinstance(value, bool):
         return value
     if isinstance(value, str):
@@ -21,25 +34,49 @@ def _coerce_bool(value) -> bool:
 
 
 def _groovy_single_quote(value: str) -> str:
+    """
+    Return a safely escaped Groovy siingle quoted string.
+
+    Nextflow config files are written in Groovy syntax, so backslashes and
+    single quotes need to be escaped before the argument strings are inserted.
+    """
     escaped = str(value).replace("\\", "\\\\").replace("'", "\\'")
     return f"'{escaped}'"
 
 
 def _join_flags(parts: Iterable[str]) -> str:
+    """
+    Join non-empty command argument fragments into one space-seperated string.
+    """
     return " ".join(part.strip() for part in parts if part and str(part).strip())
 
 
 def _maybe_flag(flag: str, enabled) -> str:
+    """
+    Return a flag only when its associated option is enabled.
+    """
     return flag if _coerce_bool(enabled) else ""
 
 
 def _maybe_option(flag: str, value, suffix: str = "") -> str:
+    """
+    Return a flag/value pair only when the value is present.
+
+    Some Trimmomatic arguments use colon syntax instead of a space, so flags
+    ending in ':' are joined directly to the value.
+    """
     if value is None or value == "":
         return ""
     return f"{flag} {value}{suffix}" if not flag.endswith(":") else f"{flag}{value}{suffix}"
 
 
 def _normalize_step_name(name: str) -> str:
+    """
+    Normalize Trimmomatic step names before rendering.
+
+    This lets the backend accept names from the UI in different formats, such
+    as 'sliding window', 'sliding-window', or 'sliding_window'.
+    """
     return (name or "").strip().lower().replace("-", "_").replace(" ", "_")
 
 
@@ -175,6 +212,9 @@ def _render_trimmomatic_step(step: dict) -> str:
 
 
 def build_fastqc_ext_args(args: dict) -> str:
+    """
+    Build the nf-core FastQC `ext.args` string from normalized node arguments.
+    """
     return _join_flags(
         [
             _maybe_flag("--quiet", args.get("quiet")),
@@ -213,6 +253,9 @@ def build_trimmomatic_ext_args2(args: dict) -> str:
 
 
 def build_trinity_ext_args(args: dict) -> str:
+    """
+    Build the nf-core Trinity ext.args string.
+    """
     return _join_flags(
         [
             args.get("extra_args", ""),
@@ -221,6 +264,9 @@ def build_trinity_ext_args(args: dict) -> str:
 
 
 def build_ext_args_for_tool(tool: str, args: dict) -> str:
+    """
+    Dispatch tool-specific argument rendering for nf-core ext.args.
+    """
     tool_key = (tool or "").lower()
     if tool_key == "fastqc":
         return build_fastqc_ext_args(args)
@@ -232,6 +278,11 @@ def build_ext_args_for_tool(tool: str, args: dict) -> str:
 
 
 def build_ext_args2_for_tool(tool: str, args: dict) -> str:
+    """
+    Dispatch tool-specific argument rendering for nf-core ext.args2.
+
+    Currently only Trimmomatic uses `ext.args2`.
+    """
     tool_key = (tool or "").lower()
     if tool_key == "trimmomatic":
         return build_trimmomatic_ext_args2(args)
@@ -239,6 +290,12 @@ def build_ext_args2_for_tool(tool: str, args: dict) -> str:
 
 
 def render_modules_config_block(node: CompiledNode) -> str:
+    """
+    Render one Nextflow `withName` process override block.
+
+    Each compiled node receives its own block so aliases, tool arguments,
+    prefixes, and publish directories can be customized per pipeline stage.
+    """
     lines = [f"{INDENT}withName: '{node.alias}' {{"]
 
     if node.ext_args:
@@ -261,6 +318,9 @@ def render_modules_config_block(node: CompiledNode) -> str:
 
 
 def render_modules_config(nodes: list[CompiledNode]) -> str:
+    """
+    Render the complete generated `conf/modules.config` file.
+    """
     blocks = [
         "/*",
         " * Auto-generated nf-core module overrides.",

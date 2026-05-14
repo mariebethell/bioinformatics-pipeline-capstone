@@ -1,24 +1,20 @@
 """
 Pipeline compilation and execution for the backend Nextflow workflow system.
 
-This module is responsible for taking the backend graph representation of a
-pipeline, validating and normalizing its nodes, compiling those nodes into
-nf-core module calls, generating the final `main.nf` workflow script plus the
-corresponding `conf/modules.config` overrides file, and then optionally
-launching the workflow with Nextflow.
+This module takes the backend graph representation of a pipeline, validates,
+and normalizes its nodes, compiles those nodes into nf-core module calls, and
+generates the final manin.nf workflow script plus the matching conf/modules.config
+override file.
 
-- this file is part of the newer nf-core-based architecture
-- it does not build raw shell commands for tools directly
-- tool-specific argument serialization is delegated to
-  `modules_config_builder.py`
-- nf-core module metadata such as process names, module paths, and output
-  accessors are defined in `compiled_node.py`
+-this file is part of the newer nf-core based architecture. It doesnt build raw
+shell commands for tools directly. Tool specific argument serialization is handled
+by modules_config_builder.py, while nf-core module metadata is defined in compiled_node.py
 
   Current limitation:
-- the compiler currently assumes a primarily linear pipeline flow
-  (input -> stage -> stage -> ...)
-- branching and merge-heavy graphs will require a future refactor toward
-  explicit edge/channel-based compilation
+- the compiler supports simple branching through multiple outgoing edges.
+- Each node still tracks one primary previous node, so merge-heavy graphs
+and tools with multiple required inputs will need future edge/channel 
+compilation logic.
 """
 
 from __future__ import annotations
@@ -47,6 +43,12 @@ ArgDict = dict[str, Any]
 
 
 class Pipeline(ABC):
+    """
+    Abstract base class for backend pipeline implementations.
+
+    Pipeline subclasses own a backend graph and know how to run or stop that
+    graph using a specific workflow engine.
+    """
     def __init__(self, graph: Graph, tool_registry: ToolRegistry):
         self.graph = graph
         self.registry = tool_registry
@@ -61,6 +63,13 @@ class Pipeline(ABC):
 
 
 class NextflowPipeline(Pipeline):
+    """
+    Pipeline implementation that generates and runs a Nextflow workflow.
+
+    This class owns the output paths for main.nf, conf/modules.config, and
+    the base Nextflow config file. The graph to Nextflow conversion itself is
+    delegated to NextflowGenerator.
+    """
     def __init__(
         self,
         graph: Graph,
@@ -91,6 +100,13 @@ class NextflowPipeline(Pipeline):
         )
 
     def run_pipeline(self):
+        """
+        Generate Nextflow files for this pipeline and execute them.
+
+        This writes the generated main.nf and conf/modules.config files to
+        disk, then starts Nextflow using both the base backend config and the
+        generated module override config.
+        """
         generator = NextflowGenerator(self.graph, self.registry)
 
         generator.prepare_graph()
@@ -138,6 +154,12 @@ class NextflowPipeline(Pipeline):
 
 
 class PipelineFactory:
+    """
+    Factory for creating backend pipeline implementations.
+
+     The project currently supports Nextflow pipelines, but this class leaves a
+     clear extension point for adding other workflow engines later.
+    """
     def __init__(self):
         self.pipelines = {}
 
@@ -148,6 +170,13 @@ class PipelineFactory:
 
 
 class NextflowGenerator:
+    """
+    Compile a backend graph into Nextflow DSL2 source code.
+
+    The generator prepares graph nodes, normalizes tool names and arguments,
+    creates CompiledNode objects, and renders the strings used for main.nf
+    and conf/modules.config .
+    """
     def __init__(self, graph: Graph, tool_registry: ToolRegistry):
         self.graph = graph
         self.registry = tool_registry
@@ -157,8 +186,10 @@ class NextflowGenerator:
 
     def _linearize_graph(self) -> list[Node]:
         """
-        Traverses the graph using Breadth First Search and returns an ordered list.
-        Ensures that the input node is the first in the list.
+        Traverse the graph with breadth-first search and return nodes in run order.
+
+        The input node is kept first because the generated Nextflow workflow needs
+         to build the initial reads channel before running tool stages.
         """
         ordered = []
         curr = self.graph.get_first_node()
@@ -183,6 +214,13 @@ class NextflowGenerator:
         return ordered
 
     def _normalize_input_reads(self, node: Node) -> list[str]:
+        """
+        Extract input FASTQ paths from an input node.
+
+        Input nodes may store reads directly as a string/list or inside nested
+        dictionaries such as `{"reads": {"reads": [...]}}`. This normalizes those
+        shapes into a flat list of path strings for `params.input`.
+        """
         payload = node.outputs if node.outputs else node.inputs
 
         while isinstance(payload, dict) and 'reads' in payload:
@@ -220,6 +258,13 @@ class NextflowGenerator:
 
 
     def prepare_graph(self):
+        """
+        Validate and normalize the graph before Nextflow code generation.
+
+        This method ensures the graph starts with an input node, extracts input
+        file paths, canonicalizes tool names, applies registry validation/defaults,
+        and resolves each stage's expected outputs.
+        """
         ordered_nodes = self._linearize_graph()
         if not ordered_nodes:
             raise ValueError('Cannot compile an empty graph.')
@@ -282,6 +327,14 @@ class NextflowGenerator:
         return f'ch_{alias.lower()}'
 
     def compile_graph(self) -> tuple[list[str], list[CompiledNode]]:
+        """
+        Convert prepared graph nodes into nf-core-ready compiled nodes.
+
+        Each compiled node stores the process alias, module path, input/output
+        channel names, output accessor, and rendered `ext.args` values needed for
+        Nextflow generation.
+
+        """
         if not self._prepared:
             self.prepare_graph()
         if self._compiled_nodes is not None:
@@ -326,6 +379,9 @@ class NextflowGenerator:
         return self._input_files, compiled_nodes
 
     def generate_input_parameters(self, input_files: list[str]) -> str:
+        """
+        Generate the Nextflow param.input list from input FASTQ paths.
+        """
         lines = ['params.input = [']
         lines.extend(f'    "{path}",' for path in input_files)
         if input_files:
@@ -334,6 +390,12 @@ class NextflowGenerator:
         return '\n'.join(lines)
 
     def generate_input_channel_str(self) -> str:
+        """
+        Generate the Nextflow input channel for FASTQ reads.
+
+        The generated channel groups files by sample ID and detects whether a
+        sample is single-end or paired-end based on R1/R2 FASTQ filename patterns.
+        """
         return (
             '    reads_ch = Channel.fromPath(params.input, checkIfExists: true)\n'
             '        .map { f ->\n'

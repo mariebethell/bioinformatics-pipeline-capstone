@@ -16,6 +16,7 @@ from abc import ABC, abstractmethod
 from shared.graph import Graph
 from backend.pipeline_builder import PipelineFactory
 from backend.tool_registry import ToolRegistry
+from frontend.webview import WebView
 
 # later remove when refactoring
 import uuid
@@ -26,6 +27,38 @@ from shared.APIStatus import APIStatus
 BIND_MOUNT_COPY_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'shared-data/input-files/')
 
 app = None
+user_uuid = None
+
+def get_user_uuid():
+        # checking if there is a user 
+
+    root = Path(__file__).resolve().parents[3]
+    config_path = root / 'user_config.json'
+
+    if config_path.exists(): # if the json exists
+        print('User JSON exists')
+        try:
+            with open(config_path, 'r') as file:
+                data = json.load(file)
+                if 'uuid' in data:
+                    user_uuid = uuid.UUID(data['uuid'])
+                    print(f'Loaded User UUID: {user_uuid}')
+                    return user_uuid
+        except Exception as e:
+            print(f'Error attempting to read or load data json: {e}')
+    
+    #file does not exist or is invalid
+    new_uuid = uuid.uuid4()
+    print(f'New user uuid: {new_uuid}')
+    
+    try:
+        with open(config_path, 'w') as file:
+            json.dump({'uuid': str(new_uuid)}, file, indent=2)
+            print('New user JSON config saved')
+    except Exception as e:
+        print(f'Error writing UUID: {e}')
+
+    return new_uuid
 class AppFrame(QtWidgets.QMainWindow):
     """
     The primary window of the App, where all the views live and are stored
@@ -53,7 +86,7 @@ class AppFrame(QtWidgets.QMainWindow):
         self._uuid_map = {}
         self._graph_map = {}
 
-        self.uuid = uuid.uuid4()
+        self.uuid = get_user_uuid()
 
         self.dispatcher = CommandDispatcher(model=self, user_uuid=self.uuid)
         self.active_pipeline_uuid = None
@@ -762,16 +795,11 @@ class HomeView(QtWidgets.QWidget):
         self.onedrive_container.setMaximumWidth(450)
         self.onedrive_container.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.web_view = QtWebEngineWidgets.QWebEngineView()
-        web_settings = self.web_view.settings()
-        web_settings.setAttribute(web_settings.WebAttribute.JavascriptCanOpenWindows, True)
-
+        self.web_view = WebView()
+  
         od_cont_layout = QtWidgets.QVBoxLayout()
         od_cont_layout.addWidget(self.web_view)
         self.onedrive_container.setLayout(od_cont_layout)
-
-        login_url = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize'
-        self.web_view.setUrl(QtCore.QUrl(login_url))
 
 
         spacer = QtWidgets.QSpacerItem(100, 100)
@@ -1293,9 +1321,10 @@ class ToolNodeWrapper(NodeBaseWidget):
         dialog = self.SubstepDialog(self.tool, self.substep_defs, None)
 
         # filling dialog with values(!) stored in the wrapper
-        for name, widget in dialog.widgets.items():
-            if name in self.substep_vals:
-                existing_val = self.substep_vals[name]
+        for (section, name), widget in dialog.widgets.items():
+
+            if (section, name) in self.substep_vals:
+                existing_val = self.substep_vals[(section, name)]
 
                 # setting values in the dialog's widgets from existing values
                 if isinstance(widget, QtWidgets.QSlider) or isinstance(widget, QtWidgets.QSpinBox):
@@ -1315,25 +1344,26 @@ class ToolNodeWrapper(NodeBaseWidget):
 
         for section, data in dialog.sections.items():
             if section in self.section_states:
+                is_enabled = self.section_states[section]
                 data['checkbox'].setChecked(self.section_states[section])
                 data['layout'].parentWidget().setEnabled(self.section_states[section])
 
         if dialog.exec() == QtWidgets.QDialog.Accepted:
 
             # saving widget values
-            for name, widget in dialog.widgets.items():
+            for (section, name), widget in dialog.widgets.items():
                 if isinstance(widget, QtWidgets.QSlider) or isinstance(widget, QtWidgets.QSpinBox):
-                    self.substep_vals[name] = widget.value()
+                    self.substep_vals[(section, name)] = widget.value()
                 elif isinstance(widget, QtWidgets.QCheckBox):
-                    self.substep_vals[name] = widget.isChecked()
+                    self.substep_vals[(section, name)] = widget.isChecked()
                 elif isinstance(widget, QtWidgets.QPlainTextEdit):
-                    self.substep_vals[name] = widget.toPlainText()
+                    self.substep_vals[(section, name)] = widget.toPlainText()
                 elif isinstance(widget, QtWidgets.QComboBox):
-                    self.substep_vals[name] = widget.currentText()
+                    self.substep_vals[(section, name)] = widget.currentText()
                 elif hasattr(widget, '_value_widget'):
                     inner = widget._value_widget
                     if isinstance(inner, QtWidgets.QLineEdit):
-                        self.substep_vals[name] = inner.text()
+                        self.substep_vals[(section, name)] = inner.text()
 
             # storing section states
             self.section_states = {
@@ -1392,13 +1422,13 @@ class ToolNodeWrapper(NodeBaseWidget):
         steps = []
         section_params = {}
 
-        for name, val in self.substep_vals.items():
-            widget_def = next((w for w in self.substep_defs if w['name'] == name), None)
+        for (section, name), val in self.substep_vals.items():
+            #widget_def = next((w for w in self.substep_defs if w['name'] == name), None)
             
-            if not widget_def:
-                continue
+            # if not widget_def:
+            #     continue
                 
-            section = widget_def.get('section')
+            #section = widget_def.get('section')
 
             if section and not self.section_states.get(section, False):
                 continue
@@ -1470,7 +1500,7 @@ class ToolNodeWrapper(NodeBaseWidget):
                 self.section_states[section_name] = True
 
             for param_name, param_val in params.items():
-                self.substep_vals[param_name] = param_val
+                self.substep_vals[(section_name, param_name)] = param_val
             
     def delete_node(self): 
         if self.node is not None:
@@ -1576,7 +1606,7 @@ class ToolNodeWrapper(NodeBaseWidget):
 
                 if widget:
                     w_name = widget_def['name']
-                    self.widgets[w_name] = widget
+                    self.widgets[(section, w_name)] = widget
 
                     if checkbox:
                         self.nullable_checks[w_name] = checkbox
@@ -1909,73 +1939,6 @@ class InputNode(DataNode):
 
     
 
-class OutputNodeWrapper(NodeBaseWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        self.uri = None
-        self.dataTimestamp = None
-        self.dataName = None
-        self.is_available = False
-
-        self.tool = None
-
-        container = QtWidgets.QWidget()
-        container.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
-        layout = QtWidgets.QVBoxLayout()
-
-
-        self.tool_label = QtWidgets.QLabel('Connected Tool: None')
-        self.data_label = QtWidgets.QLabel('Data Name: None')
-        self.timestamp_label = QtWidgets.QLabel('Timestamp: None')
-        
-
-    
-        
-
-        dl_button = QtWidgets.QPushButton('Download Results')
-        dl_button.setStyleSheet('background-color: green; color: white;')
-        dl_button.clicked.connect(self.download_data)
-        
-
-        purge_button = QtWidgets.QPushButton('Purge Data')
-        purge_button.setStyleSheet('background-color: red; color:white;')
-        purge_button.clicked.connect(self._purge_data)
-
-        stats_button = QtWidgets.QPushButton('View Stats')
-        stats_button.setStyleSheet('background-color: orange; color:white')
-        stats_button.clicked.connect(self.view_stats)
-
-        for label in [self.tool_label, self.data_label, self.timestamp_label]:
-            label.setStyleSheet('color:white; font-weight:bold;')
-            layout.addWidget(label, alignment=QtCore.Qt.AlignCenter)
-
-        for button in [dl_button, purge_button, stats_button]:
-            button.setEnabled(False)
-            layout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
-
-        container.setLayout(layout)
-        self.set_custom_widget(container)
-
-
-    def download_data(self):
-        pass
-
-    def open_data(self):
-        pass
-
-    def view_stats(self):
-        pass
-    
-    def _update(self, uri):
-        pass
-
-    def _purge_data(self):
-        pass
-
-    def _update_tool_label(self, tool):
-        self.tool = tool
-        self.tool_label.setText(f'Connected Tool: {tool}')
 
 class OutputNodeWrapper(NodeBaseWidget):
     def __init__(self, parent=None):
@@ -2019,15 +1982,25 @@ class OutputNodeWrapper(NodeBaseWidget):
             layout.addWidget(label, alignment=QtCore.Qt.AlignCenter)
 
         for button in [dl_button, purge_button, stats_button]:
-            button.setEnabled(False)
+            if button is not dl_button: 
+                button.setEnabled(False)
             layout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
 
         container.setLayout(layout)
         self.set_custom_widget(container)
 
 
+
     def download_data(self):
-        pass
+        directory = QtWidgets.QFileDialog.getExistingDirectory(None, 'Select Directory to Save Results')
+
+        if not directory:
+            print('Download data from output node cancelled')
+            return
+
+        print(f'Selected download directory: {directory}')
+
+        # call moving file here
 
     def open_data(self):
         pass
@@ -2102,9 +2075,9 @@ def start_app(app: QtWidgets.QApplication):
     # centers app at middle of screen
     window.move((scr_w - width) // 2, (scr_h - height) // 2)
 
-
     window.show()
-
+    
+    app.setStyle('Fusion')
     app.exec()
     
 if __name__ == '__main__':

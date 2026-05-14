@@ -8,15 +8,18 @@ class ToolRegistry:
     """
     Central registry for backend tool definitions.
 
-    This module is the bridge between graph nodes and tool schema modules.
+    ToolRegistry connects graph/tool names from the UI and pipeline builder to
+    the backend tool definition dictionaries. It normalizes aliases, exposes
+    tool metadata and schemas, applies default argument values, validates node
+    arguments, and resolves backend-managed output metadata.
 
-    Responsibilities are storing the cannonical mapping of tool keys -> tool_dif dictionaries.
-    normalizing tool names coming from the UI/graph layer. Exposing helper functions for validation,
-    defaults, output resolution and command rendering.
+    The registry does not render nf-core argument strings directly. The
+    pipeline builder uses this registry during graph preparation, then
+    delegates Nextflow `ext.args` rendering to modules_config_builder.py .
     """
 
     def __init__(self):
-        # cannonical registry: backend key -> tool definition
+        # canonical registry: backend tool key -> tool definition
         self.tool_registry = {
             "fastqc": fastqc_tool,
             "trimmomatic": trimmomatic_tool,
@@ -117,19 +120,18 @@ class ToolRegistry:
 
     def get_default_tool_args(self, tool_name: str) -> dict:
         """
-        Build default arguments from a tool's flat arg schema.
+        Return default argument values from a tool's flat argument schema.
 
         Note:
-        This only fills defaults for flat schema keys.
-        Structured fields like Trimmomatic 'steps' must still be
-        handled separately by the caller.
+        These defaults are merged with user-provided node arguments during graph
+        preparation before nf-core module configuration is generated.
         """
         tool_def = self.get_tool_def(tool_name)
         return get_default_args(tool_def["arg_schema"])
 
     def validate_tool_args(self, tool_name: str, args: dict, context: dict | None = None) -> list[str]:
         """
-        Validate node args using the tool's custom validator.
+        Validate node args using the tool's registered validator.
         """
         tool_def = self.get_tool_def(tool_name)
         validate_fn = tool_def.get("validate")
@@ -141,7 +143,7 @@ class ToolRegistry:
 
     def resolve_tool_outputs(self, tool_name: str, node_args: dict, context: dict) -> dict:
         """
-        Resolve backend-managed outputs for a node.
+        Resolve backend-managed output metadata for a tool node.
         """
         tool_def = self.get_tool_def(tool_name)
         resolve_fn = tool_def.get("resolve_outputs")
