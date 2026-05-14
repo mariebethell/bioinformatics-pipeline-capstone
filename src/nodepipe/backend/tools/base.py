@@ -1,9 +1,12 @@
 """
 Shared base structures and helper functions for tool definitions.
 
-Each tool module should expose a TOOL_DEF dictionary with a consistent shape
-so the tool registry, validators, and pipeline builder can interact with
-every tool the same way.
+Tool modules use this file to build consistent tool definition dictionaries
+for ToolRegistry. These definitions provide metadata, argument defaults,
+validation functions, UI schema data, and backend-managed output resolution.
+
+The nf-core pipeline generator still uses these definitions through
+ToolRegistry before rendering Nextflow module configuration.
 """
 
 from typing import Any
@@ -20,6 +23,10 @@ def build_tool_def(
 ) -> dict:
     """
     Builds a normalized tool definition dictionary.
+
+    ToolRegistry expects every registered tool to use this same dictionary
+    shape so it can look up metadata, defaults, validation logic, UI schema
+    data, and backend-managed output resolution consistently.
     """
     return {
         "metadata": metadata,
