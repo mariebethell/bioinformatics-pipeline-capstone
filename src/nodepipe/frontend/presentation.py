@@ -1058,7 +1058,7 @@ NODE_WIDGETS = {
         # threads_slider here formerly,
         # quiet_check,
         checkbox_widget('nogroup', 'NoGroup'),
-        slider_widget('kmers', 'Kmers Length', 7, max=20),
+        slider_widget('kmers', 'Kmers Length', 7, max=10),
         text_entry_widget('adapters', 'Adapters', True), 
         text_entry_widget('contaminants', 'Contaminants', True),
         combo_box_widget('format', 'File Format', items=['fastq', 'sam', 'bam'])
