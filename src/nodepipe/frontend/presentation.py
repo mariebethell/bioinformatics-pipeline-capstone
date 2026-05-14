@@ -24,7 +24,7 @@ import ipaddress
 from network.client.CommandDispatcher import CommandDispatcher
 from shared.APIStatus import APIStatus
 
-BIND_MOUNT_COPY_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'shared-data/input-files/')
+BIND_MOUNT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'shared-data')
 
 app = None
 user_uuid = None
@@ -59,6 +59,40 @@ def get_user_uuid():
         print(f'Error writing UUID: {e}')
 
     return new_uuid
+
+def move_to_bindmount(directory) -> str:
+    input_dir = os.path.join(BIND_MOUNT_DIR, 'input-files')
+    os.makedirs(input_dir, exist_ok=True) # Make input file directory within shared-data if it does not already exist
+
+    input_file_dict = {"reads": []}
+    for file in directory["reads"]:
+        uri = shutil.copy2(file, input_dir)
+
+        rel_path = "./shared-data/input-files/" + os.path.basename(uri)
+        input_file_dict["reads"].append(rel_path)
+
+    return input_file_dict
+
+def move_from_bindmount(tool: str, directory: str):
+    tool_results_src = os.path.join(BIND_MOUNT_DIR, 'results', tool)
+    tool_results_dest = os.path.join(directory, tool)
+
+    if os.path.isdir(tool_results_src):
+        print(f"Results for {tool} saved to {tool_results_dest}")
+        shutil.copytree(tool_results_src, tool_results_dest)
+    else:
+        print("Tool results not found")
+
+def delete_results_from_bindmount(tool: str):
+    tool_results = os.path.join(BIND_MOUNT_DIR, 'results', tool)
+
+    if os.path.isdir(tool_results):
+        try:
+            shutil.rmtree(tool_results)
+            print(f"Deleted {tool} results from bindmount.")
+        except FileNotFoundError:
+            print("Tool results directory does not exist.")
+
 class AppFrame(QtWidgets.QMainWindow):
     """
     The primary window of the App, where all the views live and are stored
@@ -160,18 +194,6 @@ class GraphGenerator():
             print("ERROR: Input File must have a FASTQ file input to run the pipeline!") # create some warning window that pops up if there is no URI/no input file
             return
 
-    def move_to_bindmount(self, directory) -> str:
-        os.makedirs(BIND_MOUNT_COPY_DIR, exist_ok=True) # Make input file directory within shared-data if it does not already exist
-
-        input_file_dict = {"reads": []}
-        for file in directory["reads"]:
-            uri = shutil.copy2(file, BIND_MOUNT_COPY_DIR)
-
-            rel_path = "./shared-data/input-files/" + os.path.basename(uri)
-            input_file_dict["reads"].append(rel_path)
-
-        return input_file_dict
-
     def from_workbench(self):
         """
         Convert QT node graph into backend Graph. Ensures that input node is always first in the graph.
@@ -185,19 +207,21 @@ class GraphGenerator():
                 node = self.graph.create_node(tool)
                 node.id = qt_node.id
 
-                print(f"qt_node get value: {qt_node.get_value()}")
-                print(f"move_to_bindmount: {self.move_to_bindmount(qt_node.get_value())}")
+                input_file_path = qt_node.get_value()
+                print(f"Input file path: {input_file_path}")
                 node.outputs = {
-                    "reads": self.move_to_bindmount(qt_node.get_value())
+                    "reads": move_to_bindmount(input_file_path)
                 }
                 node.args = {}  # input nodes don’t have args
 
                 self.node_map[qt_node] = node
 
-        # Traverse remaining tool nodes
+        # Traverse remaining tool nodes and output nodes (if present)
         for qt_node in self.qt_graph.all_nodes():
             if isinstance(qt_node, ToolNode):
                 tool = qt_node.tool
+            elif isinstance(qt_node, OutputNode):
+                tool = "output"
             else:
                 continue
 
@@ -205,13 +229,13 @@ class GraphGenerator():
             node.id = qt_node.id
 
             node.args = qt_node.get_value()
-            # if (tool == "trimmomatic"):
-            #     node.args["steps"] = [
-            #         {"name": "leading", "parameters": {"quality": 3}},
-            #         {"name": "trailing", "parameters": {"quality": 3}},
-            #         {"name": "sliding_window", "parameters": {"window_size": 4, "required_quality": 20}},
-            #         {"name": "min_len", "parameters": {"length": 36}},
-            #     ]
+            if tool == "trimmomatic" and not node.args.get("steps"):
+                node.args["steps"] = [
+                    {"name": "leading", "parameters": {"quality": 3}},
+                    {"name": "trailing", "parameters": {"quality": 3}},
+                    {"name": "sliding_window", "parameters": {"window_size": 4, "required_quality": 20}},
+                    {"name": "min_len", "parameters": {"length": 36}},
+                ]
 
             self.node_map[qt_node] = node
 
@@ -221,14 +245,12 @@ class GraphGenerator():
 
             for _, connected_nodes in connections.items():
                 for target in connected_nodes:
-                    self.graph.connect(
-                        self.node_map[qt_node],
-                        self.node_map[target]
-                    )
-                    # if isinstance(qt_node, ToolNode): 
-                    #     print(f'{qt_node.tool} -> {target}')
-                    # else:
-                    #     print(f'{type(qt_node)} -> {target}')
+                    # Do not connect output nodes to the graph, since they won't be needed for pipeline building
+                    if not self.node_map[target].tool == "output":
+                        self.graph.connect(
+                            self.node_map[qt_node],
+                            self.node_map[target]
+                        )
 
         return self.graph
 
@@ -553,13 +575,18 @@ class PipelineWorkbenchVC(PanelController):
                 input_node = node
                 break
 
-
         if not input_node: 
             print("ERROR: No Input Node found in the pipeline!")
             return
         else:
             print(input_node.outputs)
             input_folder = input_node.outputs["reads"]["reads"][0] # gets the file URI of the input node's reads, which is the input folder for the pipeline
+
+        # getting the output node, will be used in the future for updating the data and timestamp
+        for _, node in graph.nodes.items():
+            if node.tool == "output":
+                output_node = node
+                break
 
         for node_num, node in graph.nodes.items(): # shows the tools being ran sequentially and their args
             print(f"Node ID: {node.id}, Node Num {node_num}: tool={node.tool}, args={node.args}")
@@ -573,7 +600,6 @@ class PipelineWorkbenchVC(PanelController):
         if create_response.STATUS != APIStatus.SUCCESS:
             print(f'Failed to create pipeline on server, status:{create_response.STATUS}')
             return
-
 
         server_uuid = create_response.PIPELINE_ID
         print(f'Created Pipeline: {server_uuid}')
@@ -971,23 +997,59 @@ def file_picker_widget(name, label, filter='*.*', nullable=False, section=None):
 # threads_slider here formerly = slider_widget('threads', 'Number of Threads', min=1, max=128)
 quiet_check = checkbox_widget('quiet', 'Quiet')
 
-SECTION_CONFIGS = {
 """
 A dictionary of sub section configs for tools that require them
 """
+SECTION_CONFIGS = {
     'trimmomatic': {
-        'ILLUMINACLIP': {'label': 'Illumina Clip'},
-        'LEADING': {'label': 'Leading'},
-        'TRAILING': {'label': 'Trailing'},
-        'HEADCROP': {'label': 'Head Crop'},
-        'TAILCROP': {'label': 'Tail Crop'},
-        'CROP': {'label': 'Crop'},
-        'SLIDINGWINDOW': {'label': 'Sliding Window'},
-        'MAXINFO': {'label': 'Max Info'},
-        'MINLEN': {'label': 'Min Length'},
-        'MAXLEN': {'label': 'Max Length'},
-        'AVGQUAL': {'label': 'Avg Quality'},
-        'BASECOUNT': {'label': 'Base Count'}
+        'ILLUMINACLIP': {
+            'label': 'Illumina Clip',
+            'arg_name': 'illumina_clip'
+        },
+        'LEADING': {
+            'label': 'Leading',
+            'arg_name': 'leading'
+        },
+        'TRAILING': {
+            'label': 'Trailing',
+            'arg_name': 'trailing'
+        },
+        'HEADCROP': {
+            'label': 'Head Crop',
+            'arg_name': 'head_crop'
+        },
+        'TAILCROP': {
+            'label': 'Tail Crop',
+            'arg_name': 'tail_crop'
+        },
+        'CROP': {
+            'label': 'Crop',
+            'arg_name': 'crop'
+        },
+        'SLIDINGWINDOW': {
+            'label': 'Sliding Window',
+            'arg_name': 'sliding_window'
+        },
+        'MAXINFO': {
+            'label': 'Max Info',
+            'arg_name': 'max_info'
+        },
+        'MINLEN': {
+            'label': 'Min Length',
+            'arg_name': 'min_len'
+        },
+        'MAXLEN': {
+            'label': 'Max Length',
+            'arg_name': 'max_len'
+        },
+        'AVGQUAL': {
+            'label': 'Avg Quality',
+            'arg_name': 'avg_qual'
+        },
+        'BASECOUNT': {
+            'label': 'Base Count',
+            'arg_name': 'base_count'
+        }
     }
 }
 
@@ -1007,7 +1069,7 @@ NODE_WIDGETS = {
         combo_box_widget('phred', 'Phred', items=['33', '64'], nullable=True),
         checkbox_widget('validate_pairs', 'Validate Pairs'),
         # slider_widget('compress_level', 'Compression Level', max=9),
-        combo_box_widget('compression_mode', 'Compression Mode', items=['stream', 'block'], nullable=True),
+        # combo_box_widget('compression_mode', 'Compression Mode', items=['stream', 'block'], nullable=True),
         # quiet_check,
 
         # illumina clip
@@ -1413,7 +1475,7 @@ class ToolNodeWrapper(NodeBaseWidget):
 
         for section_name, params, in section_params.items():
             steps.append({
-                'name': section_name,
+                'name': SECTION_CONFIGS[self.tool][section_name]["arg_name"],
                 'parameters': params
             })
 
@@ -1932,10 +1994,6 @@ class OutputNodeWrapper(NodeBaseWidget):
         self.data_label = QtWidgets.QLabel('Data Name: None')
         self.timestamp_label = QtWidgets.QLabel('Timestamp: None')
         
-
-    
-        
-
         dl_button = QtWidgets.QPushButton('Download Results')
         dl_button.setStyleSheet('background-color: green; color: white;')
         dl_button.clicked.connect(self.download_data)
@@ -1954,14 +2012,10 @@ class OutputNodeWrapper(NodeBaseWidget):
             layout.addWidget(label, alignment=QtCore.Qt.AlignCenter)
 
         for button in [dl_button, purge_button, stats_button]:
-            if button is not dl_button: 
-                button.setEnabled(False)
             layout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
 
         container.setLayout(layout)
         self.set_custom_widget(container)
-
-
 
     def download_data(self):
         directory = QtWidgets.QFileDialog.getExistingDirectory(None, 'Select Directory to Save Results')
@@ -1972,7 +2026,14 @@ class OutputNodeWrapper(NodeBaseWidget):
 
         print(f'Selected download directory: {directory}')
 
-        # call moving file here
+        # if results are ready, move directory containing results for that tool to specified directory
+        results_dir = os.path.join(BIND_MOUNT_DIR, 'results')
+        tool_sub_dir = os.path.join(results_dir, self.tool)
+
+        if not os.path.isdir(tool_sub_dir):
+            print(f"Results for {self.tool} not available")
+        else:
+            move_from_bindmount(self.tool, directory)
 
     def open_data(self):
         pass
@@ -1984,7 +2045,7 @@ class OutputNodeWrapper(NodeBaseWidget):
         pass
 
     def _purge_data(self):
-        pass
+        delete_results_from_bindmount(self.tool)
 
     def _update_tool_label(self, tool):
         self.tool = tool
@@ -1995,6 +2056,7 @@ class OutputNodeWrapper(NodeBaseWidget):
 
     def set_value(self, val):
         pass
+
 class OutputNode(DataNode):
     __identifier__ = 'bioinformatics_capstone'
     NODE_NAME = 'Output Checkpoint'
@@ -2025,6 +2087,8 @@ class OutputNode(DataNode):
 
         self.wrapper._update_tool_label('None')
 
+    def get_value(self):
+        return self.wrapper.get_value() if self.wrapper else {}
         
 
 def start_app(app: QtWidgets.QApplication):
