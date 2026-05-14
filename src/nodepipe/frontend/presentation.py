@@ -1909,73 +1909,6 @@ class InputNode(DataNode):
 
     
 
-class OutputNodeWrapper(NodeBaseWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        self.uri = None
-        self.dataTimestamp = None
-        self.dataName = None
-        self.is_available = False
-
-        self.tool = None
-
-        container = QtWidgets.QWidget()
-        container.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
-        layout = QtWidgets.QVBoxLayout()
-
-
-        self.tool_label = QtWidgets.QLabel('Connected Tool: None')
-        self.data_label = QtWidgets.QLabel('Data Name: None')
-        self.timestamp_label = QtWidgets.QLabel('Timestamp: None')
-        
-
-    
-        
-
-        dl_button = QtWidgets.QPushButton('Download Results')
-        dl_button.setStyleSheet('background-color: green; color: white;')
-        dl_button.clicked.connect(self.download_data)
-        
-
-        purge_button = QtWidgets.QPushButton('Purge Data')
-        purge_button.setStyleSheet('background-color: red; color:white;')
-        purge_button.clicked.connect(self._purge_data)
-
-        stats_button = QtWidgets.QPushButton('View Stats')
-        stats_button.setStyleSheet('background-color: orange; color:white')
-        stats_button.clicked.connect(self.view_stats)
-
-        for label in [self.tool_label, self.data_label, self.timestamp_label]:
-            label.setStyleSheet('color:white; font-weight:bold;')
-            layout.addWidget(label, alignment=QtCore.Qt.AlignCenter)
-
-        for button in [dl_button, purge_button, stats_button]:
-            button.setEnabled(False)
-            layout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
-
-        container.setLayout(layout)
-        self.set_custom_widget(container)
-
-
-    def download_data(self):
-        pass
-
-    def open_data(self):
-        pass
-
-    def view_stats(self):
-        pass
-    
-    def _update(self, uri):
-        pass
-
-    def _purge_data(self):
-        pass
-
-    def _update_tool_label(self, tool):
-        self.tool = tool
-        self.tool_label.setText(f'Connected Tool: {tool}')
 
 class OutputNodeWrapper(NodeBaseWidget):
     def __init__(self, parent=None):
@@ -2019,15 +1952,25 @@ class OutputNodeWrapper(NodeBaseWidget):
             layout.addWidget(label, alignment=QtCore.Qt.AlignCenter)
 
         for button in [dl_button, purge_button, stats_button]:
-            button.setEnabled(False)
+            if button is not dl_button: 
+                button.setEnabled(False)
             layout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
 
         container.setLayout(layout)
         self.set_custom_widget(container)
 
 
+
     def download_data(self):
-        pass
+        directory = QtWidgets.QFileDialog.getExistingDirectory(None, 'Select Directory to Save Results')
+
+        if not directory:
+            print('Download data from output node cancelled')
+            return
+
+        print(f'Selected download directory: {directory}')
+
+        # call moving file here
 
     def open_data(self):
         pass
@@ -2103,7 +2046,8 @@ def start_app(app: QtWidgets.QApplication):
     window.move((scr_w - width) // 2, (scr_h - height) // 2)
 
     window.show()
-
+    
+    app.setStyle('Fusion')
     app.exec()
     
 if __name__ == '__main__':
