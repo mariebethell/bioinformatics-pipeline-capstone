@@ -1,13 +1,14 @@
-
 """
-FastQC tool configuration schema.
+FastQC tool definition for the backend tool registry.
 
-This defines the argument schema we use for validating and generating fastQC commands
-within the pipeline backend. The schema describes each supported fastQC parameter,
-including its expected type, CLI flag mapping, validation rules, and default values.
+This module describes the FastQC tool in the format expected by
+`ToolRegistry`. It defines metadata, accepted inputs, expected outputs,
+argument schema/defaults, UI grouping, validation, and backend-managed output
+metadata.
 
-The schema is used to validate arguments received from the API, normalize tool config
-values, and generate fastQC command line arguments for Nextflow stages.
+The schema keeps CLI flag information for each supported FastQC option, but
+nf-core argument string rendering is handled later by
+`modules_config_builder.py`.
 
 This links to a page that briefly explains each tool https://home.cc.umanitoba.ca/~psgendb/doc/fastqc.help
 """
@@ -15,7 +16,7 @@ This links to a page that briefly explains each tool https://home.cc.umanitoba.c
 from backend.tools.base import build_tool_def, validate_scalar_arg
 
 tool_metadata = {
-    "name" : "fastqc",
+    "name": "fastqc",
     "display_name" : "FastQC",
     "category" : "quality_control",
     "supports_single_end" : True,
@@ -205,12 +206,11 @@ def validate_fastqc_args(args: dict, context: dict | None = None) -> list[str]:
 
 def resolve_fastqc_outputs(node_args: dict, context: dict) -> dict:
     """
-    Resolve backend-managed FastQC outputs.
+    Resolve backend-managed FastQC output metadata.
 
-    context example:
-        {
-            "stage_work_dir": "/work/pipeline_123/stage_0"
-        }
+    FastQC output paths are managed by the pipeline backend/Nextflow layer, so
+    this function records the stage work directory for downstream pipeline
+    bookkeeping.
     """
     return {
         "outdir": context["stage_work_dir"]
