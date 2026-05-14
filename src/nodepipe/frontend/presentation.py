@@ -155,6 +155,7 @@ class AppFrame(QtWidgets.QMainWindow):
         """
 
         self.dispatcher.disconnect()
+        self.home.onedrive.close()
         print('Disconnecting from Server.')
         event.accept()
 
