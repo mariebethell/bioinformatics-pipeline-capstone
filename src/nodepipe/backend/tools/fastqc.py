@@ -34,7 +34,13 @@ output_contract = {
 }
 
 
+"""
+Backend-supported FastQC arguments.
 
+`ui_expose` should match the options currently shown in the frontend node.
+Some backend-supported options are kept here for validation/default support
+even though the user does not currently control them through the UI.
+"""
 arg_schema = {
     "threads": {
       "type": int,
@@ -45,8 +51,8 @@ arg_schema = {
       "allowed_values": None,
       "default": 1,
       "nullable": False,
-      "ui_expose": True,
-      "managed_by_engine": False,
+      "ui_expose": False,
+      "managed_by_engine": True,
       "help_text": "Number of FastQC worker threads.",
 
     },
@@ -60,7 +66,7 @@ arg_schema = {
         "allowed_values": None,
         "default": False,
         "nullable": False,
-        "ui_expose": True,
+        "ui_expose": False,
         "managed_by_engine": False,
         "help_text": "Suppress progress output.",
     },
@@ -158,7 +164,7 @@ arg_schema = {
         "allowed_values": None,
         "default": False,
         "nullable": False,
-        "ui_expose": True,
+        "ui_expose": False,
         "managed_by_engine": False,
         "help_text": "Extract the output zip after FastQC runs.",
     },
@@ -182,8 +188,8 @@ rules = []
 
 ui_schema = {
     "sections": {
-        "basic": ["threads", "quiet", "nogroup", "format", "extract"],
-        "advanced": ["kmers", "adapters", "contaminants", "limits"],
+        "basic": ["nogroup", "format"],
+        "advanced": ["kmers", "adapters", "contaminants"],
     }
 }
 
