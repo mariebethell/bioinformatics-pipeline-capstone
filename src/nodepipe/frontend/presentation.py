@@ -766,6 +766,17 @@ class PipelineWorkbenchVC(PanelController):
 
 #### VIEW SECTION ####
 
+class OneDriveWindow(QtWidgets.QMainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.setWindowTitle('OneDrive Upload Window')
+        self.setFixedSize(400, 400)
+
+        self.web_view = WebView()
+        self.setCentralWidget(self.web_view)
+
+
 #### view styles for text ####
 
 title_text="""
@@ -818,22 +829,26 @@ class HomeView(QtWidgets.QWidget):
         title.setStyleSheet(title_text)
         title.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.onedrive_status = QtWidgets.QLabel('Not logged in to OneDrive! Data will not be saved.')
-        self.onedrive_status.setStyleSheet(onedrive_text_false)
-        self.onedrive_status.setAlignment(QtCore.Qt.AlignCenter)
+        # self.onedrive_status = QtWidgets.QLabel('Not logged in to OneDrive! Data will not be saved.')
+        # self.onedrive_status.setStyleSheet(onedrive_text_false)
+        # self.onedrive_status.setAlignment(QtCore.Qt.AlignCenter)
         
-        ## ONEDRIVE SUBSECTION ##
-        self.onedrive_container = QtWidgets.QGroupBox('OneDrive Access')
-        self.onedrive_container.setStyleSheet('color:white; font-weight:bold')
-        self.onedrive_container.setMaximumHeight(600)
-        self.onedrive_container.setMaximumWidth(450)
-        self.onedrive_container.setAlignment(QtCore.Qt.AlignCenter)
+        # ## ONEDRIVE SUBSECTION ##
+        # self.onedrive_container = QtWidgets.QGroupBox('OneDrive Access')
+        # self.onedrive_container.setStyleSheet('color:white; font-weight:bold')
+        # self.onedrive_container.setMaximumHeight(600)
+        # self.onedrive_container.setMaximumWidth(450)
+        # self.onedrive_container.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.web_view = WebView()
+        # self.web_view = WebView()
+        self.onedrive = OneDriveWindow()
+        self.onedrive.show()
+        self.onedrive.raise_()
+        self.onedrive.activateWindow()
   
-        od_cont_layout = QtWidgets.QVBoxLayout()
-        od_cont_layout.addWidget(self.web_view)
-        self.onedrive_container.setLayout(od_cont_layout)
+        # od_cont_layout = QtWidgets.QVBoxLayout()
+        # od_cont_layout.addWidget(self.web_view)
+        # self.onedrive_container.setLayout(od_cont_layout)
 
 
         spacer = QtWidgets.QSpacerItem(100, 100)
@@ -868,8 +883,9 @@ class HomeView(QtWidgets.QWidget):
         documentation_link.setOpenExternalLinks(True)
 
         layout.addWidget(title)
-        layout.addWidget(self.onedrive_status)
-        layout.addWidget(self.onedrive_container, alignment=QtCore.Qt.AlignCenter)
+        # layout.addWidget(self.onedrive_status)
+        # layout.addWidget(self.onedrive_container, alignment=QtCore.Qt.AlignCenter)
+        
         #layout.addItem(spacer)
         
         layout.addWidget(changelog_title)
