@@ -172,14 +172,6 @@ class GraphGenerator():
             node.id = qt_node.id
 
             node.args = qt_node.get_value()
-            if (tool == "trimmomatic"):
-                node.args["steps"] = [
-                    {"name": "leading", "parameters": {"quality": 3}},
-                    {"name": "trailing", "parameters": {"quality": 3}},
-                    {"name": "sliding_window", "parameters": {"window_size": 4, "required_quality": 20}},
-                    {"name": "min_len", "parameters": {"length": 36}},
-                ]
-
             self.node_map[qt_node] = node
 
         # connect nodes
@@ -943,23 +935,59 @@ def file_picker_widget(name, label, filter='*.*', nullable=False, section=None):
 # threads_slider here formerly = slider_widget('threads', 'Number of Threads', min=1, max=128)
 quiet_check = checkbox_widget('quiet', 'Quiet')
 
-SECTION_CONFIGS = {
 """
 A dictionary of sub section configs for tools that require them
 """
+SECTION_CONFIGS = {
     'trimmomatic': {
-        'ILLUMINACLIP': {'label': 'Illumina Clip'},
-        'LEADING': {'label': 'Leading'},
-        'TRAILING': {'label': 'Trailing'},
-        'HEADCROP': {'label': 'Head Crop'},
-        'TAILCROP': {'label': 'Tail Crop'},
-        'CROP': {'label': 'Crop'},
-        'SLIDINGWINDOW': {'label': 'Sliding Window'},
-        'MAXINFO': {'label': 'Max Info'},
-        'MINLEN': {'label': 'Min Length'},
-        'MAXLEN': {'label': 'Max Length'},
-        'AVGQUAL': {'label': 'Avg Quality'},
-        'BASECOUNT': {'label': 'Base Count'}
+        'ILLUMINACLIP': {
+            'label': 'Illumina Clip',
+            'arg_name': 'illumina_clip'
+        },
+        'LEADING': {
+            'label': 'Leading',
+            'arg_name': 'leading'
+        },
+        'TRAILING': {
+            'label': 'Trailing',
+            'arg_name': 'trailing'
+        },
+        'HEADCROP': {
+            'label': 'Head Crop',
+            'arg_name': 'head_crop'
+        },
+        'TAILCROP': {
+            'label': 'Tail Crop',
+            'arg_name': 'tail_crop'
+        },
+        'CROP': {
+            'label': 'Crop',
+            'arg_name': 'crop'
+        },
+        'SLIDINGWINDOW': {
+            'label': 'Sliding Window',
+            'arg_name': 'sliding_window'
+        },
+        'MAXINFO': {
+            'label': 'Max Info',
+            'arg_name': 'max_info'
+        },
+        'MINLEN': {
+            'label': 'Min Length',
+            'arg_name': 'min_len'
+        },
+        'MAXLEN': {
+            'label': 'Max Length',
+            'arg_name': 'max_len'
+        },
+        'AVGQUAL': {
+            'label': 'Avg Quality',
+            'arg_name': 'avg_qual'
+        },
+        'BASECOUNT': {
+            'label': 'Base Count',
+            'arg_name': 'base_count'
+        }
     }
 }
 
@@ -1383,7 +1411,7 @@ class ToolNodeWrapper(NodeBaseWidget):
 
         for section_name, params, in section_params.items():
             steps.append({
-                'name': section_name,
+                'name': SECTION_CONFIGS[self.tool][section_name]["arg_name"],
                 'parameters': params
             })
 
