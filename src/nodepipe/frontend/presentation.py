@@ -16,7 +16,7 @@ from abc import ABC, abstractmethod
 from shared.graph import Graph
 from backend.pipeline_builder import PipelineFactory
 from backend.tool_registry import ToolRegistry
-import webview
+from frontend.webview import WebView
 
 # later remove when refactoring
 import uuid
@@ -771,7 +771,7 @@ class HomeView(QtWidgets.QWidget):
         self.onedrive_container.setMaximumWidth(450)
         self.onedrive_container.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.web_view = webview.WebView()
+        self.web_view = WebView()
   
         od_cont_layout = QtWidgets.QVBoxLayout()
         od_cont_layout.addWidget(self.web_view)
