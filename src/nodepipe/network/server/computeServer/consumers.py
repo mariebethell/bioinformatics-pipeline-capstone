@@ -40,6 +40,7 @@ class SocketHandler(AsyncWebsocketConsumer):
             user_uuid = None
             try: 
                 user_uuid = UUID(user_uuid_str)
+                user_uuid_str = str(user_uuid) # Normalize formatting
                 
             except ValueError:
                 print("ERROR: Websocket connection attempted with malformed UUID. Rejecting...")
@@ -53,6 +54,7 @@ class SocketHandler(AsyncWebsocketConsumer):
                 user_uuid_str,
                 self.channel_name
             )
+            print(f"DBG Websocket room for user UUID {user_uuid_str} with channel name {self.channel_name}")
             
             await self.accept()
         

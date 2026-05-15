@@ -14,7 +14,7 @@ from PySide6 import QtWidgets, QtCore, QtWebEngineWidgets
 from NodeGraphQt import NodeGraph, BaseNode, NodeBaseWidget
 from NodeGraphQt.qgraphics.node_base import NodeItem
 from abc import ABC, abstractmethod
-from shared.graph import Graph
+from shared.graph import Graph, StageState
 from backend.pipeline_builder import PipelineFactory
 from backend.tool_registry import ToolRegistry
 from frontend.webview import WebView
@@ -240,7 +240,7 @@ class GraphGenerator():
                 tool = "input"
 
                 node = self.graph.create_node(tool)
-                node.id = qt_node.id
+                node.node_id = qt_node.id
 
                 input_file_path = qt_node.get_value()
                 print(f"Input file path: {input_file_path}")
@@ -265,7 +265,7 @@ class GraphGenerator():
                 continue
 
             node = self.graph.create_node(tool)
-            node.id = qt_node.id
+            node.node_id = qt_node.id
 
             node.args = qt_node.get_value()
             if tool == "trimmomatic" and not node.args.get("steps"):
@@ -605,8 +605,8 @@ class PipelineWorkbenchVC(PanelController):
         based on the nodes in the Node Graph
         """
         try:
-            graph_generator = GraphGenerator(self.node_graph)
-            graph = graph_generator.from_workbench()
+            self.graph_generator = GraphGenerator(self.node_graph)
+            self.graph = self.graph_generator.from_workbench()
         except ValueError as e:
             print(f"ERROR: {e}")
             return
@@ -615,7 +615,7 @@ class PipelineWorkbenchVC(PanelController):
         # this is a bandaid fix.
         input_node = None
 
-        for _, node in graph.nodes.items():
+        for _, node in self.graph.nodes.items():
             if node.tool == 'input':
                 input_node = node
                 break
@@ -628,19 +628,19 @@ class PipelineWorkbenchVC(PanelController):
             input_folder = input_node.outputs["reads"]["reads"][0] # gets the file URI of the input node's reads
 
         # getting the output node, will be used in the future for updating the data and timestamp
-        for _, node in graph.nodes.items():
+        for _, node in self.graph.nodes.items():
             if node.tool == "output":
                 output_node = node
                 break
 
-        for node_num, node in graph.nodes.items(): # shows the tools being ran sequentially and their args
-            print(f"Node ID: {node.id}, Node Num {node_num}: tool={node.tool}, args={node.args}")
+        for node_num, node in self.graph.nodes.items(): # shows the tools being ran sequentially and their args
+            print(f"Node ID: {node.node_id}, Node Num {node_num}: tool={node.tool}, args={node.args}")
 
         # local creation
-        local_uuid = self.app.new_pipeline(graph)
+        local_uuid = self.app.new_pipeline(self.graph)
 
         # creating pipeline on server
-        create_response = self.app.dispatcher.new_pipeline(graph, input_folder)
+        create_response = self.app.dispatcher.new_pipeline(self.graph, input_folder)
 
         if create_response.STATUS != APIStatus.SUCCESS:
             print(f'Failed to create pipeline on server, status:{create_response.STATUS}')
@@ -656,8 +656,8 @@ class PipelineWorkbenchVC(PanelController):
         if run_response.STATUS != APIStatus.SUCCESS:
             print(f'Failed to run pipeline, status:{run_response.STATUS}')
             return
-        
-        print('Pipeline successfully started in workbench.')
+        else:
+            print('Pipeline successfully started in workbench.')
         
     def stop_pipeline(self):
         pass
@@ -669,6 +669,7 @@ class PipelineWorkbenchVC(PanelController):
         """
         A function for creating a new pipeline from scratch by deleting all of the nodes, prompting the user with a warning message before they do so
         """
+
         if not self.node_graph.all_nodes():
             print('Empty Node Graph, skipping new pipeline')
             return
@@ -710,8 +711,8 @@ class PipelineWorkbenchVC(PanelController):
 
     def _update_nodes(self, dict):
         # expecting a dictionary (node_num : state) or in the case of output (node_num : data)
-        # now expecting (node_id : state)
-        for node_id, item in dict.items():
+        for node_num, item in dict.items():
+            node_id = self.graph.get_node(int(node_num)).node_id
             curr_node = self.node_graph.get_node_by_id(node_id)
 
             if isinstance(curr_node, ToolNode):
@@ -1003,6 +1004,7 @@ class SettingsView(QtWidgets.QWidget):
         """
         Function for grabbing the legal screen sizes for a user's system, so that they can modify the resolution
         """
+        app = QtWidgets.QApplication.instance()
         screen = app.primaryScreen()
         size = screen.size()
         scr_w = size.width()
@@ -1237,7 +1239,7 @@ class ToolNodeWrapper(NodeBaseWidget):
 
         self.node_status = False # a boolean storing whether or not the current node is running or not
 
-        self.node_status_label = QtWidgets.QLabel('Not Running')
+        self.node_status_label = QtWidgets.QLabel('Incomplete')
         self.node_status_label.setAlignment(QtCore.Qt.AlignCenter)
         self.node_status_label.setStyleSheet(not_running_style)
         layout.addWidget(self.node_status_label)
@@ -1395,13 +1397,13 @@ class ToolNodeWrapper(NodeBaseWidget):
             return widget, checkbox, label
 
     def update_state(self, state):
-        if state == 'StageState.RUNNING':
+        if state == StageState.RUNNING:
             self.node_status_label.setText('Running')
             self.node_status_label.setStyleSheet(running_style)
-        elif state == 'StageState.COMPLETED':
+        elif state == StageState.COMPLETED:
             self.node_status_label.setText('Completed')
             self.node_status_label.setStyleSheet(completed_style)
-        elif state == 'StageState.NOT_RUNNING':
+        elif state == StageState.NEW:
             self.node_status_label.setText('Not Running')
             self.node_status_label.setStyleSheet(not_running_style)
         else:
@@ -2147,7 +2149,6 @@ class OutputNode(DataNode):
 
     def get_value(self):
         return self.wrapper.get_value() if self.wrapper else {}
-        
 
 def start_app(app: QtWidgets.QApplication):
 

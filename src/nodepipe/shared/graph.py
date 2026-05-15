@@ -10,9 +10,10 @@ class StageState(Enum):
     ERROR = 5
 
 class Node:
-    def __init__(self, node_num, tool, args=None, inputs=None):
+    def __init__(self, node_num, tool, node_id=None, args=None, inputs=None):
         self.node_num = node_num
         self.tool = tool
+        self.node_id = node_id # Used by the frontend only to hold ids of NodeGraphQT nodes
         self.args = args
         self.inputs = inputs
         self.outputs = {}

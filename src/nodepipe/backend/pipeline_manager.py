@@ -88,8 +88,9 @@ class PipelineManager:
                 params = {"ERROR_INFO": APIStatus.APIStatus.ERR_BAD_PIPELINE_ID, "STATUS": APIStatus.APIStatus.SUCCESS}
                 return CommandFactory.new_command(Command.RunPipelineResponse, params)
             else:
-                pipeline.run_pipeline()
-                params = {"STATUS": APIStatus.APIStatus.SUCCESS}
+                exit_code = pipeline.run_pipeline()
+                status = APIStatus.APIStatus.SUCCESS if exit_code == 0 else APIStatus.APIStatus.ERROR
+                params = {"STATUS": status}
                 return CommandFactory.new_command(Command.RunPipelineResponse, params)
 
         elif isinstance(cmd, Command.StopPipeline):

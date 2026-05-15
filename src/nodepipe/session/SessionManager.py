@@ -3,7 +3,7 @@ from datetime import datetime
 
 from session.Session import Session
 
-from shared.Command import Command, NewPipeline, Response, SendDummyWebsocketUpdate, GraphUIUpdate
+from shared.Command import Command, NewPipeline, OnStageComplete, OnPipelineError, Response, SendDummyWebsocketUpdate, GraphUIUpdate
 from shared.CommandFactory import CommandFactory
 from shared.APIStatus import APIStatus
 from shared.graph import StageState, Graph
@@ -46,22 +46,46 @@ class SessionManager:
         if not isinstance(cmd, Command):
             raise TypeError("cmd must be a Command or derivative thereof")
         
+        cmd_type = type(cmd)
+        print(f"DBG: cmd_type {cmd_type}")
+        
         user_uuid = None
         try:
             user_uuid = cmd.user_uuid
+            print(f"DBG: got user from packet {user_uuid}")
 
         except AttributeError:
+            print("DBG: packet did not have user")
+            if cmd_type is OnStageComplete or cmd_type is OnPipelineError:
+                print("DBG: packet is stage update, thats why")
+                user_session = self.pipeline_uuid_map.get(cmd.pipeline_id, None)
+
+                if user_session is None:
+                    # Just drop the packet, session for this pipeline no longer exists
+                    print(f"WARNING: Pipeline {cmd.pipeline_id} sent an update for a session which does not exist")
+                    params = {"STATUS": APIStatus.SUCCESS}
+                    response = CommandFactory.new_command(Response, params)
+
+                    return response
+                
+                user_uuid = user_session.user_uuid
+                print(f"DBG: uuid map returned user session for user {user_uuid}")
+
+        if user_uuid is None:
             raise ValueError("Command lacks user UUID? Dev, command is malformed OR command should have been handled in networking layer")
         
         user_session = self.user_uuid_map.get(user_uuid, None)
 
         if user_session is None:
-            if type(cmd) is not NewPipeline:
+            print("DBG: user session was not found")
+            if cmd_type is not NewPipeline:
+                print("WARNING: Client attempted to access non-existing session")
                 params = {'STATUS': APIStatus.ERR_BAD_PIPELINE_ID} # User has no session and therefore no pipeline. User needs to send a NewPipeline command
                 return CommandFactory.new_command(Response, params)
+            
+        print("DBG: got user session")
          
-        #TODO call PipelineManager
-        if type(cmd) is ClientConnect:
+        if cmd_type is ClientConnect:
             # Find pipeline by user_session and return if it exists, otherwise don't include it in the response
             
             pipeline_uuid = None
@@ -77,11 +101,26 @@ class SessionManager:
                 params = {"STATUS": APIStatus.SUCCESS}
 
             response = CommandFactory.new_command(ClientConnectResponse, params)
+
+        elif cmd_type is OnStageComplete or cmd_type is OnPipelineError:
+            print("DEBUG: Handling stage update from pipeline")
+            async_params = {
+                'PIPELINE_ID': cmd.pipeline_id,
+                'UPDATES': {str(cmd.stage_num): StageState.COMPLETED if cmd_type is OnStageComplete else StageState.ERROR}
+            }
+            async_cmd = CommandFactory.new_command(GraphUIUpdate, async_params)
+            self.send_client_update_async(cmd.pipeline_id, async_cmd)
+            print("DEBUG: Handed off to async netcode")
+
+            params = {"STATUS": APIStatus.SUCCESS}
+            response = CommandFactory.new_command(Response, params)
+
+            return response
+
         else:
             response = self.pipeline_manager.handlePipelineCommand(cmd)
 
-        #TODO if cmd was NewPipeline make a new session, add to user_uuid_map and pipeline_uuid_map
-        if type(cmd) is NewPipeline:
+        if cmd_type is NewPipeline:
             pipeline_uuid = response.PIPELINE_ID
             user_session = Session(user_uuid, pipeline_uuid)
 
@@ -108,12 +147,14 @@ class SessionManager:
         
         """
 
-        user_uuid = self.pipeline_uuid_map.get(pipeline_uuid, None)
+        user_session = self.pipeline_uuid_map.get(pipeline_uuid, None)
         
-        if user_uuid is None:
+        if user_session is None:
             print("WARNING: Pipeline attempted to send update to nonexistant user session")
             return # Just drop it
             
+        user_uuid = user_session.user_uuid
+
         self.compute_server.send_to_target_async(user_uuid, cmd)
 
 
