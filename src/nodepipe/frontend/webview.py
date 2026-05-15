@@ -37,7 +37,7 @@ class WebView(QtWebEngineWidgets.QWebEngineView):
 
     dispatcher_start_signal = Signal()
 
-    def __init__(self, folder_url: str = 'https://csusm-my.sharepoint.com/:f:/g/personal/lopez2349_csusm_edu/IgA49nG5FJ9zQKUU0pp3-bzpAai6HcPCUIlidkIByGlnaKE?e=kgOb2v'):
+    def __init__(self, folder_url: str = 'https://csusm-my.sharepoint.com/:f:/g/personal/ediazalmeyda_csusm_edu/IgD_A_U_UhHjRLI5AMFhv4mAAT1TQ-zsf2MKDg26xZ-sKjw?e=Wa1dN2'):
         super().__init__()
 
         self.setPage(self.UploadablePage(self))
