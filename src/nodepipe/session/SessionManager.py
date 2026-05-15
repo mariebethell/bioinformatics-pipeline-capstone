@@ -109,7 +109,7 @@ class SessionManager:
                 'UPDATES': {str(cmd.stage_num): StageState.COMPLETED if cmd_type is OnStageComplete else StageState.ERROR}
             }
             async_cmd = CommandFactory.new_command(GraphUIUpdate, async_params)
-            self.send_client_update_async(user_uuid, async_cmd)
+            self.send_client_update_async(cmd.pipeline_id, async_cmd)
             print("DEBUG: Handed off to async netcode")
 
             params = {"STATUS": APIStatus.SUCCESS}
@@ -147,12 +147,14 @@ class SessionManager:
         
         """
 
-        user_uuid = self.pipeline_uuid_map.get(pipeline_uuid, None)
+        user_session = self.pipeline_uuid_map.get(pipeline_uuid, None)
         
-        if user_uuid is None:
+        if user_session is None:
             print("WARNING: Pipeline attempted to send update to nonexistant user session")
             return # Just drop it
             
+        user_uuid = user_session.user_uuid
+
         self.compute_server.send_to_target_async(user_uuid, cmd)
 
 
