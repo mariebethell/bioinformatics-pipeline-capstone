@@ -411,7 +411,7 @@ class NextflowGenerator:
             '            def r2s = files.findAll { it.name ==~ /.*_R?2(_\\d+)?\\.(fastq|fq)(\\.gz)?$/ }.sort()\n\n'
             '            if (r1s && r2s) {\n'
             '                def meta = [ id: sample_id, single_end: false ]\n'
-            '                tuple(meta, [ r1s, r2s ])\n'
+            '                tuple(meta, r1s + r2s)\n'
             '            } else {\n'
             '                def meta = [ id: sample_id, single_end: true ]\n'
             '                tuple(meta, files[0])\n'

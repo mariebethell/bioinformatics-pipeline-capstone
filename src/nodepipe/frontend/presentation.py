@@ -60,15 +60,29 @@ def get_user_uuid():
 
     return new_uuid
 
-def move_to_bindmount(directory) -> str:
-    input_dir = os.path.join(BIND_MOUNT_DIR, 'input-files')
-    os.makedirs(input_dir, exist_ok=True) # Make input file directory within shared-data if it does not already exist
+def move_to_bindmount(input_files: dict) -> dict:
+    """
+    Copy selected input FASTQ files into shared-data/input-files
+    and return paths that the Docker/Nextflow side can use.
+    """
+    if not input_files or not input_files.get("reads"):
+        raise ValueError("Input file data must include at least one FASTQ file under 'reads'.")
+
+    input_dir = Path(BIND_MOUNT_DIR) / "input-files"
+    input_dir.mkdir(parents=True, exist_ok=True)
 
     input_file_dict = {"reads": []}
-    for file in directory["reads"]:
-        uri = shutil.copy2(file, input_dir)
 
-        rel_path = "./shared-data/input-files/" + os.path.basename(uri)
+    for file in input_files["reads"]:
+        src = Path(file).resolve()
+        dest = input_dir / src.name
+
+        # If the file is already inside shared-data/input-files,
+        # don't try to copy it onto itself.
+        if src != dest.resolve():
+            shutil.copy2(src, dest)
+
+        rel_path = "./shared-data/input-files/" + dest.name
         input_file_dict["reads"].append(rel_path)
 
     return input_file_dict
@@ -183,16 +197,14 @@ class GraphGenerator():
         self.graph = Graph()
         self.node_map = {}  # maps Qt nodes to backend nodes
 
-        input = self.qt_graph.get_node_by_name('Input')
-        if not input:
-            print("ERROR: Input Node must exist within the graph to run the pipeline!")
-            return
+        input_node = self.qt_graph.get_node_by_name('Input')
+        if not input_node:
+            raise ValueError("Input Node must exist within the graph to run the pipeline!")
 
-        file_uri = input.get_value()
-
-        if not file_uri:
-            print("ERROR: Input File must have a FASTQ file input to run the pipeline!") # create some warning window that pops up if there is no URI/no input file
-            return
+        input_files = input_node.get_value()
+        
+        if not input_files or not input_files.get("reads"):
+            raise ValueError("Input File must have a FASTQ file input to run the pipeline!")
 
     def from_workbench(self):
         """
@@ -209,6 +221,10 @@ class GraphGenerator():
 
                 input_file_path = qt_node.get_value()
                 print(f"Input file path: {input_file_path}")
+
+                if not input_file_path or not input_file_path.get("reads"):
+                    raise ValueError("Input File must have at least one FASTQ file input to run the pipeline!")
+
                 node.outputs = {
                     "reads": move_to_bindmount(input_file_path)
                 }
@@ -565,11 +581,17 @@ class PipelineWorkbenchVC(PanelController):
         A function to run the pipeline by creating a graph to be sent and run to the backend,
         based on the nodes in the Node Graph
         """
-        graph = GraphGenerator(self.node_graph)
-        graph = graph.from_workbench()
+        try:
+            graph_generator = GraphGenerator(self.node_graph)
+            graph = graph_generator.from_workbench()
+        except ValueError as e:
+            print(f"ERROR: {e}")
+            return
 
         # getting the input node
-        # this is a bandaid fix... this would only work for ONE input node!! I might just enforce that
+        # this is a bandaid fix.
+        input_node = None
+
         for _, node in graph.nodes.items():
             if node.tool == 'input':
                 input_node = node
@@ -580,7 +602,7 @@ class PipelineWorkbenchVC(PanelController):
             return
         else:
             print(input_node.outputs)
-            input_folder = input_node.outputs["reads"]["reads"][0] # gets the file URI of the input node's reads, which is the input folder for the pipeline
+            input_folder = input_node.outputs["reads"]["reads"][0] # gets the file URI of the input node's reads
 
         # getting the output node, will be used in the future for updating the data and timestamp
         for _, node in graph.nodes.items():
@@ -1941,35 +1963,37 @@ class InputNode(DataNode):
         self.add_custom_widget(self.wrapper)
 
     def get_value(self):
-        # uri = self.get_property('file_uri')
-        uri = self.get_property('file_uri')
-        # return {"reads" : [uri]} if uri else {}
-        return {"reads" : [uri]} if uri else {}
-        #return self.wrapper.get_value()
-        directory = self.get_property('input_directory')
-        file_uri = self.get_property('file_uri')
+        """
+        Return selected FASTQ input files.
+
+        If file_uri is set, the user selected one file.
+        If file_uri is empty but input_directory is set, the user selected
+        'Run All Files', so collect every FASTQ file in that directory.
+        """
+        directory = self.get_property("input_directory")
+        file_uri = self.get_property("file_uri")
 
         if not directory:
             return {}
-        
+
+        # Single-file mode
+        if file_uri:
+            return {"reads": [file_uri]}
+
+        # Run All Files mode.
+        # In this mode, file_uri is intentionally empty.
         directory = Path(directory)
-        if not file_uri: # an empty file_uri is Run All Files
-            files = list(directory.glob('*.fastq'))
-            files.extend(directory.glob('*.fq'))
 
-            files = sorted(files)
+        fastq_files = []
+        for pattern in ("*.fastq", "*.fq", "*.fastq.gz", "*.fq.gz"):
+            fastq_files.extend(directory.glob(pattern))
 
-            if not files:
-                return {}
-            
-            return {'reads': [str(file) for file in files]} # returns every file to be run
+        fastq_files = sorted(fastq_files)
 
-        return {'reads' : [file_uri]}
+        if not fastq_files:
+            return {}
 
-    def set_property(self, name, val, push_undo=True):
-        super(InputNode, self).set_property(name, val, push_undo)
-        if name == 'file_uri' and self.wrapper:
-            self.wrapper.uri = val
+        return {"reads": [str(file) for file in fastq_files]}
 
     
 
