@@ -669,6 +669,7 @@ class PipelineWorkbenchVC(PanelController):
         """
         A function for creating a new pipeline from scratch by deleting all of the nodes, prompting the user with a warning message before they do so
         """
+
         if not self.node_graph.all_nodes():
             print('Empty Node Graph, skipping new pipeline')
             return
@@ -1003,6 +1004,7 @@ class SettingsView(QtWidgets.QWidget):
         """
         Function for grabbing the legal screen sizes for a user's system, so that they can modify the resolution
         """
+        app = QtWidgets.QApplication.instance()
         screen = app.primaryScreen()
         size = screen.size()
         scr_w = size.width()
@@ -1237,7 +1239,7 @@ class ToolNodeWrapper(NodeBaseWidget):
 
         self.node_status = False # a boolean storing whether or not the current node is running or not
 
-        self.node_status_label = QtWidgets.QLabel('Not Running')
+        self.node_status_label = QtWidgets.QLabel('Incomplete')
         self.node_status_label.setAlignment(QtCore.Qt.AlignCenter)
         self.node_status_label.setStyleSheet(not_running_style)
         layout.addWidget(self.node_status_label)
