@@ -392,6 +392,14 @@ class App:
                                   QtCore.Qt.AlignmentFlag.AlignBottom \
                                   | QtCore.Qt.AlignmentFlag.AlignCenter, 
                                   QtCore.Qt.GlobalColor.white)
+        
+    @staticmethod
+    def _stop_container():
+        cd = Path(__file__).resolve().parent
+        cur_env = os.environ.copy()
+        cur_env['PATH'] = App.mac_pathvar + os.pathsep + cur_env['PATH']
+        subprocess.run(["docker", "compose", "down"], cwd=str(cd), env=cur_env)
+
 
     @staticmethod
     def bootup():
@@ -413,6 +421,8 @@ class App:
         else:
             App.ensure_docker_windows(splash_screen)
             App.start_windows(qt_app, splash_screen)
+
+        App._stop_container()
 
 
 if __name__ == "__main__":

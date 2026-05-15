@@ -36,6 +36,7 @@ class WebView(QtWebEngineWidgets.QWebEngineView):
     
 
     dispatcher_start_signal = Signal()
+    instance = None
 
     def __init__(self, folder_url: str = 'https://csusm-my.sharepoint.com/:f:/g/personal/ediazalmeyda_csusm_edu/IgD_A_U_UhHjRLI5AMFhv4mAAT1TQ-zsf2MKDg26xZ-sKjw?e=Wa1dN2'):
         super().__init__()
@@ -55,6 +56,8 @@ class WebView(QtWebEngineWidgets.QWebEngineView):
         self.page().chooseFiles
         self.setUrl(self.folder_url)
         self.loadFinished.connect(self._handle_page_loaded)
+
+        WebView.instance = self
 
     def __del__(self):
         if self.dispatch_worker_thread is not None:
