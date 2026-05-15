@@ -13,7 +13,7 @@ from PySide6 import QtWidgets, QtCore, QtWebEngineWidgets
 from NodeGraphQt import NodeGraph, BaseNode, NodeBaseWidget
 from NodeGraphQt.qgraphics.node_base import NodeItem
 from abc import ABC, abstractmethod
-from shared.graph import Graph
+from shared.graph import Graph, StageState
 from backend.pipeline_builder import PipelineFactory
 from backend.tool_registry import ToolRegistry
 from frontend.webview import WebView
@@ -218,7 +218,7 @@ class GraphGenerator():
                 tool = "input"
 
                 node = self.graph.create_node(tool)
-                node.id = qt_node.id
+                node.node_id = qt_node.id
 
                 input_file_path = qt_node.get_value()
                 print(f"Input file path: {input_file_path}")
@@ -239,7 +239,7 @@ class GraphGenerator():
                 continue
 
             node = self.graph.create_node(tool)
-            node.id = qt_node.id
+            node.node_id = qt_node.id
 
             node.args = qt_node.get_value()
             if tool == "trimmomatic" and not node.args.get("steps"):
@@ -578,12 +578,12 @@ class PipelineWorkbenchVC(PanelController):
         A function to run the pipeline by creating a graph to be sent and run to the backend,
         based on the nodes in the Node Graph
         """
-        graph = GraphGenerator(self.node_graph)
-        graph = graph.from_workbench()
+        self.graph = GraphGenerator(self.node_graph)
+        self.graph = self.graph.from_workbench()
 
         # getting the input node
         # this is a bandaid fix... this would only work for ONE input node!! I might just enforce that
-        for _, node in graph.nodes.items():
+        for _, node in self.graph.nodes.items():
             if node.tool == 'input':
                 input_node = node
                 break
@@ -596,19 +596,19 @@ class PipelineWorkbenchVC(PanelController):
             input_folder = input_node.outputs["reads"]["reads"][0] # gets the file URI of the input node's reads, which is the input folder for the pipeline
 
         # getting the output node, will be used in the future for updating the data and timestamp
-        for _, node in graph.nodes.items():
+        for _, node in self.graph.nodes.items():
             if node.tool == "output":
                 output_node = node
                 break
 
-        for node_num, node in graph.nodes.items(): # shows the tools being ran sequentially and their args
-            print(f"Node ID: {node.id}, Node Num {node_num}: tool={node.tool}, args={node.args}")
+        for node_num, node in self.graph.nodes.items(): # shows the tools being ran sequentially and their args
+            print(f"Node ID: {node.node_id}, Node Num {node_num}: tool={node.tool}, args={node.args}")
 
         # local creation
-        local_uuid = self.app.new_pipeline(graph)
+        local_uuid = self.app.new_pipeline(self.graph)
 
         # creating pipeline on server
-        create_response = self.app.dispatcher.new_pipeline(graph, input_folder)
+        create_response = self.app.dispatcher.new_pipeline(self.graph, input_folder)
 
         if create_response.STATUS != APIStatus.SUCCESS:
             print(f'Failed to create pipeline on server, status:{create_response.STATUS}')
@@ -624,8 +624,8 @@ class PipelineWorkbenchVC(PanelController):
         if run_response.STATUS != APIStatus.SUCCESS:
             print(f'Failed to run pipeline, status:{run_response.STATUS}')
             return
-        
-        print('Pipeline successfully started in workbench.')
+        else:
+            print('Pipeline successfully started in workbench.')
         
     def stop_pipeline(self):
         pass
@@ -680,8 +680,15 @@ class PipelineWorkbenchVC(PanelController):
         # expecting a dictionary (node_num : state) or in the case of output (node_num : data)
         # now expecting (node_id : state)
 
+        print("UPDATE NODES")
+        print(dict)
         ## May need to change to update by node num, since graph does not have node_id.
-        for node_id, item in dict.items():
+        for node_num, item in dict.items():
+            node_id = self.graph.get_node(int(node_num)).node_id
+            print(int(node_num))
+            print(self.graph)
+            print(self.graph.get_node(int(node_num)))
+            print(node_id)
             curr_node = self.node_graph.get_node_by_id(node_id)
 
             if isinstance(curr_node, ToolNode):
@@ -1365,13 +1372,13 @@ class ToolNodeWrapper(NodeBaseWidget):
             return widget, checkbox, label
 
     def update_state(self, state):
-        if state == 'StageState.RUNNING':
+        if state == StageState.RUNNING:
             self.node_status_label.setText('Running')
             self.node_status_label.setStyleSheet(running_style)
-        elif state == 'StageState.COMPLETED':
+        elif state == StageState.COMPLETED:
             self.node_status_label.setText('Completed')
             self.node_status_label.setStyleSheet(completed_style)
-        elif state == 'StageState.NOT_RUNNING':
+        elif state == StageState.NEW:
             self.node_status_label.setText('Not Running')
             self.node_status_label.setStyleSheet(not_running_style)
         else:
