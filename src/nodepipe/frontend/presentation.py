@@ -710,17 +710,8 @@ class PipelineWorkbenchVC(PanelController):
 
     def _update_nodes(self, dict):
         # expecting a dictionary (node_num : state) or in the case of output (node_num : data)
-        # now expecting (node_id : state)
-
-        print("UPDATE NODES")
-        print(dict)
-        ## May need to change to update by node num, since graph does not have node_id.
         for node_num, item in dict.items():
             node_id = self.graph.get_node(int(node_num)).node_id
-            print(int(node_num))
-            print(self.graph)
-            print(self.graph.get_node(int(node_num)))
-            print(node_id)
             curr_node = self.node_graph.get_node_by_id(node_id)
 
             if isinstance(curr_node, ToolNode):
@@ -2156,7 +2147,6 @@ class OutputNode(DataNode):
 
     def get_value(self):
         return self.wrapper.get_value() if self.wrapper else {}
-#ate_tool_label('None') # Was this a typo or is some logic unfinished here?
 
 def start_app(app: QtWidgets.QApplication):
 
