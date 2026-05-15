@@ -679,6 +679,8 @@ class PipelineWorkbenchVC(PanelController):
     def _update_nodes(self, dict):
         # expecting a dictionary (node_num : state) or in the case of output (node_num : data)
         # now expecting (node_id : state)
+
+        ## May need to change to update by node num, since graph does not have node_id.
         for node_id, item in dict.items():
             curr_node = self.node_graph.get_node_by_id(node_id)
 
@@ -2113,32 +2115,5 @@ class OutputNode(DataNode):
 
     def get_value(self):
         return self.wrapper.get_value() if self.wrapper else {}
-        
+ate_tool_label('None')
 
-def start_app(app: QtWidgets.QApplication):
-
-    #gets user's screen size for resizing the window
-    screen = app.primaryScreen()
-    size = screen.size()
-    scr_w = size.width()
-    scr_h = size.height()
-
-
-    window = AppFrame()
-
-    # resizes it based on screen size (takes up 80%)
-    width = int(scr_w * 0.8)
-    height = int(scr_h * 0.8)
-    window.setFixedHeight(height)
-    window.setFixedWidth(width)
-
-    # centers app at middle of screen
-    window.move((scr_w - width) // 2, (scr_h - height) // 2)
-
-    window.show()
-    
-    app.setStyle('Fusion')
-    app.exec()
-    
-if __name__ == '__main__':
-    start_app(QtWidgets.QApplication([]))

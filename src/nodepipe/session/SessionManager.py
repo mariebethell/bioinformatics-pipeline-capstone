@@ -3,7 +3,7 @@ from datetime import datetime
 
 from session.Session import Session
 
-from shared.Command import Command, NewPipeline, Response, SendDummyWebsocketUpdate, GraphUIUpdate
+from shared.Command import Command, NewPipeline, OnStageComplete, Response, SendDummyWebsocketUpdate, GraphUIUpdate
 from shared.CommandFactory import CommandFactory
 from shared.APIStatus import APIStatus
 from shared.graph import StageState, Graph
@@ -77,6 +77,13 @@ class SessionManager:
                 params = {"STATUS": APIStatus.SUCCESS}
 
             response = CommandFactory.new_command(ClientConnectResponse, params)
+        elif type(cmd) is OnStageComplete:
+            async_params = {
+                'PIPELINE_ID': cmd.pipeline_id,
+                'UPDATES': {str(cmd.stage_num): StageState.COMPLETED}
+            }
+            async_cmd = CommandFactory.new_command(GraphUIUpdate, params)
+            self.send_client_update_async(cmd.pipeline_id, async_cmd)
         else:
             response = self.pipeline_manager.handlePipelineCommand(cmd)
 

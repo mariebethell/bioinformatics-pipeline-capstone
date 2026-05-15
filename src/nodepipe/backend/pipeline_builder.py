@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import os
 import sys
+import datetime
 from abc import ABC, abstractmethod
 from typing import Any
 
@@ -34,13 +35,14 @@ from backend.modules_config_builder import (
     render_modules_config,
 )
 from backend.tool_registry import ToolRegistry
-from shared.graph import Graph, Node
+from shared.graph import Graph, Node, StageState
 from collections import deque # for BFS graph traversal
 
 from uuid import UUID, uuid4
 
 ArgDict = dict[str, Any]
 
+INDENT = " " * 4
 
 class Pipeline(ABC):
     """
@@ -107,7 +109,7 @@ class NextflowPipeline(Pipeline):
         disk, then starts Nextflow using both the base backend config and the
         generated module override config.
         """
-        generator = NextflowGenerator(self.graph, self.registry)
+        generator = NextflowGenerator(self.graph, self.registry, self.uuid)
 
         generator.prepare_graph()
         main_nf = generator.generate_pipeline()
@@ -177,12 +179,13 @@ class NextflowGenerator:
     creates CompiledNode objects, and renders the strings used for main.nf
     and conf/modules.config .
     """
-    def __init__(self, graph: Graph, tool_registry: ToolRegistry):
+    def __init__(self, graph: Graph, tool_registry: ToolRegistry, uuid: UUID):
         self.graph = graph
         self.registry = tool_registry
         self._prepared = False
         self._input_files: list[str] = []
         self._compiled_nodes: list[CompiledNode] | None = None
+        self.pipeline_id = str(uuid)
 
     def _linearize_graph(self) -> list[Node]:
         """
@@ -430,6 +433,61 @@ class NextflowGenerator:
     def generate_output_channel_str(self, node: CompiledNode) -> str:
         return f'    {node.output_channel} = {node.alias}.{node.output_accessor}'
 
+    def generate_stage_event_process(self) -> str:
+        return (
+            "process SEND_STAGE_EVENT {\n"
+            "    input:\n"
+            "    val(payload)\n"
+            "\n"
+            "    script:\n"
+            "    \"\"\"\n"
+            "    curl -X PUT http://172.17.0.1:8000/api/container/onstagecomplete/ \\\n"
+            "      -H 'Content-Type: application/command' \\\n"
+            "      -d '${payload}'\n"
+            "    \"\"\"\n"
+            "}\n"
+        )
+
+    def generate_stage_event_map(self) -> str:
+        # need to add user_uuid to payload
+        lines = [
+            "def emit_stage(stage_num) {",
+            f"{INDENT}return {{ tuple ->",
+            f"{INDENT * 2}def (meta, data) = tuple",
+            "",
+            (
+                f'{INDENT * 2}def payload = '
+                f'"{{\\"timestamp\\":\\"{datetime.datetime.now()}\\",\\"pipeline_id\\":\\"{self.pipeline_id}\\",\\"stage_num\\":$stage_num}}"'
+            ),
+            "",
+            f"{INDENT * 2}return payload",
+            f"{INDENT}}}",
+            "}",
+        ]
+
+        return "\n".join(lines)
+    
+    def generate_stage_event_channel(self, node: CompiledNode) -> str:
+        stage_num = node.node_num
+        event_channel = f"{node.output_channel}_event"
+
+        return (
+            f"    {event_channel} = "
+            f"{node.output_channel}.map(emit_stage({stage_num}))"
+        )
+    
+    def generate_send_stage_events(self, compiled_nodes: list[CompiledNode] | None = None):
+        lines = [
+            f"{INDENT}ch_stage_events = {compiled_nodes[0].output_channel}_event"
+        ]
+        for node in compiled_nodes[1:]:
+            lines.append(f"{INDENT * 2}.mix({node.output_channel}_event)")
+
+        lines.append(f"{INDENT}SEND_STAGE_EVENT(ch_stage_events)")
+
+        return '\n'.join(lines)
+
+
     def generate_pipeline(self, graph=None) -> str:
         input_files, compiled_nodes = self.compile_graph()
 
@@ -443,12 +501,25 @@ class NextflowGenerator:
         for node in compiled_nodes:
             lines.append(self.generate_nfcore_include_statement(node))
 
-        lines.extend(['', 'workflow {', '', self.generate_input_channel_str(), ''])
+        lines.extend([
+            '',
+            self.generate_stage_event_process(),
+            '',
+            self.generate_stage_event_map(),
+            '',
+            'workflow {',
+            '',
+            self.generate_input_channel_str(),
+            ''
+        ])
 
         for node in compiled_nodes:
             lines.append(self.generate_execution_block(node))
             lines.append(self.generate_output_channel_str(node))
+            lines.append(self.generate_stage_event_channel(node))
             lines.append('')
+
+        lines.append(self.generate_send_stage_events(compiled_nodes))
 
         lines.append('}')
         lines.append('')
@@ -477,8 +548,53 @@ class NextflowGenerator:
         for node in compiled_nodes:
             lines.append(self.generate_execution_block(node))
             lines.append(self.generate_output_channel_str(node))
+            lines.append(self.generate_stage_event_channel(node))
             lines.append('')
+
+        lines.append(self.generate_send_stage_events(compiled_nodes))
 
         lines.append('}')
         lines.append('')
         return '\n'.join(lines)
+    
+if __name__ == "__main__":
+    graph = Graph()
+
+    # Use create_node for auto numbering
+    input = graph.create_node("input")
+
+    input.outputs = {'reads': ['./shared-data/input-files/Test03_L001_R1_001.fastq']}
+
+    fastqc1 = graph.create_node("FastQC")
+    trimmomatic = graph.create_node("Trimmomatic")
+
+    trimmomatic.args = {
+        'steps': [
+            {"name": "leading", "parameters": {"quality": 3}},
+            {"name": "trailing", "parameters": {"quality": 3}},
+            {"name": "sliding_window", "parameters": {"window_size": 4, "required_quality": 20}},
+            {"name": "min_len", "parameters": {"length": 36}},
+        ]
+    }
+
+    fastqc2 = graph.create_node("FastQC")
+    trinity = graph.create_node("De Novo Transcriptome Assembly")
+
+    graph.add_node(input)
+    graph.add_node(fastqc1)
+    graph.add_node(trimmomatic)
+    graph.add_node(fastqc2)
+    graph.add_node(trinity)
+
+    graph.connect(input, fastqc1)
+    graph.connect(input, trimmomatic)
+    graph.connect(trimmomatic, fastqc2)
+    graph.connect(trimmomatic, trinity)
+
+    # Test getting node information
+    for node in graph.nodes.values():
+        print(node)
+        print()
+
+    pipeline = NextflowPipeline(graph, ToolRegistry())
+    pipeline.run_pipeline()
