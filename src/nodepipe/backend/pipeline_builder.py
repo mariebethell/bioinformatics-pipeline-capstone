@@ -23,6 +23,7 @@ from __future__ import annotations
 import os
 import sys
 import datetime
+import time
 from abc import ABC, abstractmethod
 from typing import Any
 
@@ -57,7 +58,7 @@ class Pipeline(ABC):
 
     @abstractmethod
     def run_pipeline(self):
-        pass
+        return 0
 
     @abstractmethod
     def stop_pipeline(self):
@@ -135,7 +136,7 @@ class NextflowPipeline(Pipeline):
         print(modules_config)
 
         import subprocess
-        subprocess.run(
+        nf_process = subprocess.Popen(
             [
                 "nextflow",
                 "run",
@@ -144,9 +145,15 @@ class NextflowPipeline(Pipeline):
                 self.nextflow_config_path,
                 "-c",
                 self.modules_config_path,
-            ],
-            check=True,
+            ]
         )
+
+        time.sleep(2.5)
+        exit_code = nf_process.poll()
+        if exit_code is None:
+            exit_code = 0 # If process doesn't immediately crash assume success
+
+        return exit_code
 
     def stop_pipeline(self):
         print('Stopping Nextflow pipeline...')
@@ -457,7 +464,7 @@ class NextflowGenerator:
             "",
             (
                 f'{INDENT * 2}def payload = '
-                f'"{{\\"timestamp\\":\\"{datetime.datetime.now()}\\",\\"pipeline_id\\":\\"{self.pipeline_id}\\",\\"stage_num\\":$stage_num}}"'
+                f'"{{\\"timestamp\\":\\"{datetime.datetime.now().isoformat()}\\",\\"pipeline_id\\":\\"{self.pipeline_id}\\",\\"stage_num\\":$stage_num}}"'
             ),
             "",
             f"{INDENT * 2}return payload",
