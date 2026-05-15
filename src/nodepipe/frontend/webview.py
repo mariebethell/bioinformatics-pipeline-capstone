@@ -57,7 +57,7 @@ class WebView(QtWebEngineWidgets.QWebEngineView):
         self.loadFinished.connect(self._handle_page_loaded)
 
     def __del__(self):
-        if self.dispatch_worker'_thread is not None:
+        if self.dispatch_worker_thread is not None:
             print("Stopping OneDrive dispatch worker")
             self.dispatch_worker_thread.requestInterruption()
             self.dispatch_worker_thread.wait()
