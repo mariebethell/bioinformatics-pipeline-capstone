@@ -639,25 +639,34 @@ class PipelineWorkbenchVC(PanelController):
         # local creation
         local_uuid = self.app.new_pipeline(graph)
 
+        self.runner = PipelineWorkbenchVC.PipelineRunner(self.app.dispatcher, graph, input_folder)
+
+        self.runner.local_uuid = local_uuid
+
+        self.runner.finished_signal.connect(self._on_pipeline_started)
+        
+        print('starting pipeline worker thread...')
+        self.runner.start()
+
         # creating pipeline on server
-        create_response = self.app.dispatcher.new_pipeline(graph, input_folder)
+        # create_response = self.app.dispatcher.new_pipeline(graph, input_folder)
 
-        if create_response.STATUS != APIStatus.SUCCESS:
-            print(f'Failed to create pipeline on server, status:{create_response.STATUS}')
-            return
+        # if create_response.STATUS != APIStatus.SUCCESS:
+        #     print(f'Failed to create pipeline on server, status:{create_response.STATUS}')
+        #     return
 
-        server_uuid = create_response.PIPELINE_ID
-        print(f'Created Pipeline: {server_uuid}')
+        # server_uuid = create_response.PIPELINE_ID
+        # print(f'Created Pipeline: {server_uuid}')
 
-        self.app.bind_pipeline(local_uuid, server_uuid)
+        # self.app.bind_pipeline(local_uuid, server_uuid)
 
-        run_response = self.app.dispatcher.run_pipeline(server_uuid)
+        # run_response = self.app.dispatcher.run_pipeline(server_uuid)
         
-        if run_response.STATUS != APIStatus.SUCCESS:
-            print(f'Failed to run pipeline, status:{run_response.STATUS}')
-            return
+        # if run_response.STATUS != APIStatus.SUCCESS:
+        #     print(f'Failed to run pipeline, status:{run_response.STATUS}')
+        #     return
         
-        print('Pipeline successfully started in workbench.')
+        # print('Pipeline successfully started in workbench.')
         
     def stop_pipeline(self):
         pass
@@ -699,11 +708,11 @@ class PipelineWorkbenchVC(PanelController):
     def _check_for_updates(self):
         latest = None
 
-        while not self.bridge.graph_queue.empty():
-            try:
-                latest = self.bridge.graph_queue.get_nowait()
-            except queue.Empty:
-                break
+
+        try:
+            latest = self.bridge.graph_queue.get_nowait()
+        except queue.Empty:
+            return
 
         if latest:
             self._update_nodes(latest) # sends the graph to the update state
@@ -711,8 +720,15 @@ class PipelineWorkbenchVC(PanelController):
     def _update_nodes(self, dict):
         # expecting a dictionary (node_num : state) or in the case of output (node_num : data)
         # now expecting (node_id : state)
+        print('Incoming updates:', dict)
+
         for node_id, item in dict.items():
             curr_node = self.node_graph.get_node_by_id(node_id)
+            if curr_node is None:
+                print(f'Node not found for id: {node_id}')
+                continue
+
+            print(f'updating node {node_id} as {item}')
 
             if isinstance(curr_node, ToolNode):
                 curr_node.update_state(item)
@@ -723,7 +739,39 @@ class PipelineWorkbenchVC(PanelController):
 
         # updates node based on node number
 
+    def _on_pipeline_started(self, result):
+        status, payload = result
 
+        if status == 'error':
+            print(f'Pipeline failed to start: {payload.STATUS}')
+            return
+        
+        server_uuid = payload # succesfully passed this back from worker
+
+        print(f'Pipeline succesfully started: {server_uuid}')
+
+        self.app.bind_pipeline(self.runner.local_uuid, server_uuid)
+
+    class PipelineRunner(QtCore.QThread):
+        finished_signal = QtCore.Signal(object)
+
+        def __init__(self, dispatcher, graph, input_dir):
+            super().__init__()
+            self.dispatcher = dispatcher
+            self.graph = graph
+            self.input_dir = input_dir
+
+        def run(self):
+            create_response = self.dispatcher.new_pipeline(self.graph, self.input_dir)
+            if create_response.STATUS != APIStatus.SUCCESS:
+                self.finished_signal.emit(('error', create_response))
+                return
+
+            server_uuid = create_response.PIPELINE_ID
+            run_response = self.dispatcher.run_pipeline(server_uuid)
+
+            self.finished_signal.emit(('success', server_uuid))
+            
 
     class EventBridge(QtCore.QObject):
         """
