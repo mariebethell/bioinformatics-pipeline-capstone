@@ -27,6 +27,7 @@ class DockerEngineStatus(Enum):
 class App:
     mac_paths = ["usr/local/bin", "/opt/homebrew/bin", "/usr/bin"]
     mac_pathvar = os.pathsep.join(mac_paths + os.environ.get("PATH", "").split(os.pathsep))
+    cd = Path(__file__).resolve().parent
 
     @staticmethod
     def start_mac(qt_app: QtWidgets.QApplication, splash_screen: QtWidgets.QSplashScreen):
@@ -115,10 +116,9 @@ class App:
         print("Launching compute container...")
         App._upd_splash_msg(splash_screen, "Building compute container (this may take a few minutes)...")
 
-        cd = Path(__file__).resolve().parent
         cur_env = os.environ.copy()
         cur_env['PATH'] = App.mac_pathvar + os.pathsep + cur_env['PATH']
-        subprocess.run(["docker", "compose", "up", "-d"], cwd=str(cd), env=cur_env)
+        subprocess.run(["docker", "compose", "up", "-d"], cwd=str(App.cd), env=cur_env)
         
         # Stall until the compute server is listening
         print("Waiting for container to finish initializing...")
@@ -398,7 +398,8 @@ class App:
         # Show splash screen. It could take awhile to spin up the container
         qt_app = QtWidgets.QApplication([])
 
-        splash_bitmap = QtGui.QPixmap("./resources/img/splash.png")
+        splash_path = App.cd / "resources/img/splash.png"
+        splash_bitmap = QtGui.QPixmap(str(splash_path.resolve()))
         splash_screen = QtWidgets.QSplashScreen(splash_bitmap, QtCore.Qt.WindowType.WindowStaysOnTopHint)
         splash_screen.show()
         qt_app.processEvents()
