@@ -105,9 +105,17 @@ class AppFrame(QtWidgets.QMainWindow):
         # a top bar for navigating between the panels
         top_bar_layout = QtWidgets.QHBoxLayout()
         main_layout = QtWidgets.QVBoxLayout()
+        onedrive_col_layout = QtWidgets.QVBoxLayout()
+        
 
         top_bar_layout.setContentsMargins(5, 5, 5, 5)
         main_layout.setContentsMargins(10, 10, 10, 10)
+        onedrive_col_layout.setContentsMargins(5, 5, 5, 5)
+
+        # onedrive view
+        self.onedrive = OneDrivePanel()
+        self.onedrive.setMaximumWidth(350)
+        onedrive_col_layout.addWidget(self.onedrive)
 
         # panel controllers
         self.home = HomeController(self)
@@ -115,6 +123,7 @@ class AppFrame(QtWidgets.QMainWindow):
         self.workbench = PipelineWorkbenchVC(self)
 
         self.content = QtWidgets.QStackedWidget()
+        self.content_layout = QtWidgets.QHBoxLayout()
 
         ## MODEL ##
         self._uuid_map = {}
@@ -140,7 +149,11 @@ class AppFrame(QtWidgets.QMainWindow):
             top_bar_layout.addWidget(btn)
 
         main_layout.addLayout(top_bar_layout, 0)
-        main_layout.addWidget(self.content, 1)
+        self.content_layout.addWidget(self.content, 4)
+        self.content_layout.addWidget(self.onedrive, 1)
+        main_layout.addLayout(self.content_layout)
+        #main_layout.addWidget(self.content, 4)
+    
         
         
         central = QtWidgets.QWidget()
@@ -155,7 +168,6 @@ class AppFrame(QtWidgets.QMainWindow):
         """
 
         self.dispatcher.disconnect()
-        self.home.onedrive.close()
         print('Disconnecting from Server.')
         event.accept()
 
@@ -767,15 +779,13 @@ class PipelineWorkbenchVC(PanelController):
 
 #### VIEW SECTION ####
 
-class OneDriveWindow(QtWidgets.QMainWindow):
+class OneDrivePanel(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.setWindowTitle('OneDrive Upload Window')
-        self.setFixedSize(400, 400)
-
         self.web_view = WebView()
-        self.setCentralWidget(self.web_view)
+        layout = QtWidgets.QVBoxLayout(self)
+        layout.addWidget(self.web_view)
 
 
 #### view styles for text ####
@@ -842,10 +852,7 @@ class HomeView(QtWidgets.QWidget):
         # self.onedrive_container.setAlignment(QtCore.Qt.AlignCenter)
 
         # self.web_view = WebView()
-        self.onedrive = OneDriveWindow()
-        self.onedrive.show()
-        self.onedrive.raise_()
-        self.onedrive.activateWindow()
+
   
         # od_cont_layout = QtWidgets.QVBoxLayout()
         # od_cont_layout.addWidget(self.web_view)
