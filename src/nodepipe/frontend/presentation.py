@@ -2,6 +2,7 @@ import sys
 [sys.path.append(i) for i in ['.', '..']] # Tells Python to search for modules in the parent directories.
 
 from datetime import date, datetime
+import time
 import json
 import re
 import queue
@@ -74,12 +75,21 @@ def move_to_bindmount(directory) -> str:
     return input_file_dict
 
 def move_from_bindmount(tool: str, directory: str):
+    cur_time = time.localtime()
+    cur_time_str = f"{cur_time.tm_year}.{cur_time.tm_mon}.{cur_time.tm_hour}.{cur_time.tm_min}.{cur_time.tm_sec}"
+    complete_dest_str = f"{get_user_uuid()}_{tool}_{cur_time_str}"
+
     tool_results_src = os.path.join(BIND_MOUNT_DIR, 'results', tool)
-    tool_results_dest = os.path.join(directory, tool)
+    tool_results_dest = os.path.join(directory, complete_dest_str)
 
     if os.path.isdir(tool_results_src):
         print(f"Results for {tool} saved to {tool_results_dest}")
         shutil.copytree(tool_results_src, tool_results_dest)
+
+        wv_instance = WebView.instance
+        if wv_instance is not None:
+            wv_instance.upload_file(tool_results_dest)
+
     else:
         print("Tool results not found")
 
